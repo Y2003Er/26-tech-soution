@@ -3,7 +3,6 @@ const TelegramService = require('../telegramService');
 
 const DownloadController = {
 
-  // GET /download/:slug
   async downloadPage(req, res) {
     try {
       const app = await AppModel.getBySlug(req.params.slug);
@@ -21,7 +20,6 @@ const DownloadController = {
     }
   },
 
-  // GET /go/:slug 
   async goDownload(req, res) {
     console.log(`⚡ [SERVER]: Request imepokelewa kwa slug: ${req.params.slug}`);
 
@@ -32,34 +30,31 @@ const DownloadController = {
         return res.redirect('/');
       }
 
-      // Ongeza download count
       await AppModel.incrementDownloads(app.id);
 
       const urlOrId = app.download_url ? app.download_url.trim() : '';
 
-      // 1. Kama ni link ya kawaida (http)
+      // 1. Link ya kawaida (http)
       if (urlOrId.startsWith('http')) {
         console.log("🔗 [SERVER]: Redirect ya kawaida...");
         return res.redirect(urlOrId);
-      } 
+      }
 
-      // 2. Kama ni Telegram File ID ✅ HAPA NDIYO MABADILIKO
+      // 2. Telegram File ID — stream kupitia server yetu
       else if (urlOrId !== '') {
         console.log(`☁️ [SERVER]: Inastream faili kutoka Telegram kwa ID: ${urlOrId}`);
-
         try {
-          // ✅ Badala ya redirect — stream faili kupitia server yako
-          await TelegramService.streamTelegramFile(urlOrId, res);
-
+          // Pitisha app.name ili file ishuke kwa jina sahihi
+          await TelegramService.streamTelegramFile(urlOrId, res, app.name);
         } catch (teleErr) {
           console.error("❌ [SERVER]: Telegram Error:", teleErr.message);
           return res.status(500).render('error', { 
             title: 'Hitilafu ya Server', 
             code: '500', 
-            message: 'Faili halipatikani kwenye seva ya Telegram (Labda File ID imekufa).' 
+            message: 'Faili halipatikani kwenye seva ya Telegram.' 
           });
         }
-      } 
+      }
 
       // 3. Hakuna link
       else {
