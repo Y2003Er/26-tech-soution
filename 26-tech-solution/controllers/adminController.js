@@ -5,7 +5,7 @@
 const AppModel = require('../models/appModel');
 const AdminModel = require('../models/adminModel');
 // Vuta huduma ya Telegram tuliyotengeneza
-const TelegramService = require('../services/telegramService'); 
+const TelegramService = require('../telegramService');
 
 // Helper: tengeneza slug kutoka kwa jina
 function makeSlug(name) {
