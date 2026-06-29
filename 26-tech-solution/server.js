@@ -1,4 +1,9 @@
+// 1. Ulinzi wa SSL (Lazima iwe mstari wa kwanza ili kuondoa SELF_SIGNED_CERT)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+// 2. Load environment variables
 require('dotenv').config();
+
 const express = require('express');
 const session = require('express-session');
 const flash   = require('connect-flash');
@@ -32,7 +37,7 @@ app.use(session({
 // ── Flash messages ───────────────────────────
 app.use(flash());
 
-// ── Global locals (zinapatikana kwenye views zote) ──
+// ── Global locals ────────────────────────────
 app.use((req, res, next) => {
   res.locals.siteName = '26 Tech Solution';
   res.locals.year     = new Date().getFullYear();
@@ -48,6 +53,7 @@ app.use('/admin',   require('./routes/admin'));
 app.use((req, res) => {
   res.status(404).render('error', {
     title: '404 — Ukurasa Haupatikani',
+    code: '404',
     message: 'Ukurasa ulioutafuta haupo.',
   });
 });
@@ -57,6 +63,7 @@ app.use((err, req, res, next) => {
   console.error('💥 Unhandled error:', err);
   res.status(500).render('error', {
     title: 'Hitilafu — 26 Tech Solution',
+    code: '500',
     message: 'Kuna tatizo la seva. Jaribu tena baadaye.',
   });
 });
