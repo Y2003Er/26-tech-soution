@@ -1,4 +1,4 @@
-// 1. Ulinzi wa SSL (Lazima iwe mstari wa kwanza ili kuondoa SELF_SIGNED_CERT)
+// 1. Ulinzi wa SSL
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 // 2. Load environment variables
@@ -8,8 +8,25 @@ const express = require('express');
 const session = require('express-session');
 const flash   = require('connect-flash');
 const path    = require('path');
+const pool    = require('./config/db'); // Imeongezwa kwa ajili ya DB Init
 
 const app = express();
+
+// ── Database Initialization ──────────────────
+async function initializeDatabase() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL
+      );
+    `);
+    console.log("✅ Database table 'admins' iko tayari!");
+  } catch (err) {
+    console.error("❌ Hitilafu kuunda table ya admins:", err.message);
+  }
+}
 
 // ── View engine ──────────────────────────────
 app.set('view engine', 'ejs');
@@ -70,6 +87,10 @@ app.use((err, req, res, next) => {
 
 // ── Start ────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
+
+// Tunaiita init kwanza, ndipo tunawasha seva
+initializeDatabase().then(() => {
+    app.listen(PORT, () => {
+        console.log(`🚀 26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
+    });
 });

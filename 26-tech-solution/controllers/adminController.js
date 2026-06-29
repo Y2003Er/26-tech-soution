@@ -1,4 +1,8 @@
-const AppModel   = require('../models/appModel');
+// ═══════════════════════════════════════════
+// 26-TECH ADMIN CONTROLLER (OPTIMIZED & SECURE)
+// ═══════════════════════════════════════════
+
+const AppModel = require('../models/appModel');
 const AdminModel = require('../models/adminModel');
 
 // Helper: tengeneza slug kutoka kwa jina
@@ -108,6 +112,7 @@ const AdminController = {
         is_free: is_free === 'true',
         download_url,
         is_featured: is_featured === 'true',
+        is_active: true // Imewekwa default kuwa active
       });
 
       req.flash('success', `"${name}" imeongezwa.`);
@@ -122,7 +127,8 @@ const AdminController = {
   // GET /admin/apps/:id/edit
   async editAppPage(req, res) {
     try {
-      const app = await AppModel.getById(req.params.id);
+      const appId = parseInt(req.params.id);
+      const app = await AppModel.getById(appId);
       if (!app) { req.flash('error', 'App haikupatikana.'); return res.redirect('/admin'); }
       res.render('admin/app-form', {
         title: `Hariri ${app.name} - 26 Tech`,
@@ -138,11 +144,12 @@ const AdminController = {
   // POST /admin/apps/:id/edit
   async updateApp(req, res) {
     try {
+      const appId = parseInt(req.params.id);
       const { name, category, description, version,
               file_size, os, is_free, download_url, is_featured, is_active } = req.body;
       const slug = makeSlug(name);
 
-      await AppModel.update(req.params.id, {
+      await AppModel.update(appId, {
         name, slug, category,
         description,
         version: version || 'v1.0',
@@ -151,7 +158,7 @@ const AdminController = {
         is_free: is_free === 'true',
         download_url,
         is_featured: is_featured === 'true',
-        is_active: is_active !== 'false',
+        is_active: is_active === 'true',
       });
 
       req.flash('success', `"${name}" imehariwiwa.`);
@@ -166,8 +173,9 @@ const AdminController = {
   // POST /admin/apps/:id/delete
   async deleteApp(req, res) {
     try {
-      const app = await AppModel.getById(req.params.id);
-      await AppModel.delete(req.params.id);
+      const appId = parseInt(req.params.id);
+      const app = await AppModel.getById(appId);
+      await AppModel.delete(appId);
       req.flash('success', `"${app?.name}" imefutwa.`);
       res.redirect('/admin');
     } catch (err) {

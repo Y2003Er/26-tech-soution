@@ -1,74 +1,72 @@
 // ═══════════════════════════════════════════
-// 26-TECH APP CONTROLLER (LITEAPKS FULL FIXED)
+// 26-TECH APP CONTROLLER (FULL VERSION)
 // ═══════════════════════════════════════════
 
 const AppModel = require('../models/appModel');
 
 const appController = {
-  // 1. Ukurasa wa Nyumbani (Home Page na Filters)
+  // 1. Ukurasa wa Nyumbani
   async index(req, res) {
     try {
-      const currentCategory = req.query.category || 'Zote';
-      const searchQuery = req.query.search || '';
+      const currentCategory = req.query.cat || 'Zote';
+      const searchQuery = req.query.q || '';
 
-      // Kuvuta data kwa pamoja kulingana na kategoria na search query
       const [apps, categories, totalApps] = await Promise.all([
         AppModel.getAll({ category: currentCategory, search: searchQuery }),
         AppModel.getCategories(),
         AppModel.count({ category: currentCategory, search: searchQuery })
       ]);
 
-      // Tuma data zote kwenye index.ejs
       res.render('index', { 
-        title: 'LITEAPKS — #1 MOD APK for Android',
+        title: '26 TECH — Software Hub',
         apps: apps, 
         categories: categories, 
-        totalApps: totalApps,
-        currentCategory: currentCategory,
-        searchQuery: searchQuery
+        total: totalApps,
+        currentCat: currentCategory,
+        query: searchQuery
       });
-
     } catch (err) {
-      console.error('❌ index error:', err);
+      console.error('index error:', err);
       res.status(500).render('error', { 
-        title: 'Hitilafu ya Seva',
+        title: 'Hitilafu ya Seva — 26 TECH',
         code: '500', 
-        message: 'Imeshindwa kuvuta data kutoka kwenye hifadhi ya Supabase.' 
+        message: 'Imeshindwa kuvuta data kutoka kwenye hifadhi.' 
       });
     }
   },
 
-  // 2. Ukurasa wa Undani wa App (Details Page)
+  // 2. Ukurasa wa Undani wa App
   async details(req, res) {
     const { slug } = req.params;
     try {
       const app = await AppModel.getBySlug(slug);
-      
       if (!app) {
         return res.status(404).render('error', { 
-          title: 'Haikupatikana',
+          title: 'Haikupatikana — 26 TECH',
           code: '404', 
-          message: 'Programu unayotafuta haipo kwenye seva yetu.' 
+          message: 'Programu unayotafuta haipo.' 
         });
       }
-
-      // Ongeza view count kiotomatiki mtumiaji akifungua
       await AppModel.incrementViews(app.id);
-
       res.render('details', { 
-        title: `${app.name} — LiteAPKs Mode`,
+        title: `${app.name} — 26 TECH`,
         app: app 
       });
-
     } catch (err) {
-      console.error('❌ details error:', err);
+      console.error('details error:', err);
       res.status(500).render('error', { 
-        title: 'Hitilafu ya Seva',
+        title: 'Hitilafu ya Seva — 26 TECH',
         code: '500', 
-        message: 'Kuna tatizo limejitokeza wakati wa kufungua ukurasa huu.' 
+        message: 'Kuna tatizo limejitokeza.' 
       });
     }
-  }
+  },
+
+  // 3. Kurasa za Footer
+  about(req, res) { res.render('about'); },
+  contact(req, res) { res.render('contact'); },
+  dmca(req, res) { res.render('dmca'); },
+  privacy(req, res) { res.render('privacy'); }
 };
 
 module.exports = appController;

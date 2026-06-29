@@ -1,78 +1,91 @@
-<%- include('partials/head', { title: typeof title !== 'undefined' ? title : '26 TECH — Software Hub' }) %>
+<%- include('partials/head', { title: '26 TECH — Software Hub' }) %>
 <%- include('partials/nav') %>
 
-<div class="hero-banner" style="margin-top: 4.5rem;">
+<div class="hero-banner">
   <div class="hero-inner">
     <div class="hero-text">
-      <div class="hero-tag" style="color: #fff;"><span class="hero-tag-dot" style="background: #fff;"></span> SOFTWARE HUB</div>
-      
-      <h1 class="hero-h1" style="color: #fff;">Pakua Programu Unazohitaji</h1>
+      <div class="hero-tag"><span class="hero-tag-dot"></span> SOFTWARE HUB</div>
+      <h1 class="hero-h1" style="text-transform: uppercase;">SOFTWARE HUB</h1>
       
       <div style="margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.8rem; font-family: var(--f-mono); font-size: 0.85rem;">
-        <a href="/?cat=Windows" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='var(--accent)';">Windows</a>
+        <a href="/?cat=Windows" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);">Windows</a>
         <span style="color: var(--dim);">·</span>
-        <a href="/?cat=Android" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='var(--accent)';">Android</a>
+        <a href="/?cat=Android" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);">Android</a>
         <span style="color: var(--dim);">·</span>
-        <a href="/?cat=macOS" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='var(--accent)';">macOS</a>
+        <a href="/?cat=macOS" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);">macOS</a>
         <span style="color: var(--dim);">·</span>
-        <a href="/?cat=Michezo" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);" onmouseover="this.style.color='#fff';" onmouseout="this.style.color='var(--accent)';">Michezo</a>
+        <a href="/?cat=Games" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);">Games</a>
+      </div>
+    </div>
+    
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num"><%= total %>+</div>
+        <div class="hero-stat-label">SOFTWARE</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">50K+</div>
+        <div class="hero-stat-label">WATUMIAJI</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">24/7</div>
+        <div class="hero-stat-label">SUPPORT</div>
       </div>
     </div>
   </div>
 </div>
 
-<main class="container" style="max-width: 1100px; margin: 0 auto; padding: 2rem 1rem 4rem 1rem; box-sizing: border-box;">
+<div class="page-wrap" style="flex: 1; display: flex; flex-direction: column;">
 
-  <% if (apps && apps.length > 0) { %>
-    
-    <div class="apps-grid">
-      <% apps.forEach(app => { %>
-        <% 
-          let stars = (Math.random() * (5.0 - 4.2) + 4.2).toFixed(1); 
-        %>
-        <a href="/details/<%= app.slug %>" class="app-card">
-          <div class="app-card-img">
-            <% if (app.icon) { %>
-              <img src="<%= app.icon %>" alt="<%= app.name %>">
-            <% } else { %>
-              <div class="app-card-placeholder">26</div>
-            <% } %>
-          </div>
-          <div class="app-card-body">
-            <h3 class="app-card-title"><%= app.name %></h3>
-            <div class="app-card-meta">
-              <div class="app-card-rating">
-                <span><%= stars %></span>
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-              </div>
-              <span class="dot">·</span>
-              <span class="app-card-cat"><%= app.category %></span>
-            </div>
-            <div class="app-card-mod">
-              <span class="mod-tag"><%= app.version || 'v1.0' %></span>
-            </div>
-          </div>
-        </a>
-      <% }) %>
-    </div>
-
-    <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
-      <div class="pager" style="margin-top: 2rem;">
-        <% if (currentPage > 1) { %>
-          <a href="/?cat=<%= typeof currentCat !== 'undefined' ? currentCat : '' %>&search=<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>&page=<%= currentPage - 1 %>" class="page-btn">Iliyopita</a>
-        <% } %>
-        <% if (currentPage < totalPages) { %>
-          <a href="/?cat=<%= typeof currentCat !== 'undefined' ? currentCat : '' %>&search=<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>&page=<%= currentPage + 1 %>" class="page-btn">Inayofuata</a>
-        <% } %>
-      </div>
+  <div class="filter-bar">
+    <a href="/" class="filter-pill <%= currentCat === 'Zote' && !query ? 'active' : '' %>">Zote</a>
+    <% categories.forEach(c => { %>
+      <a href="/?cat=<%= encodeURIComponent(c.category) %>" class="filter-pill <%= currentCat === c.category ? 'active' : '' %>">
+        <%= c.category %>
+      </a>
+    <% }) %>
+    <% if (query) { %>
+      <span class="filter-query">Matokeo ya "<strong><%= query %></strong>" — <%= total %></span>
     <% } %>
+  </div>
 
+  <div class="section-head">
+    <div class="section-title"><%= currentCat !== 'Zote' ? currentCat : 'Software Zote' %></div>
+  </div>
+
+  <% if (apps.length === 0) { %>
+    <div class="empty-state" style="margin-bottom: auto; padding: 6rem 1rem; text-align: center;">
+      Hakuna software iliyopatikana.
+    </div>
   <% } else { %>
-    <div style="background: var(--card); border: 1px dashed var(--border); padding: 5rem 1rem; text-align: center; border-radius: var(--r); margin-bottom: 2rem;">
-      <p style="font-family: var(--f-body); color: var(--dim); font-size: 0.9rem; margin: 0;">Mfumo hauna data kwa sasa.</p>
+    <div class="app-grid">
+      <% apps.forEach(app => {
+        const stars = (3 + Math.random() * 2).toFixed(1);
+      %> 
+      <a href="/details/<%= app.slug %>" class="app-card">
+        <div class="app-card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm-7 9.5c0-1.5 3.13-2.5 7-2.5s7 1 7 2.5V19H5v-.5z"/></svg>
+        </div>
+        <div class="app-card-body">
+          <div class="app-card-name"><%= app.name %></div>
+          <div class="app-card-meta">
+            <div class="app-card-rating">
+              <span><%= stars %></span>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            </div>
+            <span class="dot">·</span>
+            <span class="app-card-cat"><%= app.category %></span>
+          </div>
+          <div class="app-card-mod">
+            <span class="mod-tag"><%= app.version %></span>
+          </div>
+        </div>
+      </a>
+      <% }) %>
     </div>
   <% } %>
 
-</main>
+</div>
 
+<%- include('partials/footer') %>
 <%- include('partials/foot') %>
