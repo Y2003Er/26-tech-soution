@@ -8,9 +8,12 @@ const express = require('express');
 const session = require('express-session');
 const flash   = require('connect-flash');
 const path    = require('path');
-const pool    = require('./config/db'); // Imeongezwa kwa ajili ya DB Init
+const pool    = require('./config/db');
 
 const app = express();
+
+// ── Trust Proxy (Railway inahitaji hii) ──────
+app.set('trust proxy', 1);
 
 // ── Database Initialization ──────────────────
 async function initializeDatabase() {
@@ -47,7 +50,8 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 8 * 60 * 60 * 1000, // saa 8
+    maxAge: 8 * 60 * 60 * 1000,
+    sameSite: 'lax', // ✅ Imeongezwa
   },
 }));
 
@@ -88,9 +92,8 @@ app.use((err, req, res, next) => {
 // ── Start ────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 
-// Tunaiita init kwanza, ndipo tunawasha seva
 initializeDatabase().then(() => {
-    app.listen(PORT, () => {
-        console.log(`🚀 26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
-    });
+  app.listen(PORT, () => {
+    console.log(`🚀 26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
+  });
 });
