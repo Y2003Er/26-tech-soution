@@ -1,9 +1,11 @@
 // ═══════════════════════════════════════════
-// 26-TECH ADMIN CONTROLLER (OPTIMIZED & SECURE)
+// 26-TECH ADMIN CONTROLLER (TELEGRAM COMPATIBLE)
 // ═══════════════════════════════════════════
 
 const AppModel = require('../models/appModel');
 const AdminModel = require('../models/adminModel');
+// Vuta huduma ya Telegram tuliyotengeneza
+const TelegramService = require('../services/telegramService'); 
 
 // Helper: tengeneza slug kutoka kwa jina
 function makeSlug(name) {
@@ -40,7 +42,7 @@ const AdminController = {
         return res.redirect('/admin/login');
       }
 
-      const ok = await AdminModel.verifyPassword(password, admin.password_hash);
+      const ok = await AdminModel.verifyPassword(password, admin.password);
       if (!ok) {
         req.flash('error', 'Jina au nywila si sahihi.');
         return res.redirect('/admin/login');
@@ -110,9 +112,9 @@ const AdminController = {
         file_size: file_size || '-',
         os: os || 'Windows',
         is_free: is_free === 'true',
-        download_url,
+        download_url: download_url.trim(), // Hapa sasa itaingia link ya kawaida AU Telegram File ID
         is_featured: is_featured === 'true',
-        is_active: true // Imewekwa default kuwa active
+        is_active: true
       });
 
       req.flash('success', `"${name}" imeongezwa.`);
@@ -156,7 +158,7 @@ const AdminController = {
         file_size: file_size || '-',
         os: os || 'Windows',
         is_free: is_free === 'true',
-        download_url,
+        download_url: download_url.trim(),
         is_featured: is_featured === 'true',
         is_active: is_active === 'true',
       });

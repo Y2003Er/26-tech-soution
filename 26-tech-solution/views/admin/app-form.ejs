@@ -1,5 +1,5 @@
 <%- include('../partials/head', { title: (app ? 'Edit App' : 'New App') + ' - 26 Tech Admin' }) %>
-<%- include('../partials/nav') %>
+<%- include('../partials/admin-nav') %>
 
 <div class="admin-wrap">
 
@@ -33,8 +33,9 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">DOWNLOAD URL *</label>
-        <input class="form-input" type="url" name="download_url"
+        <label class="form-label">DOWNLOAD URL / TELEGRAM FILE ID *</label>
+        <input class="form-input" type="text" name="download_url"
+               placeholder="Weka URL ya kawaida au Telegram File ID"
                value="<%= app ? app.download_url : '' %>" required/>
       </div>
 
@@ -103,5 +104,8 @@
 
 </div>
 
-<%- include('../partials/footer') %>
+<div style="text-align: center; padding: 2rem; color: #8a8a98; font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 3rem;">
+  © 2026 26 TECH SOLUTION — ADMIN PANEL
+</div>
+
 <%- include('../partials/foot') %>
