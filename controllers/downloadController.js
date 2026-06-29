@@ -24,7 +24,7 @@ const DownloadController = {
   // GET /go/:slug 
   async goDownload(req, res) {
     console.log(`⚡ [SERVER]: Request imepokelewa kwa slug: ${req.params.slug}`);
-    
+
     try {
       const app = await AppModel.getBySlug(req.params.slug);
       if (!app) {
@@ -42,15 +42,15 @@ const DownloadController = {
         console.log("🔗 [SERVER]: Redirect ya kawaida...");
         return res.redirect(urlOrId);
       } 
-      
-      // 2. Kama ni Telegram File ID
+
+      // 2. Kama ni Telegram File ID ✅ HAPA NDIYO MABADILIKO
       else if (urlOrId !== '') {
-        console.log(`☁️ [SERVER]: Inavuta link ya Telegram kwa ID: ${urlOrId}`);
-        
+        console.log(`☁️ [SERVER]: Inastream faili kutoka Telegram kwa ID: ${urlOrId}`);
+
         try {
-          const realTelegramLink = await TelegramService.getTelegramDownloadLink(urlOrId);
-          console.log("✅ [SERVER]: Link imepatikana, inafanya redirect...");
-          return res.redirect(realTelegramLink);
+          // ✅ Badala ya redirect — stream faili kupitia server yako
+          await TelegramService.streamTelegramFile(urlOrId, res);
+
         } catch (teleErr) {
           console.error("❌ [SERVER]: Telegram Error:", teleErr.message);
           return res.status(500).render('error', { 
@@ -60,7 +60,7 @@ const DownloadController = {
           });
         }
       } 
-      
+
       // 3. Hakuna link
       else {
         console.log("⚠️ [SERVER]: App haina download link.");
