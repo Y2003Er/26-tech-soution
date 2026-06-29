@@ -1,7 +1,6 @@
 // 1. Vuta maktaba nzima ya Telegram
 const TelegramBotInstance = require('node-telegram-bot-api');
 const path = require('path');
-const fetch = require('node-fetch');
 
 // Kusoma .env
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
@@ -48,7 +47,7 @@ bot.on('message', async (msg) => {
 });
 
 /**
- * Rudisha link ya zamani (ipo kwa compatibility - lakini haitafanya kazi nchi zilizozuia)
+ * Rudisha link ya zamani (compatibility tu)
  */
 async function getTelegramDownloadLink(fileId) {
   try {
@@ -75,8 +74,8 @@ async function getTelegramFilePath(fileId) {
 }
 
 /**
- * ✅ MPYA: Stream file kutoka Telegram kwenda user kupitia server yako
- * Hii ndiyo suluhisho la nchi zilizozuia Telegram
+ * ✅ Stream file kutoka Telegram kwenda user kupitia server yako
+ * Inafanya kazi nchi zote — hata zilizozuia Telegram!
  */
 async function streamTelegramFile(fileId, res) {
   try {
@@ -85,7 +84,7 @@ async function streamTelegramFile(fileId, res) {
     const filePath = fileInfo.file_path;
     const fileName = filePath.split('/').pop();
 
-    // Hatua 2: Fetch file kutoka Telegram (server yako inafanya hii)
+    // Hatua 2: Fetch file kutoka Telegram (Node.js v22 fetch built-in)
     const fileRes = await fetch(
       `https://api.telegram.org/file/bot${token}/${filePath}`
     );
@@ -98,10 +97,12 @@ async function streamTelegramFile(fileId, res) {
     const contentType = fileRes.headers.get('content-type') || 'application/octet-stream';
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.setHeader('Content-Type', contentType);
-    res.setHeader('Content-Length', fileRes.headers.get('content-length') || '');
+    const contentLength = fileRes.headers.get('content-length');
+    if (contentLength) res.setHeader('Content-Length', contentLength);
 
-    // Hatua 4: Stream file moja kwa moja kwenda user
-    fileRes.body.pipe(res);
+    // Hatua 4: Stream file kwenda user
+    const { Readable } = require('stream');
+    Readable.fromWeb(fileRes.body).pipe(res);
 
   } catch (error) {
     console.error("❌ Stream imefeli:", error.message);
