@@ -1,14 +1,19 @@
 const TelegramBot = require('node-telegram-bot-api');
-require('dotenv').config();
+const path = require('path');
 
-// Vuta token kutoka kwenye .env
+// Kulazimisha Node.js isome .env iliyopo folda moja (root) na faili hili
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
 if (!token) {
-  console.error("❌ Hitilafu: TELEGRAM_BOT_TOKEN haijapatikana kwenye .env!");
+  console.error("❌ Hitilafu Kuu: TELEGRAM_BOT_TOKEN haijapatikana kabisa kwenye .env!");
+  console.error("Hakikisha faili lako la .env lina mstari kama: TELEGRAM_BOT_TOKEN=namba_za_token_yako");
+  // Inazuia constructor isiwake kama hakuna token ili kuzuia "is not a constructor" crash
+  process.exit(1); 
 }
 
-// Washa bot bila kuwasha mfumo wa kusikiliza meseji (polling) kwa sababu tunaitumia tu kutuma
+// Sasa itawaka salama 100% kwa sababu tumeshahakikisha token ipo
 const bot = new TelegramBot(token, { polling: false });
 
 /**
