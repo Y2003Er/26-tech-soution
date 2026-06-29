@@ -16,14 +16,14 @@
 
     <div class="timer-ring" id="timerSection" style="margin: 0 auto 1.5rem auto;">
       <svg viewBox="0 0 100 100" width="90" height="90">
-        <circle class="timer-circle-bg" cx="50" cy=\"50\" r=\"45\"/>
-        <circle class="timer-circle" id="timerCircle" cx="50" cy="50" r=\"45\"/>
+        <circle class="timer-circle-bg" cx="50" cy="50" r="45" style="fill:none; stroke:#333; stroke-width:5;"/>
+        <circle class="timer-circle" id="timerCircle" cx="50" cy="50" r="45" style="fill:none; stroke:var(--accent); stroke-width:5; stroke-linecap:round; transition: stroke-dashoffset 1s linear;"/>
       </svg>
-      <div class="timer-num" id="timerNum">15</div>
+      <div class="timer-num" id="timerNum" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: bold;">15</div>
     </div>
 
     <div id="downloadAction" style="display: none; max-width: 100%; margin: 0 auto;">
-      <a href="<%= app.download_url %>" class="dl-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: #000; font-family: var(--f-mono); font-size: 0.85rem; font-weight: 800; padding: 0.85rem 1.5rem; border-radius: var(--r-sm); width: 100%; box-sizing: border-box; text-align: center;" download>
+      <a href="/go/<%= app.slug %>" class="dl-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: #000; font-family: var(--f-mono); font-size: 0.85rem; font-weight: 800; padding: 0.85rem 1.5rem; border-radius: var(--r-sm); width: 100%; box-sizing: border-box; text-align: center;">
         ANZA KUPAKUA NOW
       </a>
     </div>
@@ -40,8 +40,10 @@ document.addEventListener("DOMContentLoaded", function() {
   const downloadAction = document.getElementById("downloadAction");
 
   if (timerNum && timerCircle) {
-    const strokeDash = 2 * Math.PI * 45;
+    const radius = 45;
+    const strokeDash = 2 * Math.PI * radius;
     timerCircle.style.strokeDasharray = strokeDash;
+    timerCircle.style.strokeDashoffset = 0;
 
     const interval = setInterval(() => {
       timeLeft--;
