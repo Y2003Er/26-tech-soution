@@ -1,0 +1,120 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav') %>
+
+<div class="l1 light"></div>
+<div class="l2 light"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">
+    <span class="hero-tag-dot"></span>
+    SOFTWARE HUB YA AFRICA
+  </div>
+  <h1 class="hero-h1">
+    Software Yoyote<br/>
+    <span class="grad">Bure Kabisa</span>
+  </h1>
+  <p class="hero-sub">
+    Mkusanyiko mkubwa wa software bora zaidi duniani — Windows, Android, macOS, Games. Haraka. Salama. Bure.
+  </p>
+  <form class="search" action="/" method="GET">
+    <% if (currentCat && currentCat !== 'Zote') { %>
+      <input type="hidden" name="cat" value="<%= currentCat %>"/>
+    <% } %>
+    <input
+      type="text"
+      name="q"
+      value="<%= query %>"
+      placeholder="Tafuta software… Photoshop, VPN, Office…"
+      autocomplete="off"
+    />
+    <button type="submit">TAFUTA ↗</button>
+  </form>
+</section>
+
+<!-- COUNTERS -->
+<div class="counters">
+  <div>
+    <div class="cnt-num"><%= total %><span>+</span></div>
+    <div class="cnt-label">SOFTWARE</div>
+  </div>
+  <div>
+    <div class="cnt-num"><span>100%</span></div>
+    <div class="cnt-label">BURE</div>
+  </div>
+  <div>
+    <div class="cnt-num">50<span>K+</span></div>
+    <div class="cnt-label">WATUMIAJI</div>
+  </div>
+  <div>
+    <div class="cnt-num"><span>24/7</span></div>
+    <div class="cnt-label">ONLINE</div>
+  </div>
+</div>
+
+<!-- BENTO -->
+<div class="section">
+  <div class="sec-eyebrow">// SOFTWARE LIBRARY</div>
+  <div class="sec-head">
+    <div class="sec-title">Pakua Leo.</div>
+  </div>
+
+  <!-- Category pills -->
+  <div class="pills">
+    <a href="/?q=<%= query %>" class="pill <%= currentCat === 'Zote' ? 'on' : '' %>">ZOTE</a>
+    <% categories.forEach(c => { %>
+      <a
+        href="/?cat=<%= encodeURIComponent(c.category) %>&q=<%= query %>"
+        class="pill <%= currentCat === c.category ? 'on' : '' %>"
+      ><%= c.category.toUpperCase() %></a>
+    <% }) %>
+  </div>
+
+  <!-- Grid -->
+  <% if (apps.length === 0) { %>
+    <div class="empty">HAKUNA SOFTWARE ILIYOPATIKANA</div>
+  <% } else { %>
+    <div class="bento">
+      <% apps.forEach((app, i) => {
+        const accents = ['tg-lime','tg-purple','tg-red'];
+        const ac = accents[i % 3];
+        const isFirst = i === 0;
+      %>
+        <a
+          href="/app/<%= app.slug %>"
+          class="tile <%= isFirst ? 'span2 tall2' : '' %> <%= ac %>"
+        >
+          <div class="tile-glow"></div>
+          <div class="tile-thumb"><%= app.icon %></div>
+          <div class="tile-body">
+            <div>
+              <div class="tile-cat"><%= app.category %></div>
+              <div class="tile-name"><%= app.name %></div>
+            </div>
+            <div class="tile-bottom">
+              <span class="badge <%= app.is_free ? 'badge-free' : 'badge-pro' %>">
+                <%= app.is_free ? 'BURE' : 'PREMIUM' %>
+              </span>
+              <div class="tile-dl">↓</div>
+            </div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <!-- Pagination -->
+  <% if (totalPages > 1) { %>
+    <div class="pager">
+      <% for (let p = 1; p <= totalPages; p++) { %>
+        <a
+          href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= p %>"
+          class="page-btn <%= p === currentPage ? 'on' : '' %>"
+        ><%= p %></a>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
+<%- include('partials/foot') %>

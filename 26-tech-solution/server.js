@@ -1,0 +1,68 @@
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const flash   = require('connect-flash');
+const path    = require('path');
+
+const app = express();
+
+// ── View engine ──────────────────────────────
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// ── Static files ─────────────────────────────
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ── Body parsers ─────────────────────────────
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// ── Session ──────────────────────────────────
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 8 * 60 * 60 * 1000, // saa 8
+  },
+}));
+
+// ── Flash messages ───────────────────────────
+app.use(flash());
+
+// ── Global locals (zinapatikana kwenye views zote) ──
+app.use((req, res, next) => {
+  res.locals.siteName = '26 Tech Solution';
+  res.locals.year     = new Date().getFullYear();
+  next();
+});
+
+// ── Routes ───────────────────────────────────
+app.use('/',        require('./routes/index'));
+app.use('/',        require('./routes/download'));
+app.use('/admin',   require('./routes/admin'));
+
+// ── 404 handler ──────────────────────────────
+app.use((req, res) => {
+  res.status(404).render('error', {
+    title: '404 — Ukurasa Haupatikani',
+    message: 'Ukurasa ulioutafuta haupo.',
+  });
+});
+
+// ── Error handler ────────────────────────────
+app.use((err, req, res, next) => {
+  console.error('💥 Unhandled error:', err);
+  res.status(500).render('error', {
+    title: 'Hitilafu — 26 Tech Solution',
+    message: 'Kuna tatizo la seva. Jaribu tena baadaye.',
+  });
+});
+
+// ── Start ────────────────────────────────────
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
+});

@@ -1,0 +1,105 @@
+<%- include('../partials/head', { title }) %>
+
+<nav class="admin-nav">
+  <div class="admin-nav-logo"><span>26</span> Admin</div>
+  <div class="admin-nav-right">
+    <a href="/admin" class="btn-logout">← RUDI</a>
+  </div>
+</nav>
+
+<div class="admin-wrap">
+  <div style="font-family:var(--f-display);font-size:1.3rem;font-weight:800;letter-spacing:-.035em;margin-bottom:1.5rem;">
+    <%= app ? 'Hariri App' : 'Ongeza App Mpya' %>
+  </div>
+  <% if (error && error.length) { %><div class="flash flash-err"><%= error[0] %></div><% } %>
+
+  <div class="form-card">
+    <form action="<%= app ? '/admin/apps/' + app.id + '/edit' : '/admin/apps' %>" method="POST">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>JINA LA APP *</label>
+          <input type="text" name="name" value="<%= app ? app.name : '' %>" required placeholder="e.g. Adobe Photoshop 2025"/>
+        </div>
+
+        <div class="form-group">
+          <label>ICON (emoji) *</label>
+          <input type="text" name="icon" value="<%= app ? app.icon : '📦' %>" placeholder="🎨"/>
+        </div>
+
+        <div class="form-group">
+          <label>CATEGORY *</label>
+          <select name="category" required>
+            <% ['Design','Windows','Android','macOS','Security','Office','Games','Other'].forEach(c => { %>
+              <option value="<%= c %>" <%= app && app.category === c ? 'selected' : '' %>><%= c %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>MFUMO (OS)</label>
+          <select name="os">
+            <% ['Windows','Android','macOS','Linux','iOS','Cross-platform'].forEach(o => { %>
+              <option value="<%= o %>" <%= app && app.os === o ? 'selected' : '' %>><%= o %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>TOLEO</label>
+          <input type="text" name="version" value="<%= app ? app.version : '' %>" placeholder="v1.0"/>
+        </div>
+
+        <div class="form-group">
+          <label>UKUBWA WA FAILI</label>
+          <input type="text" name="file_size" value="<%= app ? app.file_size : '' %>" placeholder="500 MB"/>
+        </div>
+
+        <div class="form-group full">
+          <label>MAELEZO *</label>
+          <textarea name="description" required placeholder="Elezea app hii kwa ufupi..."><%= app ? app.description : '' %></textarea>
+        </div>
+
+        <div class="form-group full">
+          <label>DOWNLOAD URL *</label>
+          <input type="url" name="download_url" value="<%= app ? app.download_url : '' %>" required placeholder="https://..."/>
+        </div>
+
+        <div class="form-group">
+          <label>AINA</label>
+          <select name="is_free">
+            <option value="true" <%= !app || app.is_free ? 'selected' : '' %>>Bure</option>
+            <option value="false" <%= app && !app.is_free ? 'selected' : '' %>>Premium</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>FEATURED</label>
+          <select name="is_featured">
+            <option value="false" <%= !app || !app.is_featured ? 'selected' : '' %>>Hapana</option>
+            <option value="true" <%= app && app.is_featured ? 'selected' : '' %>>Ndiyo</option>
+          </select>
+        </div>
+
+        <% if (app) { %>
+        <div class="form-group">
+          <label>HALI</label>
+          <select name="is_active">
+            <option value="true" <%= app.is_active ? 'selected' : '' %>>Active</option>
+            <option value="false" <%= !app.is_active ? 'selected' : '' %>>Hidden</option>
+          </select>
+        </div>
+        <% } %>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          <%= app ? 'HIFADHI MABADILIKO' : 'ONGEZA APP' %>
+        </button>
+        <a href="/admin" class="btn-secondary">GHAIRI</a>
+      </div>
+    </form>
+  </div>
+</div>
+<%- include('../partials/foot') %>

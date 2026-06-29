@@ -1,0 +1,15 @@
+<%- include('partials/head', { title: title || 'Hitilafu' }) %>
+<%- include('partials/nav') %>
+
+<div class="error-page">
+  <div class="error-code">404</div>
+  <div style="font-family:var(--f-display);font-size:1.4rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.5rem;">
+    Samahani!
+  </div>
+  <p class="error-msg"><%= message || 'Kuna tatizo. Jaribu tena baadaye.' %></p>
+  <a href="/" class="dl-btn" style="margin-top:1.5rem;display:inline-flex;width:auto;padding:.7rem 1.5rem;">
+    ← Rudi Nyumbani
+  </a>
+</div>
+
+<%- include('partials/foot') %>
