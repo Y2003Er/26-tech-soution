@@ -1,6 +1,4 @@
-const AppModel   = require('../models/appModel');
-const TokenModel = require('../models/tokenModel');
-// Vuta huduma ya Telegram kutoka root
+const AppModel = require('../models/appModel');
 const TelegramService = require('../telegramService'); 
 
 const DownloadController = {
@@ -23,43 +21,55 @@ const DownloadController = {
     }
   },
 
-  // GET /go/:slug - inaitwa baada ya timer kuisha, inaongeza download count
+  // GET /go/:slug 
   async goDownload(req, res) {
+    console.log(`⚡ [SERVER]: Request imepokelewa kwa slug: ${req.params.slug}`);
+    
     try {
       const app = await AppModel.getBySlug(req.params.slug);
-      if (!app) return res.redirect('/');
-      
-      // Ongeza idadi ya downloads kwenye database
+      if (!app) {
+        console.log("❌ [SERVER]: App haikupatikana kwenye DB");
+        return res.redirect('/');
+      }
+
+      // Ongeza download count
       await AppModel.incrementDownloads(app.id);
 
       const urlOrId = app.download_url ? app.download_url.trim() : '';
 
-      // 🕵️‍♂️ UKAGUZI: Je, hii ni Link ya kawaida au ni Telegram File ID?
-      if (urlOrId.startsWith('http://') || urlOrId.startsWith('https://')) {
-        // Njia ya Kawaida: Mpelee kwenye hiyo link moja kwa moja
+      // 1. Kama ni link ya kawaida (http)
+      if (urlOrId.startsWith('http')) {
+        console.log("🔗 [SERVER]: Redirect ya kawaida...");
         return res.redirect(urlOrId);
-      } else if (urlOrId !== '') {
-        // Njia ya Telegram: Vuta link halisi ya faili kutoka Telegram kwa kutumia File ID
+      } 
+      
+      // 2. Kama ni Telegram File ID
+      else if (urlOrId !== '') {
+        console.log(`☁️ [SERVER]: Inavuta link ya Telegram kwa ID: ${urlOrId}`);
+        
         try {
           const realTelegramLink = await TelegramService.getTelegramDownloadLink(urlOrId);
-          // Mpelee mtumiaji kwenye link ya download ya Telegram iliyotengenezwa haraka
+          console.log("✅ [SERVER]: Link imepatikana, inafanya redirect...");
           return res.redirect(realTelegramLink);
         } catch (teleErr) {
-          console.error("❌ Hitilafu ya kuvuta faili Telegram:", teleErr.message);
+          console.error("❌ [SERVER]: Telegram Error:", teleErr.message);
           return res.status(500).render('error', { 
-            title: 'Hitilafu ya Shusha', 
+            title: 'Hitilafu ya Server', 
             code: '500', 
-            message: 'Imeshindwa kuunganishwa na seva ya faili ya Telegram. Jaribu tena baadae.' 
+            message: 'Faili halipatikani kwenye seva ya Telegram (Labda File ID imekufa).' 
           });
         }
-      } else {
-        // Hakuna link iliyowekwa
+      } 
+      
+      // 3. Hakuna link
+      else {
+        console.log("⚠️ [SERVER]: App haina download link.");
         return res.redirect('/');
       }
 
     } catch (err) {
-      console.error('goDownload error:', err);
-      res.redirect('/');
+      console.error('❌ [SERVER]: goDownload Error:', err);
+      return res.redirect('/');
     }
   },
 };
