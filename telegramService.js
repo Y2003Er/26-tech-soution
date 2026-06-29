@@ -1,8 +1,6 @@
-// 1. Vuta maktaba nzima ya Telegram
 const TelegramBotInstance = require('node-telegram-bot-api');
 const path = require('path');
 
-// Kusoma .env
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -12,7 +10,6 @@ if (!token) {
   process.exit(1); 
 }
 
-// 2. Kinga ya Constructor
 let TelegramBot;
 if (typeof TelegramBotInstance === 'function') {
   TelegramBot = TelegramBotInstance;
@@ -22,12 +19,10 @@ if (typeof TelegramBotInstance === 'function') {
   TelegramBot = require('node-telegram-bot-api/src/telegram');
 }
 
-// 3. Washa Bot
 const bot = new TelegramBot(token, { polling: true });
 
 console.log("🤖 Bot ya 26-Tech imewaka vizuri na inasikiliza faili zako Telegram...");
 
-// 📥 MTAMBO WA KUKUPA FILE ID
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
 
@@ -46,23 +41,16 @@ bot.on('message', async (msg) => {
   }
 });
 
-/**
- * Rudisha link ya zamani (compatibility tu)
- */
 async function getTelegramDownloadLink(fileId) {
   try {
     const fileInfo = await bot.getFile(fileId);
-    const downloadLink = `https://api.telegram.org/file/bot${token}/${fileInfo.file_path}`;
-    return downloadLink;
+    return `https://api.telegram.org/file/bot${token}/${fileInfo.file_path}`;
   } catch (error) {
     console.error("❌ Imefeli kuvuta link kutoka Telegram:", error.message);
     throw error;
   }
 }
 
-/**
- * Pata file_path tu kutoka Telegram
- */
 async function getTelegramFilePath(fileId) {
   try {
     const fileInfo = await bot.getFile(fileId);
@@ -73,18 +61,19 @@ async function getTelegramFilePath(fileId) {
   }
 }
 
-/**
- * ✅ Stream file kutoka Telegram kwenda user kupitia server yako
- * Inafanya kazi nchi zote — hata zilizozuia Telegram!
- */
-async function streamTelegramFile(fileId, res) {
+async function streamTelegramFile(fileId, res, fileName) {
   try {
     // Hatua 1: Pata file path
     const fileInfo = await bot.getFile(fileId);
     const filePath = fileInfo.file_path;
-    const fileName = filePath.split('/').pop();
 
-    // Hatua 2: Fetch file kutoka Telegram (Node.js v22 fetch built-in)
+    // Hatua 2: Tengeneza jina zuri la file
+    const extension = filePath.split('.').pop();
+    const cleanName = fileName
+      ? `${fileName.replace(/[^a-zA-Z0-9\-_ ]/g, '').trim()}.${extension}`
+      : filePath.split('/').pop();
+
+    // Hatua 3: Fetch file kutoka Telegram
     const fileRes = await fetch(
       `https://api.telegram.org/file/bot${token}/${filePath}`
     );
@@ -93,14 +82,14 @@ async function streamTelegramFile(fileId, res) {
       throw new Error(`Telegram ilikataa ombi: ${fileRes.status}`);
     }
 
-    // Hatua 3: Weka headers sahihi
+    // Hatua 4: Weka headers
     const contentType = fileRes.headers.get('content-type') || 'application/octet-stream';
-    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${cleanName}"`);
     res.setHeader('Content-Type', contentType);
     const contentLength = fileRes.headers.get('content-length');
     if (contentLength) res.setHeader('Content-Length', contentLength);
 
-    // Hatua 4: Stream file kwenda user
+    // Hatua 5: Stream kwenda user
     const { Readable } = require('stream');
     Readable.fromWeb(fileRes.body).pipe(res);
 
