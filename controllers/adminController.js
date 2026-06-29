@@ -4,7 +4,6 @@
 
 const AppModel = require('../models/appModel');
 const AdminModel = require('../models/adminModel');
-// Vuta huduma ya Telegram tuliyotengeneza
 const TelegramService = require('../telegramService');
 
 // Helper: tengeneza slug kutoka kwa jina
@@ -49,7 +48,17 @@ const AdminController = {
       }
 
       req.session.admin = { id: admin.id, username: admin.username };
-      res.redirect('/admin');
+
+      // ✅ FIX: Subiri session ihifadhiwe kwanza, kisha redirect
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          req.flash('error', 'Hitilafu ya seva.');
+          return res.redirect('/admin/login');
+        }
+        res.redirect('/admin');
+      });
+
     } catch (err) {
       console.error('login error:', err);
       req.flash('error', 'Hitilafu ya seva.');
@@ -112,7 +121,7 @@ const AdminController = {
         file_size: file_size || '-',
         os: os || 'Windows',
         is_free: is_free === 'true',
-        download_url: download_url.trim(), // Hapa sasa itaingia link ya kawaida AU Telegram File ID
+        download_url: download_url.trim(),
         is_featured: is_featured === 'true',
         is_active: true
       });
@@ -131,7 +140,10 @@ const AdminController = {
     try {
       const appId = parseInt(req.params.id);
       const app = await AppModel.getById(appId);
-      if (!app) { req.flash('error', 'App haikupatikana.'); return res.redirect('/admin'); }
+      if (!app) {
+        req.flash('error', 'App haikupatikana.');
+        return res.redirect('/admin');
+      }
       res.render('admin/app-form', {
         title: `Hariri ${app.name} - 26 Tech`,
         admin: req.session.admin,
