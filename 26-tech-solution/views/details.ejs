@@ -1,94 +1,119 @@
 <%- include('partials/head', { title }) %>
 <%- include('partials/nav') %>
-<div class="l1 light"></div>
 
-<div class="section" style="padding-top:6rem">
-  <div class="details-grid">
+<div class="details-wrap">
+  <!-- LEFT: Main -->
+  <div class="details-main">
 
-    <!-- LEFT: Main content -->
-    <div class="details-main">
-      <div class="details-thumb"><%= app.icon %></div>
-      <div class="details-meta">
-        <span class="meta-chip"><%= app.category %></span>
-        <span class="meta-chip"><%= app.os %></span>
-        <span class="meta-chip"><%= app.version %></span>
-        <span class="meta-chip"><%= app.file_size %></span>
-        <span class="badge <%= app.is_free ? 'badge-free' : 'badge-pro' %>">
-          <%= app.is_free ? 'BURE' : 'PREMIUM' %>
-        </span>
-      </div>
-      <h1 class="details-title"><%= app.name %></h1>
-      <p class="details-desc"><%= app.description %></p>
-
-      <!-- Stats strip -->
-      <div style="display:flex;gap:1.5rem;margin-bottom:2rem;flex-wrap:wrap;">
-        <div>
-          <div style="font-family:var(--f-display);font-size:1.4rem;font-weight:800;letter-spacing:-.03em">
-            <%= app.downloads.toLocaleString() %>
-          </div>
-          <div style="font-family:var(--f-mono);font-size:.58rem;letter-spacing:.14em;color:var(--dim);margin-top:.2rem">DOWNLOADS</div>
+    <!-- Header -->
+    <div class="details-header">
+      <div class="details-main-icon"><%= app.icon %></div>
+      <div>
+        <h1 class="details-title"><%= app.name %></h1>
+        <div class="details-cats">
+          <span class="mod-tag"><%= app.category %></span>
+          <span class="mod-tag"><%= app.os %></span>
+          <span class="mod-tag <%= app.is_free ? 'green' : 'orange' %>">
+            <%= app.is_free ? 'BURE' : 'PREMIUM' %>
+          </span>
         </div>
-        <div>
-          <div style="font-family:var(--f-display);font-size:1.4rem;font-weight:800;letter-spacing:-.03em">
-            <%= app.views.toLocaleString() %>
-          </div>
-          <div style="font-family:var(--f-mono);font-size:.58rem;letter-spacing:.14em;color:var(--dim);margin-top:.2rem">VIEWS</div>
+        <div class="details-rating">
+          <span style="color:#f59e0b">★★★★</span>★
+          <span>4.2 · <%= app.downloads.toLocaleString() %> downloads</span>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: Sidebar -->
-    <div class="details-sidebar">
-      <div class="sidebar-card">
-        <span class="sidebar-icon"><%= app.icon %></span>
-        <div class="sidebar-name"><%= app.name %></div>
-        <div class="sidebar-ver">VERSION <%= app.version %> · <%= app.os.toUpperCase() %></div>
+    <!-- MOD Features box -->
+    <div class="mod-features">
+      <div class="mod-features-title">⚡ MOD FEATURES — <%= app.version %></div>
+      <ul class="mod-features-list">
+        <li>Premium Unlocked — Tumia vipengele vyote bila malipo</li>
+        <li>Ads Removed — Hakuna matangazo yanayokusumbua</li>
+        <li>Latest Version — Toleo jipya zaidi, lililosasishwa</li>
+        <li>No Root Required — Hakuna haja ya Root kwenye simu</li>
+      </ul>
+    </div>
 
-        <a href="/download/<%= app.slug %>" class="dl-btn">
-          ⬇ Pakua Bure
-        </a>
+    <!-- Description -->
+    <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--dim);margin-bottom:.5rem;">MAELEZO</div>
+    <p class="details-desc"><%= app.description %></p>
 
-        <div class="sidebar-stats">
-          <div class="stat-item">
-            <div class="stat-val"><%= app.file_size %></div>
-            <div class="stat-key">UKUBWA</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-val"><%= app.os %></div>
-            <div class="stat-key">MFUMO</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-val"><%= app.downloads.toLocaleString() %></div>
-            <div class="stat-key">DOWNLOADS</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-val"><%= app.is_free ? 'Bure' : 'Premium' %></div>
-            <div class="stat-key">AINA</div>
+    <!-- Info table -->
+    <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--dim);margin-bottom:.5rem;">TAARIFA ZA APP</div>
+    <table class="info-table">
+      <tr><td>Jina</td><td><%= app.name %></td></tr>
+      <tr><td>Toleo</td><td><%= app.version %></td></tr>
+      <tr><td>Mfumo</td><td><%= app.os %></td></tr>
+      <tr><td>Ukubwa</td><td><%= app.file_size %></td></tr>
+      <tr><td>Aina</td><td><%= app.is_free ? 'Bure' : 'Premium' %></td></tr>
+      <tr><td>Downloads</td><td><%= app.downloads.toLocaleString() %></td></tr>
+      <tr><td>Views</td><td><%= app.views.toLocaleString() %></td></tr>
+    </table>
+
+    <!-- Related apps -->
+    <% if (related.length > 0) { %>
+    <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--dim);margin-bottom:.75rem;margin-top:1.5rem;">
+      ZINAZOFANANA
+    </div>
+    <div class="app-list">
+      <% related.forEach(r => { %>
+      <a href="/app/<%= r.slug %>" class="app-row">
+        <div class="app-row-icon"><%= r.icon %></div>
+        <div class="app-row-info">
+          <div class="app-row-name"><%= r.name %></div>
+          <div class="app-row-meta">
+            <span class="app-row-cat"><%= r.category %></span>
+            <span class="mod-tag"><%= r.version %></span>
           </div>
         </div>
-      </div>
+        <div class="app-row-right">
+          <span class="app-row-size"><%= r.file_size %></span>
+        </div>
+      </a>
+      <% }) %>
     </div>
+    <% } %>
+
   </div>
 
-  <!-- Related apps -->
-  <% if (related.length > 0) { %>
-    <div style="margin-top:3rem;">
-      <div class="sec-eyebrow">// RELATED</div>
-      <div class="sec-title" style="margin-bottom:1.25rem">Software Zinazofanana</div>
-      <div class="related-grid">
-        <% related.forEach(r => { %>
-          <a href="/app/<%= r.slug %>" class="rel-card">
-            <span class="rel-icon"><%= r.icon %></span>
-            <div>
-              <div class="rel-name"><%= r.name %></div>
-              <div class="rel-size"><%= r.file_size %> · <%= r.version %></div>
-            </div>
-          </a>
-        <% }) %>
+  <!-- RIGHT: Sidebar -->
+  <aside>
+    <div class="dl-card">
+      <span class="dl-card-icon"><%= app.icon %></span>
+      <div class="dl-card-name"><%= app.name %></div>
+      <div class="dl-card-ver">VERSION <%= app.version %> · <%= app.os.toUpperCase() %></div>
+
+      <a href="/download/<%= app.slug %>" class="dl-btn-main">
+        ⬇ Pakua Bure
+      </a>
+
+      <div style="font-size:.7rem;color:var(--dim);text-align:center;margin-bottom:.75rem;">
+        Ukubwa: <strong style="color:var(--white)"><%= app.file_size %></strong>
+      </div>
+
+      <div class="dl-card-stats">
+        <div class="dl-stat">
+          <div class="dl-stat-val"><%= app.downloads.toLocaleString() %></div>
+          <div class="dl-stat-key">DOWNLOADS</div>
+        </div>
+        <div class="dl-stat">
+          <div class="dl-stat-val"><%= app.views.toLocaleString() %></div>
+          <div class="dl-stat-key">VIEWS</div>
+        </div>
+        <div class="dl-stat">
+          <div class="dl-stat-val"><%= app.version %></div>
+          <div class="dl-stat-key">TOLEO</div>
+        </div>
+        <div class="dl-stat">
+          <div class="dl-stat-val"><%= app.is_free ? 'Bure' : 'Pro' %></div>
+          <div class="dl-stat-key">AINA</div>
+        </div>
       </div>
     </div>
-  <% } %>
-</div>
+  </aside>
+
+</div><!-- /details-wrap -->
 
 <%- include('partials/footer') %>
 <%- include('partials/foot') %>

@@ -1,15 +1,16 @@
 <nav class="nav">
   <a href="/" class="nav-logo">
-    <span class="nav-logo-26">26</span>
-    <span class="nav-logo-dot"></span>
-    <span>Tech Solution</span>
+    <span>26</span>Tech
   </a>
   <ul class="nav-links">
-    <li><a href="/?cat=Windows">Windows</a></li>
-    <li><a href="/?cat=Android">Android</a></li>
-    <li><a href="/?cat=macOS">macOS</a></li>
+    <li><a href="/" class="<%= typeof currentCat !== 'undefined' && currentCat === 'Zote' ? 'active' : '' %>">Nyumbani</a></li>
+    <li><a href="/?cat=Android">Apps</a></li>
     <li><a href="/?cat=Games">Games</a></li>
+    <li><a href="/?cat=Windows">Windows</a></li>
     <li><a href="/?cat=Design">Design</a></li>
   </ul>
-  <a href="/" class="nav-cta">PAKUA SASA</a>
+  <form class="nav-search" action="/" method="GET">
+    <input type="text" name="q" placeholder="Tafuta..." value="<%= typeof query !== 'undefined' ? query : '' %>"/>
+    <button type="submit">↗</button>
+  </form>
 </nav>

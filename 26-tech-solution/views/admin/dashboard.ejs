@@ -1,95 +1,26 @@
 <%- include('../partials/head', { title }) %>
-
-<nav class="admin-nav">
-  <div class="admin-nav-logo"><span>26</span> Admin</div>
-  <div class="admin-nav-right">
-    <span class="admin-nav-user">👤 <%= admin.username %></span>
-    <form action="/admin/logout" method="POST" style="display:inline">
-      <button class="btn-logout">TOKA</button>
+<div class="l1 light"></div>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="nav-logo" style="margin-bottom:1.5rem;font-family:var(--f-display);font-weight:800;font-size:1.1rem;letter-spacing:-.03em;">
+      <span style="color:var(--accent)">26</span> · Admin
+    </div>
+    <div class="login-title">Ingia</div>
+    <div class="login-sub">Eneo la wasimamizi tu</div>
+    <% if (error && error.length) { %>
+      <div class="flash flash-err"><%= error[0] %></div>
+    <% } %>
+    <form action="/admin/login" method="POST" style="display:flex;flex-direction:column;gap:1rem;">
+      <div class="form-group">
+        <label>JINA LA MTUMIAJI</label>
+        <input type="text" name="username" autocomplete="username" required/>
+      </div>
+      <div class="form-group">
+        <label>NYWILA</label>
+        <input type="password" name="password" autocomplete="current-password" required/>
+      </div>
+      <button type="submit" class="btn-primary" style="margin-top:.5rem">INGIA →</button>
     </form>
-  </div>
-</nav>
-
-<div class="admin-wrap">
-  <% if (success && success.length) { %><div class="flash flash-ok"><%= success[0] %></div><% } %>
-  <% if (error && error.length) { %><div class="flash flash-err"><%= error[0] %></div><% } %>
-
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-card-val lime"><%= stats.total_apps %></div>
-      <div class="stat-card-key">APPS ZOTE</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val"><%= stats.active_apps %></div>
-      <div class="stat-card-key">ACTIVE</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val"><%= stats.featured_apps %></div>
-      <div class="stat-card-key">FEATURED</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val"><%= parseInt(stats.total_downloads).toLocaleString() %></div>
-      <div class="stat-card-key">DOWNLOADS</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-card-val"><%= parseInt(stats.total_views).toLocaleString() %></div>
-      <div class="stat-card-key">VIEWS</div>
-    </div>
-  </div>
-
-  <!-- Header + Add button -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
-    <div style="font-family:var(--f-display);font-size:1.1rem;font-weight:800;letter-spacing:-.03em;">Apps Zote</div>
-    <a href="/admin/apps/new" class="btn-primary" style="display:inline-block;padding:.55rem 1.25rem;font-size:.78rem;">+ ONGEZA APP</a>
-  </div>
-
-  <!-- Table -->
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>APP</th>
-          <th>CATEGORY</th>
-          <th>TOLEO</th>
-          <th>DOWNLOADS</th>
-          <th>HALI</th>
-          <th>VITENDO</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% apps.forEach(app => { %>
-        <tr>
-          <td>
-            <div style="display:flex;align-items:center;gap:.75rem;">
-              <span class="tbl-ico"><%= app.icon %></span>
-              <div>
-                <div class="tbl-name"><%= app.name %></div>
-                <div class="tbl-cat"><%= app.file_size %></div>
-              </div>
-            </div>
-          </td>
-          <td><span class="tbl-cat"><%= app.category %></span></td>
-          <td style="font-family:var(--f-mono);font-size:.7rem;color:var(--dim)"><%= app.version %></td>
-          <td style="font-family:var(--f-display);font-weight:700"><%= app.downloads.toLocaleString() %></td>
-          <td>
-            <span class="status-dot <%= app.is_active ? 'on' : 'off' %>"></span>
-            <span style="font-family:var(--f-mono);font-size:.6rem;letter-spacing:.1em;color:var(--dim)">
-              <%= app.is_active ? 'ACTIVE' : 'HIDDEN' %>
-            </span>
-          </td>
-          <td>
-            <div class="tbl-actions">
-              <a href="/admin/apps/<%= app.id %>/edit" class="btn-edit">HARIRI</a>
-              <form action="/admin/apps/<%= app.id %>/delete" method="POST" onsubmit="return confirm('Futa <%= app.name %>?')">
-                <button class="btn-del">FUTA</button>
-              </form>
-            </div>
-          </td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table>
   </div>
 </div>
 <%- include('../partials/foot') %>

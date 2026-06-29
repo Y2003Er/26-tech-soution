@@ -1,120 +1,171 @@
 <%- include('partials/head', { title }) %>
 <%- include('partials/nav') %>
 
-<div class="l1 light"></div>
-<div class="l2 light"></div>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-tag">
-    <span class="hero-tag-dot"></span>
-    SOFTWARE HUB YA AFRICA
-  </div>
-  <h1 class="hero-h1">
-    Software Yoyote<br/>
-    <span class="grad">Bure Kabisa</span>
-  </h1>
-  <p class="hero-sub">
-    Mkusanyiko mkubwa wa software bora zaidi duniani — Windows, Android, macOS, Games. Haraka. Salama. Bure.
-  </p>
-  <form class="search" action="/" method="GET">
-    <% if (currentCat && currentCat !== 'Zote') { %>
-      <input type="hidden" name="cat" value="<%= currentCat %>"/>
-    <% } %>
-    <input
-      type="text"
-      name="q"
-      value="<%= query %>"
-      placeholder="Tafuta software… Photoshop, VPN, Office…"
-      autocomplete="off"
-    />
-    <button type="submit">TAFUTA ↗</button>
-  </form>
-</section>
-
-<!-- COUNTERS -->
-<div class="counters">
-  <div>
-    <div class="cnt-num"><%= total %><span>+</span></div>
-    <div class="cnt-label">SOFTWARE</div>
-  </div>
-  <div>
-    <div class="cnt-num"><span>100%</span></div>
-    <div class="cnt-label">BURE</div>
-  </div>
-  <div>
-    <div class="cnt-num">50<span>K+</span></div>
-    <div class="cnt-label">WATUMIAJI</div>
-  </div>
-  <div>
-    <div class="cnt-num"><span>24/7</span></div>
-    <div class="cnt-label">ONLINE</div>
+<!-- HERO BANNER -->
+<div class="hero-banner">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-tag"><span class="hero-tag-dot"></span> #1 SOFTWARE HUB YA AFRICA</div>
+      <h1 class="hero-h1">Pakua Software Yoyote<br/><em>Bure Kabisa</em></h1>
+      <p class="hero-sub">Windows, Android, macOS, Games — toleo kamili, tayari kutumika.</p>
+      <div class="hero-quick">
+        <a href="/?cat=Android"><span>📱</span> Android APK</a>
+        <a href="/?cat=Windows"><span>🖥️</span> Windows</a>
+        <a href="/?cat=Games"><span>🎮</span> Games</a>
+        <a href="/?cat=Design"><span>🎨</span> Design</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num"><%= total %>+</div>
+        <div class="hero-stat-label">SOFTWARE</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">50K+</div>
+        <div class="hero-stat-label">WATUMIAJI</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">BURE</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- BENTO -->
-<div class="section">
-  <div class="sec-eyebrow">// SOFTWARE LIBRARY</div>
-  <div class="sec-head">
-    <div class="sec-title">Pakua Leo.</div>
-  </div>
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+  <div class="main-content">
 
-  <!-- Category pills -->
-  <div class="pills">
-    <a href="/?q=<%= query %>" class="pill <%= currentCat === 'Zote' ? 'on' : '' %>">ZOTE</a>
-    <% categories.forEach(c => { %>
-      <a
-        href="/?cat=<%= encodeURIComponent(c.category) %>&q=<%= query %>"
-        class="pill <%= currentCat === c.category ? 'on' : '' %>"
-      ><%= c.category.toUpperCase() %></a>
-    <% }) %>
-  </div>
-
-  <!-- Grid -->
-  <% if (apps.length === 0) { %>
-    <div class="empty">HAKUNA SOFTWARE ILIYOPATIKANA</div>
-  <% } else { %>
-    <div class="bento">
-      <% apps.forEach((app, i) => {
-        const accents = ['tg-lime','tg-purple','tg-red'];
-        const ac = accents[i % 3];
-        const isFirst = i === 0;
-      %>
-        <a
-          href="/app/<%= app.slug %>"
-          class="tile <%= isFirst ? 'span2 tall2' : '' %> <%= ac %>"
-        >
-          <div class="tile-glow"></div>
-          <div class="tile-thumb"><%= app.icon %></div>
-          <div class="tile-body">
-            <div>
-              <div class="tile-cat"><%= app.category %></div>
-              <div class="tile-name"><%= app.name %></div>
-            </div>
-            <div class="tile-bottom">
-              <span class="badge <%= app.is_free ? 'badge-free' : 'badge-pro' %>">
-                <%= app.is_free ? 'BURE' : 'PREMIUM' %>
-              </span>
-              <div class="tile-dl">↓</div>
-            </div>
-          </div>
+    <!-- Category filter pills (kama search iko) -->
+    <% if (query || currentCat !== 'Zote') { %>
+    <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center;">
+      <a href="/" class="page-btn <%= currentCat === 'Zote' && !query ? 'on' : '' %>">ZOTE</a>
+      <% categories.forEach(c => { %>
+        <a href="/?cat=<%= encodeURIComponent(c.category) %>" class="page-btn <%= currentCat === c.category ? 'on' : '' %>">
+          <%= c.category.toUpperCase() %>
         </a>
       <% }) %>
-    </div>
-  <% } %>
-
-  <!-- Pagination -->
-  <% if (totalPages > 1) { %>
-    <div class="pager">
-      <% for (let p = 1; p <= totalPages; p++) { %>
-        <a
-          href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= p %>"
-          class="page-btn <%= p === currentPage ? 'on' : '' %>"
-        ><%= p %></a>
+      <% if (query) { %>
+        <span style="font-size:.75rem;color:var(--dim);margin-left:.25rem;">
+          Matokeo ya "<strong style="color:var(--white)"><%= query %></strong>" — <%= total %>
+        </span>
       <% } %>
     </div>
-  <% } %>
-</div>
+    <% } %>
+
+    <!-- Latest Apps section -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">
+          <%= currentCat !== 'Zote' ? currentCat : 'Software Zote' %>
+        </div>
+        <% if (totalPages > 1) { %>
+          <span style="font-size:.72rem;color:var(--dim)">Ukurasa <%= currentPage %> / <%= totalPages %></span>
+        <% } %>
+      </div>
+
+      <% if (apps.length === 0) { %>
+        <div style="text-align:center;padding:3rem;font-size:.82rem;color:var(--dim);">
+          Hakuna software iliyopatikana.
+        </div>
+      <% } else { %>
+        <div class="app-list">
+          <% apps.forEach((app, i) => {
+            const stars = Math.round(3 + Math.random() * 2);
+          %>
+          <a href="/app/<%= app.slug %>" class="app-row">
+            <span class="app-row-num"><%= (currentPage - 1) * 12 + i + 1 %></span>
+            <div class="app-row-icon"><%= app.icon %></div>
+            <div class="app-row-info">
+              <div class="app-row-name"><%= app.name %></div>
+              <div class="app-row-meta">
+                <span class="app-row-cat"><%= app.category %></span>
+                <% if (app.is_free) { %>
+                  <span class="mod-tag green">BURE</span>
+                <% } else { %>
+                  <span class="mod-tag orange">PREMIUM</span>
+                <% } %>
+                <span class="mod-tag"><%= app.version %></span>
+              </div>
+            </div>
+            <div class="app-row-right">
+              <div class="stars">
+                <% for(let s=1;s<=5;s++) { %>
+                  <span class="star <%= s <= stars ? '' : 'empty' %>">★</span>
+                <% } %>
+              </div>
+              <span class="app-row-size"><%= app.file_size %></span>
+            </div>
+          </a>
+          <% }) %>
+        </div>
+      <% } %>
+
+      <!-- Pagination -->
+      <% if (totalPages > 1) { %>
+        <div class="pager">
+          <% if (currentPage > 1) { %>
+            <a href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= currentPage - 1 %>" class="page-btn">← Iliyopita</a>
+          <% } %>
+          <% for (let p = Math.max(1, currentPage-2); p <= Math.min(totalPages, currentPage+2); p++) { %>
+            <a href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= p %>" class="page-btn <%= p === currentPage ? 'on' : '' %>"><%= p %></a>
+          <% } %>
+          <% if (currentPage < totalPages) { %>
+            <a href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= currentPage + 1 %>" class="page-btn">Inayofuata →</a>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <!-- SIDEBAR -->
+  <aside class="main-sidebar">
+
+    <!-- Categories -->
+    <div class="sidebar-widget">
+      <div class="widget-title">Categories</div>
+      <div class="cat-list">
+        <a href="/" class="cat-item">
+          <span class="cat-item-left">📦 Zote</span>
+          <span class="cat-count"><%= total %></span>
+        </a>
+        <% categories.forEach(c => { %>
+        <a href="/?cat=<%= encodeURIComponent(c.category) %>" class="cat-item">
+          <span class="cat-item-left">
+            <%= c.category === 'Android' ? '📱' :
+                c.category === 'Windows' ? '🖥️' :
+                c.category === 'Games'   ? '🎮' :
+                c.category === 'Design'  ? '🎨' :
+                c.category === 'Security'? '🛡️' :
+                c.category === 'Office'  ? '📄' :
+                c.category === 'macOS'   ? '🍎' : '📦' %>
+            <%= c.category %>
+          </span>
+          <span class="cat-count"><%= c.total %></span>
+        </a>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Featured apps in sidebar -->
+    <% if (apps.filter(a => a.is_featured).length > 0) { %>
+    <div class="sidebar-widget">
+      <div class="widget-title">Featured</div>
+      <% apps.filter(a => a.is_featured).slice(0,5).forEach(app => { %>
+      <a href="/app/<%= app.slug %>" class="sidebar-app">
+        <div class="sidebar-app-icon"><%= app.icon %></div>
+        <div>
+          <div class="sidebar-app-name"><%= app.name %></div>
+          <div class="sidebar-app-cat"><%= app.category %> · <%= app.file_size %></div>
+        </div>
+      </a>
+      <% }) %>
+    </div>
+    <% } %>
+
+  </aside>
+</div><!-- /main-layout -->
 
 <%- include('partials/footer') %>
 <%- include('partials/foot') %>
