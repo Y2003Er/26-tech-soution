@@ -1,33 +1,63 @@
 <%- include('partials/head', { title: 'Pakua — ' + app.name }) %>
 <%- include('partials/nav') %>
 
-<div class="dl-page">
-  <div class="dl-box">
-    <div class="dl-box-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+<div class="dl-page" style="padding-top: 5.5rem; min-height: 80vh; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+  <div class="dl-box" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 2.5rem 1.5rem; width: 100%; max-width: 460px; text-align: center; box-sizing: border-box;">
+    
+    <div class="dl-box-icon" style="width: 70px; height: 70px; background: var(--surface); border: 1px solid var(--border-lit); border-radius: 14px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width: 32px; height: 32px; color: var(--accent);"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
     </div>
-    <div class="dl-box-name"><%= app.name %></div>
-    <div class="dl-box-sub">
+    
+    <div class="dl-box-name" style="font-family: var(--f-display); font-size: 1.35rem; font-weight: 800; color: var(--white); margin-bottom: 0.3rem;"><%= app.name %></div>
+    <div class="dl-box-sub" style="font-family: var(--f-body); font-size: 0.78rem; color: var(--dim); line-height: 1.5; margin-bottom: 1.5rem;">
       Subiri sekunde chache. Download itaanza moja kwa moja.<br/>
       Ukubwa: <strong><%= app.file_size %></strong> · Toleo: <strong><%= app.version %></strong>
     </div>
 
-    <div class="timer-ring">
+    <div class="timer-ring" id="timerSection" style="margin: 0 auto 1.5rem auto;">
       <svg viewBox="0 0 100 100" width="90" height="90">
-        <circle class="timer-circle-bg" cx="50" cy="50" r="45"/>
-        <circle class="timer-circle" id="timerCircle" cx="50" cy="50" r="45"/>
+        <circle class="timer-circle-bg" cx="50" cy=\"50\" r=\"45\"/>
+        <circle class="timer-circle" id="timerCircle" cx="50" cy="50" r=\"45\"/>
       </svg>
       <div class="timer-num" id="timerNum">15</div>
     </div>
 
-    <div class="ad-slot">NAFASI YA TANGAZO</div>
+    <div id="downloadAction" style="display: none; max-width: 100%; margin: 0 auto;">
+      <a href="<%= app.download_url %>" class="dl-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: #000; font-family: var(--f-mono); font-size: 0.85rem; font-weight: 800; padding: 0.85rem 1.5rem; border-radius: var(--r-sm); width: 100%; box-sizing: border-box; text-align: center;" download>
+        ANZA KUPAKUA NOW
+      </a>
+    </div>
 
-    <a href="<%= app.download_url %>" class="dl-go-btn" id="dlBtn">
-      Bonyeza Hapa Kupakua
-    </a>
-    <div class="dl-note">FAILI SALAMA · HAKUNA VIRUSI · TOLEO KAMILI</div>
   </div>
 </div>
 
-<%- include('partials/footer') %>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  let timeLeft = 15;
+  const timerNum = document.getElementById("timerNum");
+  const timerCircle = document.getElementById("timerCircle");
+  const timerSection = document.getElementById("timerSection");
+  const downloadAction = document.getElementById("downloadAction");
+
+  if (timerNum && timerCircle) {
+    const strokeDash = 2 * Math.PI * 45;
+    timerCircle.style.strokeDasharray = strokeDash;
+
+    const interval = setInterval(() => {
+      timeLeft--;
+      timerNum.textContent = timeLeft;
+      
+      let offset = strokeDash - (timeLeft / 15) * strokeDash;
+      timerCircle.style.strokeDashoffset = offset;
+
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        timerSection.style.display = "none";
+        downloadAction.style.display = "block";
+      }
+    }, 1000);
+  }
+});
+</script>
+
 <%- include('partials/foot') %>

@@ -1,11 +1,11 @@
-<%- include('../partials/head', { title: (app ? 'Edit App' : 'New App') + ' — 26 Tech Admin' }) %>
+<%- include('../partials/head', { title: (app ? 'Edit App' : 'New App') + ' - 26 Tech Admin' }) %>
 <%- include('../partials/nav') %>
 
 <div class="admin-wrap">
 
   <div class="admin-header">
-    <h1><%= app ? '✏️ Edit App' : '➕ Add New App' %></h1>
-    <a href="/admin" class="btn btn-ghost">← Back</a>
+    <h1><%= app ? 'Edit App' : 'Add New App' %></h1>
+    <a href="/admin" class="btn btn-ghost">Back</a>
   </div>
 
   <% if (error && error.length > 0) { %><div class="flash error"><%= error %></div><% } %>
@@ -54,11 +54,6 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">ICON (emoji)</label>
-          <input class="form-input" type="text" name="icon"
-                 value="<%= app ? app.icon : '📦' %>"/>
-        </div>
-        <div class="form-group">
           <label class="form-label">PLATFORM</label>
           <select class="form-select" name="os">
             <option value="Windows"  <%= app && app.os === 'Windows'  ? 'selected' : '' %>>Windows</option>
@@ -69,23 +64,21 @@
             <option value="Multi"    <%= app && app.os === 'Multi'    ? 'selected' : '' %>>Multi-platform</option>
           </select>
         </div>
-      </div>
-
-      <div class="form-row">
         <div class="form-group">
           <label class="form-label">TYPE</label>
           <select class="form-select" name="is_free">
-            <option value="true"  <%= !app || app.is_free  ? 'selected' : '' %>>Free / Mod</option>
+            <option value="true"  <%= !app || app.is_free  ? 'selected' : '' %>>Free</option>
             <option value="false" <%= app && !app.is_free  ? 'selected' : '' %>>Premium</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">FEATURED</label>
-          <select class="form-select" name="is_featured">
-            <option value="false" <%= !app || !app.is_featured ? 'selected' : '' %>>No</option>
-            <option value="true"  <%= app && app.is_featured   ? 'selected' : '' %>>Yes</option>
-          </select>
-        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">FEATURED</label>
+        <select class="form-select" name="is_featured">
+          <option value="false" <%= !app || !app.is_featured ? 'selected' : '' %>>No</option>
+          <option value="true"  <%= app && app.is_featured   ? 'selected' : '' %>>Yes</option>
+        </select>
       </div>
 
       <% if (app) { %>

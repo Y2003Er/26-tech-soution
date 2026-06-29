@@ -16,7 +16,7 @@ const AdminController = {
   loginPage(req, res) {
     if (req.session.admin) return res.redirect('/admin');
     res.render('admin/login', {
-      title: 'Admin Login — 26 Tech',
+      title: 'Admin Login - 26 Tech',
       error: req.flash('error'),
     });
   },
@@ -45,7 +45,7 @@ const AdminController = {
       req.session.admin = { id: admin.id, username: admin.username };
       res.redirect('/admin');
     } catch (err) {
-      console.error('❌ login error:', err);
+      console.error('login error:', err);
       req.flash('error', 'Hitilafu ya seva.');
       res.redirect('/admin/login');
     }
@@ -56,7 +56,7 @@ const AdminController = {
     req.session.destroy(() => res.redirect('/admin/login'));
   },
 
-  // GET /admin — Dashboard
+  // GET /admin - Dashboard
   async dashboard(req, res) {
     try {
       const [apps, stats] = await Promise.all([
@@ -64,7 +64,7 @@ const AdminController = {
         AppModel.getStats(),
       ]);
       res.render('admin/dashboard', {
-        title: 'Admin Dashboard — 26 Tech',
+        title: 'Admin Dashboard - 26 Tech',
         admin: req.session.admin,
         apps,
         stats,
@@ -72,7 +72,7 @@ const AdminController = {
         error: req.flash('error'),
       });
     } catch (err) {
-      console.error('❌ dashboard error:', err);
+      console.error('dashboard error:', err);
       res.status(500).render('error', { message: 'Hitilafu ya seva.' });
     }
   },
@@ -80,7 +80,7 @@ const AdminController = {
   // GET /admin/apps/new
   newAppPage(req, res) {
     res.render('admin/app-form', {
-      title: 'Ongeza App — 26 Tech',
+      title: 'Ongeza App - 26 Tech',
       admin: req.session.admin,
       app: null,
       error: req.flash('error'),
@@ -90,7 +90,7 @@ const AdminController = {
   // POST /admin/apps
   async createApp(req, res) {
     try {
-      const { name, category, icon, description, version,
+      const { name, category, description, version,
               file_size, os, is_free, download_url, is_featured } = req.body;
 
       if (!name || !category || !description || !download_url) {
@@ -102,19 +102,18 @@ const AdminController = {
 
       await AppModel.create({
         name, slug, category,
-        icon: icon || '📦',
         description, version: version || 'v1.0',
-        file_size: file_size || '—',
+        file_size: file_size || '-',
         os: os || 'Windows',
         is_free: is_free === 'true',
         download_url,
         is_featured: is_featured === 'true',
       });
 
-      req.flash('success', `✅ "${name}" imeongezwa.`);
+      req.flash('success', `"${name}" imeongezwa.`);
       res.redirect('/admin');
     } catch (err) {
-      console.error('❌ createApp error:', err);
+      console.error('createApp error:', err);
       req.flash('error', err.message.includes('unique') ? 'Jina hili lipo tayari.' : 'Hitilafu ya seva.');
       res.redirect('/admin/apps/new');
     }
@@ -126,7 +125,7 @@ const AdminController = {
       const app = await AppModel.getById(req.params.id);
       if (!app) { req.flash('error', 'App haikupatikana.'); return res.redirect('/admin'); }
       res.render('admin/app-form', {
-        title: `Hariri ${app.name} — 26 Tech`,
+        title: `Hariri ${app.name} - 26 Tech`,
         admin: req.session.admin,
         app,
         error: req.flash('error'),
@@ -139,16 +138,15 @@ const AdminController = {
   // POST /admin/apps/:id/edit
   async updateApp(req, res) {
     try {
-      const { name, category, icon, description, version,
+      const { name, category, description, version,
               file_size, os, is_free, download_url, is_featured, is_active } = req.body;
       const slug = makeSlug(name);
 
       await AppModel.update(req.params.id, {
         name, slug, category,
-        icon: icon || '📦',
         description,
         version: version || 'v1.0',
-        file_size: file_size || '—',
+        file_size: file_size || '-',
         os: os || 'Windows',
         is_free: is_free === 'true',
         download_url,
@@ -156,10 +154,10 @@ const AdminController = {
         is_active: is_active !== 'false',
       });
 
-      req.flash('success', `✅ "${name}" imeharijiwa.`);
+      req.flash('success', `"${name}" imehariwiwa.`);
       res.redirect('/admin');
     } catch (err) {
-      console.error('❌ updateApp error:', err);
+      console.error('updateApp error:', err);
       req.flash('error', 'Hitilafu ya seva.');
       res.redirect(`/admin/apps/${req.params.id}/edit`);
     }
@@ -170,10 +168,10 @@ const AdminController = {
     try {
       const app = await AppModel.getById(req.params.id);
       await AppModel.delete(req.params.id);
-      req.flash('success', `🗑️ "${app?.name}" imefutwa.`);
+      req.flash('success', `"${app?.name}" imefutwa.`);
       res.redirect('/admin');
     } catch (err) {
-      console.error('❌ deleteApp error:', err);
+      console.error('deleteApp error:', err);
       req.flash('error', 'Hitilafu ya seva.');
       res.redirect('/admin');
     }

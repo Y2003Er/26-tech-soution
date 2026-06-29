@@ -1,60 +1,74 @@
-const AppModel   = require('../models/appModel');
-const TokenModel = require('../models/tokenModel');
+// ═══════════════════════════════════════════
+// 26-TECH APP CONTROLLER (LITEAPKS FULL FIXED)
+// ═══════════════════════════════════════════
 
-const AppController = {
+const AppModel = require('../models/appModel');
 
-  // GET / — Ukurasa mkuu
+const appController = {
+  // 1. Ukurasa wa Nyumbani (Home Page na Filters)
   async index(req, res) {
     try {
-      const { cat = 'Zote', q = '', page = 1 } = req.query;
-      const limit  = 12;
-      const offset = (parseInt(page) - 1) * limit;
+      const currentCategory = req.query.category || 'Zote';
+      const searchQuery = req.query.search || '';
 
-      const [apps, categories, total] = await Promise.all([
-        AppModel.getAll({ category: cat, search: q, limit, offset }),
+      // Kuvuta data kwa pamoja kulingana na kategoria na search query
+      const [apps, categories, totalApps] = await Promise.all([
+        AppModel.getAll({ category: currentCategory, search: searchQuery }),
         AppModel.getCategories(),
-        AppModel.count({ category: cat, search: q }),
+        AppModel.count({ category: currentCategory, search: searchQuery })
       ]);
 
-      const totalPages = Math.ceil(total / limit);
-
-      res.render('index', {
-        apps,
-        categories,
-        total,
-        totalPages,
-        currentPage: parseInt(page),
-        currentCat: cat,
-        query: q,
-        title: '26 Tech Solution — Software Hub',
+      // Tuma data zote kwenye index.ejs
+      res.render('index', { 
+        title: 'LITEAPKS — #1 MOD APK for Android',
+        apps: apps, 
+        categories: categories, 
+        totalApps: totalApps,
+        currentCategory: currentCategory,
+        searchQuery: searchQuery
       });
+
     } catch (err) {
       console.error('❌ index error:', err);
-      res.status(500).render('error', { message: 'Hitilafu ya seva. Jaribu tena.' });
+      res.status(500).render('error', { 
+        title: 'Hitilafu ya Seva',
+        code: '500', 
+        message: 'Imeshindwa kuvuta data kutoka kwenye hifadhi ya Supabase.' 
+      });
     }
   },
 
-  // GET /app/:slug — Ukurasa wa maelezo
+  // 2. Ukurasa wa Undani wa App (Details Page)
   async details(req, res) {
+    const { slug } = req.params;
     try {
-      const app = await AppModel.getBySlug(req.params.slug);
-      if (!app) return res.status(404).render('error', { message: 'App haikupatikana.' });
+      const app = await AppModel.getBySlug(slug);
+      
+      if (!app) {
+        return res.status(404).render('error', { 
+          title: 'Haikupatikana',
+          code: '404', 
+          message: 'Programu unayotafuta haipo kwenye seva yetu.' 
+        });
+      }
 
-      // Ongeza view count (background — usisimamisha ukurasa)
-      AppModel.incrementViews(app.id).catch(() => {});
+      // Ongeza view count kiotomatiki mtumiaji akifungua
+      await AppModel.incrementViews(app.id);
 
-      const related = await AppModel.getRelated(app.id, app.category);
-
-      res.render('details', {
-        app,
-        related,
-        title: `${app.name} — 26 Tech Solution`,
+      res.render('details', { 
+        title: `${app.name} — LiteAPKs Mode`,
+        app: app 
       });
+
     } catch (err) {
       console.error('❌ details error:', err);
-      res.status(500).render('error', { message: 'Hitilafu ya seva.' });
+      res.status(500).render('error', { 
+        title: 'Hitilafu ya Seva',
+        code: '500', 
+        message: 'Kuna tatizo limejitokeza wakati wa kufungua ukurasa huu.' 
+      });
     }
-  },
+  }
 };
 
-module.exports = AppController;
+module.exports = appController;

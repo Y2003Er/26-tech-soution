@@ -5,7 +5,7 @@ const AppModel = {
   // Leta apps zote (na filter + search)
   async getAll({ category, search, limit = 20, offset = 0 } = {}) {
     let query = `
-      SELECT id, name, slug, category, icon, description,
+      SELECT id, name, slug, category, description,
              version, file_size, os, is_free, is_featured,
              views, downloads, created_at
       FROM apps
@@ -30,7 +30,7 @@ const AppModel = {
       const { rows } = await pool.query(query, params);
       return rows;
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.getAll:', err.message);
+      console.error('Hitilafu kwenye AppModel.getAll:', err.message);
       throw err;
     }
   },
@@ -50,7 +50,7 @@ const AppModel = {
       const { rows } = await pool.query(query, params);
       return parseInt(rows[0].count, 10) || 0;
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.count:', err.message);
+      console.error('Hitilafu kwenye AppModel.count:', err.message);
       throw err;
     }
   },
@@ -64,7 +64,7 @@ const AppModel = {
       );
       return rows[0] || null;
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.getBySlug:', err.message);
+      console.error('Hitilafu kwenye AppModel.getBySlug:', err.message);
       throw err;
     }
   },
@@ -78,7 +78,7 @@ const AppModel = {
       );
       return rows[0] || null;
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.getById:', err.message);
+      console.error('Hitilafu kwenye AppModel.getById:', err.message);
       throw err;
     }
   },
@@ -91,7 +91,7 @@ const AppModel = {
         [id]
       );
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.incrementViews:', err.message);
+      console.error('Hitilafu kwenye AppModel.incrementViews:', err.message);
     }
   },
 
@@ -103,7 +103,7 @@ const AppModel = {
         [id]
       );
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.incrementDownloads:', err.message);
+      console.error('Hitilafu kwenye AppModel.incrementDownloads:', err.message);
     }
   },
 
@@ -117,7 +117,7 @@ const AppModel = {
       );
       return rows;
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.getCategories:', err.message);
+      console.error('Hitilafu kwenye AppModel.getCategories:', err.message);
       throw err;
     }
   },
@@ -126,7 +126,7 @@ const AppModel = {
   async getRelated(appId, category, limit = 4) {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, icon, version, file_size, is_free, downloads
+        `SELECT id, name, slug, category, version, file_size, is_free, downloads
          FROM apps
          WHERE is_active = true AND id != $1 AND category = $2
          ORDER BY downloads DESC LIMIT $3`,
@@ -134,65 +134,65 @@ const AppModel = {
       );
       return rows;
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.getRelated:', err.message);
+      console.error('Hitilafu kwenye AppModel.getRelated:', err.message);
       throw err;
     }
   },
 
-  // ── ADMIN QUERIES ──────────────────────────────
+  // ---- ADMIN QUERIES ----
 
-  // Leta apps zote (admin — ikiwemo zisizokuwa active)
+  // Leta apps zote (admin - ikiwemo zisizokuwa active)
   async adminGetAll() {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, icon, version,
+        `SELECT id, name, slug, category, version,
                 file_size, os, is_free, is_featured, is_active,
                 views, downloads, created_at
          FROM apps ORDER BY created_at DESC`
       );
       return rows;
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.adminGetAll:', err.message);
+      console.error('Hitilafu kwenye AppModel.adminGetAll:', err.message);
       throw err;
     }
   },
 
   // Ongeza app mpya
-  async create({ name, slug, category, icon, description, version,
+  async create({ name, slug, category, description, version,
                  file_size, os, is_free, download_url, is_featured }) {
     try {
       const { rows } = await pool.query(
         `INSERT INTO apps
-           (name, slug, category, icon, description, version,
+           (name, slug, category, description, version,
             file_size, os, is_free, download_url, is_featured)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
          RETURNING *`,
-        [name, slug, category, icon, description, version,
+        [name, slug, category, description, version,
          file_size, os, is_free, download_url, is_featured]
       );
       return rows[0];
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.create:', err.message);
+      console.error('Hitilafu kwenye AppModel.create:', err.message);
       throw err;
     }
   },
 
   // Hariri app
-  async update(id, { name, slug, category, icon, description, version,
+  async update(id, { name, slug, category, description, version,
                      file_size, os, is_free, download_url, is_featured, is_active }) {
     try {
       const { rows } = await pool.query(
         `UPDATE apps SET
-           name=$1, slug=$2, category=$3, icon=$4, description=$5,
-           version=$6, file_size=$7, os=$8, is_free=$9,
-           download_url=$10, is_featured=$11, is_active=$12
-         WHERE id=$13 RETURNING *`,
-        [name, slug, category, icon, description, version,
+           name=$1, slug=$2, category=$3, description=$4,
+           version=$5, file_size=$6, os=$7, is_free=$8,
+           download_url=$9, is_featured=$10, is_active=$11
+         WHERE id=$12 RETURNING *`,
+        [name, slug, category, description, version,
          file_size, os, is_free, download_url, is_featured, is_active, id]
       );
       return rows[0];
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.update:', err.message);
+      console.error('Hitilafu kwenye AppModel.update:', err.message);
       throw err;
     }
   },
@@ -202,7 +202,7 @@ const AppModel = {
     try {
       await pool.query(`DELETE FROM apps WHERE id = $1`, [id]);
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.delete:', err.message);
+      console.error('Hitilafu kwenye AppModel.delete:', err.message);
       throw err;
     }
   },
@@ -221,7 +221,7 @@ const AppModel = {
       `);
       return rows[0];
     } catch (err) {
-      console.error('❌ Hitilafu kwenye AppModel.getStats:', err.message);
+      console.error('Hitilafu kwenye AppModel.getStats:', err.message);
       throw err;
     }
   },

@@ -1,8 +1,11 @@
-const express       = require('express');
-const router        = express.Router();
-const AppController = require('../controllers/appController');
+const express = require('express');
+const router = express.Router();
+const appController = require('../controllers/appController');
 
-router.get('/',           AppController.index);
-router.get('/app/:slug',  AppController.details);
+// Ukurasa wa nyumbani (Home Page)
+router.get('/', appController.index);
+
+// Ukurasa wa undani wa app (Details Page)
+router.get('/details/:slug', appController.details);
 
 module.exports = router;
