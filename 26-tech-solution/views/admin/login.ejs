@@ -1,26 +1,27 @@
-<%- include('../partials/head', { title }) %>
-<div class="l1 light"></div>
-<div class="login-wrap">
+<%- include('../partials/head', { title: 'Admin Login — 26 Tech' }) %>
+
+<div class="login-page">
   <div class="login-card">
-    <div class="nav-logo" style="margin-bottom:1.5rem;font-family:var(--f-display);font-weight:800;font-size:1.1rem;letter-spacing:-.03em;">
-      <span style="color:var(--accent)">26</span> · Admin
-    </div>
-    <div class="login-title">Ingia</div>
-    <div class="login-sub">Eneo la wasimamizi tu</div>
-    <% if (error && error.length) { %>
-      <div class="flash flash-err"><%= error[0] %></div>
+    <div class="login-title"><span style="color:var(--accent)">26</span>Tech Admin</div>
+
+    <% if (error && error.length > 0) { %>
+      <div class="flash error"><%= error %></div>
     <% } %>
-    <form action="/admin/login" method="POST" style="display:flex;flex-direction:column;gap:1rem;">
+
+    <form method="POST" action="/admin/login">
       <div class="form-group">
-        <label>JINA LA MTUMIAJI</label>
-        <input type="text" name="username" autocomplete="username" required/>
+        <label class="form-label">USERNAME</label>
+        <input class="form-input" type="text" name="username" autocomplete="username" required/>
       </div>
       <div class="form-group">
-        <label>NYWILA</label>
-        <input type="password" name="password" autocomplete="current-password" required/>
+        <label class="form-label">PASSWORD</label>
+        <input class="form-input" type="password" name="password" autocomplete="current-password" required/>
       </div>
-      <button type="submit" class="btn-primary" style="margin-top:.5rem">INGIA →</button>
+      <button class="btn btn-green" type="submit" style="width:100%;justify-content:center;padding:.65rem;">
+        Login
+      </button>
     </form>
   </div>
 </div>
+
 <%- include('../partials/foot') %>

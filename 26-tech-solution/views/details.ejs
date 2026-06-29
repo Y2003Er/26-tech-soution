@@ -2,12 +2,12 @@
 <%- include('partials/nav') %>
 
 <div class="details-wrap">
-  <!-- LEFT: Main -->
   <div class="details-main">
 
-    <!-- Header -->
     <div class="details-header">
-      <div class="details-main-icon"><%= app.icon %></div>
+      <div class="details-main-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm-7 9.5c0-1.5 3.13-2.5 7-2.5s7 1 7 2.5V19H5v-.5z"/></svg>
+      </div>
       <div>
         <h1 class="details-title"><%= app.name %></h1>
         <div class="details-cats">
@@ -18,15 +18,14 @@
           </span>
         </div>
         <div class="details-rating">
-          <span style="color:#f59e0b">★★★★</span>★
+          <span style="color:#f59e0b">&#9733;&#9733;&#9733;&#9733;</span>&#9733;
           <span>4.2 · <%= app.downloads.toLocaleString() %> downloads</span>
         </div>
       </div>
     </div>
 
-    <!-- MOD Features box -->
     <div class="mod-features">
-      <div class="mod-features-title">⚡ MOD FEATURES — <%= app.version %></div>
+      <div class="mod-features-title">MOD FEATURES — <%= app.version %></div>
       <ul class="mod-features-list">
         <li>Premium Unlocked — Tumia vipengele vyote bila malipo</li>
         <li>Ads Removed — Hakuna matangazo yanayokusumbua</li>
@@ -35,12 +34,10 @@
       </ul>
     </div>
 
-    <!-- Description -->
-    <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--dim);margin-bottom:.5rem;">MAELEZO</div>
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--gray);margin-bottom:.5rem;text-transform:uppercase;">Maelezo</div>
     <p class="details-desc"><%= app.description %></p>
 
-    <!-- Info table -->
-    <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--dim);margin-bottom:.5rem;">TAARIFA ZA APP</div>
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--gray);margin-bottom:.5rem;text-transform:uppercase;">Taarifa za App</div>
     <table class="info-table">
       <tr><td>Jina</td><td><%= app.name %></td></tr>
       <tr><td>Toleo</td><td><%= app.version %></td></tr>
@@ -51,15 +48,16 @@
       <tr><td>Views</td><td><%= app.views.toLocaleString() %></td></tr>
     </table>
 
-    <!-- Related apps -->
     <% if (related.length > 0) { %>
-    <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--dim);margin-bottom:.75rem;margin-top:1.5rem;">
-      ZINAZOFANANA
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--gray);margin-bottom:.75rem;margin-top:1.5rem;text-transform:uppercase;">
+      Zinazofanana
     </div>
     <div class="app-list">
       <% related.forEach(r => { %>
       <a href="/app/<%= r.slug %>" class="app-row">
-        <div class="app-row-icon"><%= r.icon %></div>
+        <div class="app-row-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+        </div>
         <div class="app-row-info">
           <div class="app-row-name"><%= r.name %></div>
           <div class="app-row-meta">
@@ -77,19 +75,21 @@
 
   </div>
 
-  <!-- RIGHT: Sidebar -->
   <aside>
     <div class="dl-card">
-      <span class="dl-card-icon"><%= app.icon %></span>
+      <div class="dl-card-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm-7 9.5c0-1.5 3.13-2.5 7-2.5s7 1 7 2.5V19H5v-.5z"/></svg>
+      </div>
       <div class="dl-card-name"><%= app.name %></div>
       <div class="dl-card-ver">VERSION <%= app.version %> · <%= app.os.toUpperCase() %></div>
 
       <a href="/download/<%= app.slug %>" class="dl-btn-main">
-        ⬇ Pakua Bure
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Pakua Bure
       </a>
 
-      <div style="font-size:.7rem;color:var(--dim);text-align:center;margin-bottom:.75rem;">
-        Ukubwa: <strong style="color:var(--white)"><%= app.file_size %></strong>
+      <div style="font-size:.7rem;color:var(--gray);text-align:center;margin-bottom:.75rem;">
+        Ukubwa: <strong style="color:var(--dark)"><%= app.file_size %></strong>
       </div>
 
       <div class="dl-card-stats">
@@ -113,7 +113,7 @@
     </div>
   </aside>
 
-</div><!-- /details-wrap -->
+</div>
 
 <%- include('partials/footer') %>
 <%- include('partials/foot') %>

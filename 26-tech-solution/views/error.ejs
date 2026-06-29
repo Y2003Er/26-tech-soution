@@ -1,15 +1,14 @@
-<%- include('partials/head', { title: (typeof title !== 'undefined' ? title : 'Hitilafu') }) %>
+<%- include('partials/head', { title }) %>
 <%- include('partials/nav') %>
 
 <div class="error-page">
-  <div class="error-code"><%= typeof code !== 'undefined' ? code : '404' %></div>
-  <div style="font-size:1.2rem;font-weight:800;margin-bottom:.5rem;">
-    Samahani!
+  <div class="error-code"><%= code || 404 %></div>
+  <div style="font-size:1.1rem;font-weight:800;color:var(--dark);margin-bottom:.5rem;">
+    <%= code === '404' ? 'Ukurasa Haupatikani' : 'Hitilafu Imetokea' %>
   </div>
-  <p class="error-msg"><%= typeof message !== 'undefined' && message ? message : 'Kuna tatizo limejitokeza. Jaribu tena baadaye.' %></p>
-  <a href="/" class="dl-btn-main" style="margin-top:1.5rem;display:inline-flex;width:auto;padding:.7rem 1.5rem;">
-    ← Rudi Nyumbani
-  </a>
+  <div class="error-msg"><%= message || 'Ukurasa unaotafuta haupo au umehamishwa.' %></div>
+  <a href="/" class="btn-primary" style="margin-top:1rem;display:inline-block;">Rudi Nyumbani</a>
 </div>
 
+<%- include('partials/footer') %>
 <%- include('partials/foot') %>

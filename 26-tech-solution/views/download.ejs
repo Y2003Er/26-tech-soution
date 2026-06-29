@@ -1,36 +1,33 @@
-<%- include('partials/head', { title }) %>
+<%- include('partials/head', { title: 'Pakua — ' + app.name }) %>
 <%- include('partials/nav') %>
-
-<input type="hidden" id="timer-seconds" value="<%= timerSeconds %>"/>
 
 <div class="dl-page">
   <div class="dl-box">
-    <span class="dl-box-icon"><%= app.icon %></span>
+    <div class="dl-box-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    </div>
     <div class="dl-box-name"><%= app.name %></div>
-    <p class="dl-box-sub">
-      Subiri sekunde <%= timerSeconds %> — link yako ya download inaandaliwa.<br/>
-      Usifunge ukurasa huu.
-    </p>
-
-    <div class="timer-ring">
-      <svg width="90" height="90" viewBox="0 0 100 100">
-        <circle class="timer-circle-bg" cx="50" cy="50" r="45"/>
-        <circle class="timer-circle" id="timer-circle" cx="50" cy="50" r="45"/>
-      </svg>
-      <div class="timer-num" id="timer-num"><%= timerSeconds %></div>
+    <div class="dl-box-sub">
+      Subiri sekunde chache. Download itaanza moja kwa moja.<br/>
+      Ukubwa: <strong><%= app.file_size %></strong> · Toleo: <strong><%= app.version %></strong>
     </div>
 
-    <!-- Ad slot -->
-    <div class="ad-slot">[ ADVERTISEMENT ]</div>
+    <div class="timer-ring">
+      <svg viewBox="0 0 100 100" width="90" height="90">
+        <circle class="timer-circle-bg" cx="50" cy="50" r="45"/>
+        <circle class="timer-circle" id="timerCircle" cx="50" cy="50" r="45"/>
+      </svg>
+      <div class="timer-num" id="timerNum">15</div>
+    </div>
 
-    <a href="/go/<%= token %>" id="dl-go-btn" class="dl-go-btn">
-      ⬇ Pakua Sasa — <%= app.name %>
+    <div class="ad-slot">NAFASI YA TANGAZO</div>
+
+    <a href="<%= app.download_url %>" class="dl-go-btn" id="dlBtn">
+      Bonyeza Hapa Kupakua
     </a>
-
-    <div class="dl-note">LINK ITAKWISHA DAKIKA <%= process.env.TOKEN_EXPIRY_MINUTES || 15 %></div>
+    <div class="dl-note">FAILI SALAMA · HAKUNA VIRUSI · TOLEO KAMILI</div>
   </div>
 </div>
 
 <%- include('partials/footer') %>
-<script src="/js/timer.js"></script>
 <%- include('partials/foot') %>
