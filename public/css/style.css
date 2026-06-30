@@ -70,3 +70,10 @@
 .software-card .badge-wrap {
   order: -1;
 }
+.progress-track{width:100%;height:10px;margin:18px 0 8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.progress-fill{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#7c3aed,#0ea5e9);transition:width 1s linear}
+.dl-status-text{font-weight:800;margin:14px 0 4px}
+.dl-status-sub{color:#94a3b8;font-size:.85rem;margin:0}
+.dl-ready-text{color:#86efac}
+.dl-error-text{color:#fecaca}
+.dl-auto-note{margin-top:10px;color:#94a3b8;font-size:.82rem}
