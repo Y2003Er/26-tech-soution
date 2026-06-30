@@ -5,8 +5,8 @@ const express = require('express');
 const flash = require('connect-flash');
 const path = require('path');
 const pool = require('./config/db');
-const sessionConfig = require('./config/session'); // ← MPYA
-const requireAdmin = require('./middleware/admin'); // ← MPYA
+const sessionConfig = require('./config/session');
+const requireAdmin = require('./middleware/admin');
 
 const app = express();
 
@@ -98,6 +98,20 @@ async function initializeDatabase() {
       );
     `);
 
+    // ── MPYA: download_tokens — link za download salama, single-use, zenye muda ──
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS download_tokens (
+        id          SERIAL PRIMARY KEY,
+        token       VARCHAR(64) NOT NULL UNIQUE,
+        app_id      INTEGER NOT NULL REFERENCES apps(id) ON DELETE CASCADE,
+        used        BOOLEAN NOT NULL DEFAULT false,
+        expires_at  TIMESTAMPTZ NOT NULL,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_download_tokens_token ON download_tokens(token);`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_download_tokens_expires ON download_tokens(expires_at);`);
+
     console.log("Database tables ziko tayari!");
   } catch (err) {
     console.error("Hitilafu kuunda/kusasisha tables:", err.message);
@@ -116,7 +130,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // ── Session (Inatumia config/session.js) ────
-app.use(sessionConfig); // ← BADILISHA
+app.use(sessionConfig);
 
 // ── Flash messages ───────────────────────────
 app.use(flash());
@@ -131,7 +145,7 @@ app.use((req, res, next) => {
 // ── Routes ───────────────────────────────────
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/download'));
-app.use('/admin', require('./routes/admin')); // Route za admin zinalindwa ndani ya route file
+app.use('/admin', require('./routes/admin'));
 
 // ── 404 handler ──────────────────────────────
 app.use((req, res) => {
