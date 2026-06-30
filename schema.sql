@@ -58,6 +58,13 @@ CREATE TABLE IF NOT EXISTS download_tokens (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Jedwali la newsletter subscribers
+CREATE TABLE IF NOT EXISTS subscribers (
+  id          SERIAL PRIMARY KEY,
+  email       VARCHAR(255) NOT NULL UNIQUE,
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
 -- Index za kasi
 CREATE INDEX IF NOT EXISTS idx_apps_category  ON apps(category);
 CREATE INDEX IF NOT EXISTS idx_apps_slug      ON apps(slug);
