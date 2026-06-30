@@ -1,16 +1,16 @@
-// 1. Load environment variables
+// server.js
 require('dotenv').config();
 
 const express = require('express');
-const session = require('express-session');
-const pgSession = require('connect-pg-simple')(session);
-const flash   = require('connect-flash');
-const path    = require('path');
-const pool    = require('./config/db');
+const flash = require('connect-flash');
+const path = require('path');
+const pool = require('./config/db');
+const sessionConfig = require('./config/session'); // ← MPYA
+const requireAdmin = require('./middleware/admin'); // ← MPYA
 
 const app = express();
 
-// ── Trust Proxy (Railway inahitaji hii) ──────
+// ── Trust Proxy ──────────────────────────────
 app.set('trust proxy', 1);
 
 // ── Database Initialization ──────────────────
@@ -31,12 +31,10 @@ async function initializeDatabase() {
       ALTER TABLE admins ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
     `);
 
-    // Ongeza column ya icon kwenye apps
     await pool.query(`
       ALTER TABLE apps ADD COLUMN IF NOT EXISTS icon_file_id VARCHAR(500);
     `);
 
-    // Jedwali la categories (kwa collections / background images)
     await pool.query(`
       CREATE TABLE IF NOT EXISTS categories (
         category            VARCHAR(80) PRIMARY KEY,
@@ -61,23 +59,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ── Session (Inahifadhiwa PostgreSQL/Supabase) ───
-app.use(session({
-  store: new pgSession({
-    pool: pool,
-    tableName: 'session',
-    createTableIfMissing: true,
-  }),
-  secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 8 * 60 * 60 * 1000,
-    sameSite: 'lax',
-  },
-}));
+// ── Session (Inatumia config/session.js) ────
+app.use(sessionConfig); // ← BADILISHA
 
 // ── Flash messages ───────────────────────────
 app.use(flash());
@@ -85,14 +68,14 @@ app.use(flash());
 // ── Global locals ────────────────────────────
 app.use((req, res, next) => {
   res.locals.siteName = '26 Tech Solution';
-  res.locals.year     = new Date().getFullYear();
+  res.locals.year = new Date().getFullYear();
   next();
 });
 
 // ── Routes ───────────────────────────────────
-app.use('/',        require('./routes/index'));
-app.use('/',        require('./routes/download'));
-app.use('/admin',   require('./routes/admin'));
+app.use('/', require('./routes/index'));
+app.use('/', require('./routes/download'));
+app.use('/admin', require('./routes/admin')); // Route za admin zinalindwa ndani ya route file
 
 // ── 404 handler ──────────────────────────────
 app.use((req, res) => {
