@@ -14,7 +14,6 @@ function makeSlug(name) {
     .replace(/-+/g, '-');
 }
 
-// Validate email format rahisi
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -27,6 +26,7 @@ const AdminController = {
     res.render('admin/login', {
       title: 'Admin Login - 26 Tech',
       error: req.flash('error'),
+      success: req.flash('success'),
     });
   },
 
@@ -109,18 +109,11 @@ const AdminController = {
         return res.redirect('/admin/signup');
       }
 
-      const admin = await AdminModel.create({ email, password, username });
+      await AdminModel.create({ email, password, username });
 
-      req.session.admin = { id: admin.id, email: admin.email, username: admin.username };
-
-      req.session.save((err) => {
-        if (err) {
-          console.error('Session save error:', err);
-          req.flash('error', 'Hitilafu ya seva.');
-          return res.redirect('/admin/login');
-        }
-        res.redirect('/admin');
-      });
+      // ✅ Hapana auto-login — mpeleke kwenye login page
+      req.flash('success', 'Akaunti imeundwa! Sasa ingia kwa email na nywila yako.');
+      res.redirect('/admin/login');
 
     } catch (err) {
       console.error('signup error:', err);
