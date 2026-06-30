@@ -34,17 +34,14 @@ const DownloadController = {
 
       const urlOrId = app.download_url ? app.download_url.trim() : '';
 
-      // 1. Link ya kawaida (http)
       if (urlOrId.startsWith('http')) {
         console.log("🔗 [SERVER]: Redirect ya kawaida...");
         return res.redirect(urlOrId);
       }
 
-      // 2. Telegram File ID — stream kupitia server yetu
       else if (urlOrId !== '') {
         console.log(`☁️ [SERVER]: Inastream faili kutoka Telegram kwa ID: ${urlOrId}`);
         try {
-          // Pitisha app.name ili file ishuke kwa jina sahihi
           await TelegramService.streamTelegramFile(urlOrId, res, app.name);
         } catch (teleErr) {
           console.error("❌ [SERVER]: Telegram Error:", teleErr.message);
@@ -56,7 +53,6 @@ const DownloadController = {
         }
       }
 
-      // 3. Hakuna link
       else {
         console.log("⚠️ [SERVER]: App haina download link.");
         return res.redirect('/');
@@ -65,6 +61,17 @@ const DownloadController = {
     } catch (err) {
       console.error('❌ [SERVER]: goDownload Error:', err);
       return res.redirect('/');
+    }
+  },
+
+  // GET /icon/:fileId
+  async getIcon(req, res) {
+    try {
+      const { fileId } = req.params;
+      await TelegramService.streamTelegramIcon(fileId, res);
+    } catch (err) {
+      console.error('getIcon error:', err);
+      res.status(404).end();
     }
   },
 };

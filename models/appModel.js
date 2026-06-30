@@ -2,10 +2,9 @@ const pool = require('../config/db');
 
 const AppModel = {
 
-  // Leta apps zote (na filter + search)
   async getAll({ category, search, limit = 20, offset = 0 } = {}) {
     let query = `
-      SELECT id, name, slug, category, description,
+      SELECT id, name, slug, icon_file_id, category, description,
              version, file_size, os, is_free, is_featured,
              views, downloads, created_at
       FROM apps
@@ -35,7 +34,6 @@ const AppModel = {
     }
   },
 
-  // Hesabu jumla ya apps (kwa pagination)
   async count({ category, search } = {}) {
     let query = `SELECT COUNT(*) FROM apps WHERE is_active = true`;
     const params = [];
@@ -55,7 +53,6 @@ const AppModel = {
     }
   },
 
-  // Leta app moja kwa slug
   async getBySlug(slug) {
     try {
       const { rows } = await pool.query(
@@ -69,7 +66,6 @@ const AppModel = {
     }
   },
 
-  // Leta app moja kwa id
   async getById(id) {
     try {
       const { rows } = await pool.query(
@@ -83,7 +79,6 @@ const AppModel = {
     }
   },
 
-  // Ongeza view count
   async incrementViews(id) {
     try {
       await pool.query(
@@ -95,7 +90,6 @@ const AppModel = {
     }
   },
 
-  // Ongeza download count
   async incrementDownloads(id) {
     try {
       await pool.query(
@@ -107,7 +101,6 @@ const AppModel = {
     }
   },
 
-  // Leta categories zote zilizopo
   async getCategories() {
     try {
       const { rows } = await pool.query(
@@ -122,11 +115,10 @@ const AppModel = {
     }
   },
 
-  // Leta apps zinazofanana (same category)
   async getRelated(appId, category, limit = 4) {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, version, file_size, is_free, downloads
+        `SELECT id, name, slug, icon_file_id, category, version, file_size, is_free, downloads
          FROM apps
          WHERE is_active = true AND id != $1 AND category = $2
          ORDER BY downloads DESC LIMIT $3`,
@@ -141,11 +133,10 @@ const AppModel = {
 
   // ---- ADMIN QUERIES ----
 
-  // Leta apps zote (admin - ikiwemo zisizokuwa active)
   async adminGetAll() {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, version,
+        `SELECT id, name, slug, icon_file_id, category, version,
                 file_size, os, is_free, is_featured, is_active,
                 views, downloads, created_at
          FROM apps ORDER BY created_at DESC`
@@ -157,18 +148,17 @@ const AppModel = {
     }
   },
 
-  // Ongeza app mpya
   async create({ name, slug, category, description, version,
-                 file_size, os, is_free, download_url, is_featured }) {
+                 file_size, os, is_free, download_url, is_featured, icon_file_id }) {
     try {
       const { rows } = await pool.query(
         `INSERT INTO apps
            (name, slug, category, description, version,
-            file_size, os, is_free, download_url, is_featured)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+            file_size, os, is_free, download_url, is_featured, icon_file_id)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
          RETURNING *`,
         [name, slug, category, description, version,
-         file_size, os, is_free, download_url, is_featured]
+         file_size, os, is_free, download_url, is_featured, icon_file_id || null]
       );
       return rows[0];
     } catch (err) {
@@ -177,18 +167,17 @@ const AppModel = {
     }
   },
 
-  // Hariri app
   async update(id, { name, slug, category, description, version,
-                     file_size, os, is_free, download_url, is_featured, is_active }) {
+                     file_size, os, is_free, download_url, is_featured, is_active, icon_file_id }) {
     try {
       const { rows } = await pool.query(
         `UPDATE apps SET
            name=$1, slug=$2, category=$3, description=$4,
            version=$5, file_size=$6, os=$7, is_free=$8,
-           download_url=$9, is_featured=$10, is_active=$11
-         WHERE id=$12 RETURNING *`,
+           download_url=$9, is_featured=$10, is_active=$11, icon_file_id=$12
+         WHERE id=$13 RETURNING *`,
         [name, slug, category, description, version,
-         file_size, os, is_free, download_url, is_featured, is_active, id]
+         file_size, os, is_free, download_url, is_featured, is_active, icon_file_id || null, id]
       );
       return rows[0];
     } catch (err) {
@@ -197,7 +186,6 @@ const AppModel = {
     }
   },
 
-  // Futa app
   async delete(id) {
     try {
       await pool.query(`DELETE FROM apps WHERE id = $1`, [id]);
@@ -207,7 +195,6 @@ const AppModel = {
     }
   },
 
-  // Stats za dashboard
   async getStats() {
     try {
       const { rows } = await pool.query(`

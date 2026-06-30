@@ -6,7 +6,6 @@ const AppModel = require('../models/appModel');
 const AdminModel = require('../models/adminModel');
 const TelegramService = require('../telegramService');
 
-// Helper: tengeneza slug kutoka kwa jina
 function makeSlug(name) {
   return name.toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
@@ -15,41 +14,43 @@ function makeSlug(name) {
     .replace(/-+/g, '-');
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 const AdminController = {
 
-  // GET /admin/login
   loginPage(req, res) {
     if (req.session.admin) return res.redirect('/admin');
     res.render('admin/login', {
       title: 'Admin Login - 26 Tech',
       error: req.flash('error'),
+      success: req.flash('success'),
     });
   },
 
-  // POST /admin/login
   async loginPost(req, res) {
     try {
-      const { username, password } = req.body;
-      if (!username || !password) {
+      const { email, password } = req.body;
+      if (!email || !password) {
         req.flash('error', 'Jaza sehemu zote.');
         return res.redirect('/admin/login');
       }
 
-      const admin = await AdminModel.findByUsername(username);
+      const admin = await AdminModel.findByEmail(email);
       if (!admin) {
-        req.flash('error', 'Jina au nywila si sahihi.');
+        req.flash('error', 'Email au nywila si sahihi.');
         return res.redirect('/admin/login');
       }
 
       const ok = await AdminModel.verifyPassword(password, admin.password);
       if (!ok) {
-        req.flash('error', 'Jina au nywila si sahihi.');
+        req.flash('error', 'Email au nywila si sahihi.');
         return res.redirect('/admin/login');
       }
 
-      req.session.admin = { id: admin.id, username: admin.username };
+      req.session.admin = { id: admin.id, email: admin.email, username: admin.username };
 
-      // ✅ FIX: Subiri session ihifadhiwe kwanza, kisha redirect
       req.session.save((err) => {
         if (err) {
           console.error('Session save error:', err);
@@ -66,12 +67,60 @@ const AdminController = {
     }
   },
 
-  // POST /admin/logout
+  signupPage(req, res) {
+    if (req.session.admin) return res.redirect('/admin');
+    res.render('admin/signup', {
+      title: 'Sajili Admin - 26 Tech',
+      error: req.flash('error'),
+    });
+  },
+
+  async signupPost(req, res) {
+    try {
+      const { email, username, password, confirmPassword } = req.body;
+
+      if (!email || !password || !confirmPassword) {
+        req.flash('error', 'Jaza sehemu zote zinazohitajika.');
+        return res.redirect('/admin/signup');
+      }
+
+      if (!isValidEmail(email)) {
+        req.flash('error', 'Email si sahihi.');
+        return res.redirect('/admin/signup');
+      }
+
+      if (password.length < 6) {
+        req.flash('error', 'Nywila lazima iwe na herufi 6 au zaidi.');
+        return res.redirect('/admin/signup');
+      }
+
+      if (password !== confirmPassword) {
+        req.flash('error', 'Nywila hazifanani.');
+        return res.redirect('/admin/signup');
+      }
+
+      const exists = await AdminModel.emailExists(email);
+      if (exists) {
+        req.flash('error', 'Email hii tayari imesajiliwa.');
+        return res.redirect('/admin/signup');
+      }
+
+      await AdminModel.create({ email, password, username });
+
+      req.flash('success', 'Akaunti imeundwa! Sasa ingia kwa email na nywila yako.');
+      res.redirect('/admin/login');
+
+    } catch (err) {
+      console.error('signup error:', err);
+      req.flash('error', 'Hitilafu ya seva. Jaribu tena.');
+      res.redirect('/admin/signup');
+    }
+  },
+
   logout(req, res) {
     req.session.destroy(() => res.redirect('/admin/login'));
   },
 
-  // GET /admin - Dashboard
   async dashboard(req, res) {
     try {
       const [apps, stats] = await Promise.all([
@@ -92,7 +141,6 @@ const AdminController = {
     }
   },
 
-  // GET /admin/apps/new
   newAppPage(req, res) {
     res.render('admin/app-form', {
       title: 'Ongeza App - 26 Tech',
@@ -102,11 +150,10 @@ const AdminController = {
     });
   },
 
-  // POST /admin/apps
   async createApp(req, res) {
     try {
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured } = req.body;
+              file_size, os, is_free, download_url, is_featured, icon_file_id } = req.body;
 
       if (!name || !category || !description || !download_url) {
         req.flash('error', 'Jaza sehemu zote zinazohitajika.');
@@ -123,7 +170,8 @@ const AdminController = {
         is_free: is_free === 'true',
         download_url: download_url.trim(),
         is_featured: is_featured === 'true',
-        is_active: true
+        is_active: true,
+        icon_file_id: icon_file_id ? icon_file_id.trim() : null
       });
 
       req.flash('success', `"${name}" imeongezwa.`);
@@ -135,7 +183,6 @@ const AdminController = {
     }
   },
 
-  // GET /admin/apps/:id/edit
   async editAppPage(req, res) {
     try {
       const appId = parseInt(req.params.id);
@@ -155,12 +202,11 @@ const AdminController = {
     }
   },
 
-  // POST /admin/apps/:id/edit
   async updateApp(req, res) {
     try {
       const appId = parseInt(req.params.id);
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured, is_active } = req.body;
+              file_size, os, is_free, download_url, is_featured, is_active, icon_file_id } = req.body;
       const slug = makeSlug(name);
 
       await AppModel.update(appId, {
@@ -173,6 +219,7 @@ const AdminController = {
         download_url: download_url.trim(),
         is_featured: is_featured === 'true',
         is_active: is_active === 'true',
+        icon_file_id: icon_file_id ? icon_file_id.trim() : null
       });
 
       req.flash('success', `"${name}" imehariwiwa.`);
@@ -184,7 +231,6 @@ const AdminController = {
     }
   },
 
-  // POST /admin/apps/:id/delete
   async deleteApp(req, res) {
     try {
       const appId = parseInt(req.params.id);

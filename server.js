@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const express = require('express');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 const flash   = require('connect-flash');
 const path    = require('path');
 const pool    = require('./config/db');
@@ -21,13 +22,26 @@ async function initializeDatabase() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS admins (
         id SERIAL PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
+        username VARCHAR(255) UNIQUE,
         password VARCHAR(255) NOT NULL
       );
     `);
-    console.log("✅ Database table 'admins' iko tayari!");
+
+    await pool.query(`
+      ALTER TABLE admins ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE;
+    `);
+    await pool.query(`
+      ALTER TABLE admins ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
+    `);
+
+    // Ongeza column ya icon kwenye apps
+    await pool.query(`
+      ALTER TABLE apps ADD COLUMN IF NOT EXISTS icon_file_id VARCHAR(500);
+    `);
+
+    console.log("✅ Database tables ziko tayari!");
   } catch (err) {
-    console.error("❌ Hitilafu kuunda table ya admins:", err.message);
+    console.error("❌ Hitilafu kuunda/kusasisha tables:", err.message);
   }
 }
 
@@ -42,8 +56,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ── Session ──────────────────────────────────
+// ── Session (Inahifadhiwa PostgreSQL/Supabase) ───
 app.use(session({
+  store: new pgSession({
+    pool: pool,
+    tableName: 'session',
+    createTableIfMissing: true,
+  }),
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
   resave: false,
   saveUninitialized: false,
@@ -51,7 +70,7 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 8 * 60 * 60 * 1000,
-    sameSite: 'lax', // ✅ Imeongezwa
+    sameSite: 'lax',
   },
 }));
 

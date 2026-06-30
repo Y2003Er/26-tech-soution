@@ -9,6 +9,8 @@ function requireAuth(req, res, next) {
 
 router.get('/login', AdminController.loginPage);
 router.post('/login', AdminController.loginPost);
+router.get('/signup', AdminController.signupPage);
+router.post('/signup', AdminController.signupPost);
 router.post('/logout', AdminController.logout);
 
 router.get('/', requireAuth, AdminController.dashboard);
