@@ -60,14 +60,29 @@ async function initializeDatabase() {
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();`);
+
+    // ── Fields mpya (LiteAPKs-style): developer, package_name, rating,
+    //    mod_info, badges, screenshots, is_editors_choice ──
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS developer VARCHAR(150) DEFAULT 'Verified Publisher';`);
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS package_name VARCHAR(150);`);
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS rating NUMERIC(2,1) DEFAULT 0.0;`);
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS mod_info VARCHAR(200);`);
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS badges TEXT[] DEFAULT '{}';`);
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS screenshots TEXT[] DEFAULT '{}';`);
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS is_editors_choice BOOLEAN NOT NULL DEFAULT false;`);
+
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_category ON apps(category);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_slug ON apps(slug);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_active ON apps(is_active);`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_rating ON apps(rating DESC);`);
+
+    // ── FIX: dollar-quote ilikuwa "$" moja badala ya "$$" - hii ndiyo
+    //    iliyokuwa ikitupa "syntax error at or near $" ──
     await pool.query(`
       CREATE OR REPLACE FUNCTION update_updated_at()
-      RETURNS TRIGGER AS $
+      RETURNS TRIGGER AS $$
       BEGIN NEW.updated_at = NOW(); RETURN NEW; END;
-      $ LANGUAGE plpgsql;
+      $$ LANGUAGE plpgsql;
     `);
     await pool.query(`DROP TRIGGER IF EXISTS apps_updated_at ON apps;`);
     await pool.query(`
