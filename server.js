@@ -22,8 +22,10 @@ async function initializeDatabase() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS admins (
         id SERIAL PRIMARY KEY,
-        username VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL
+        username VARCHAR(255) UNIQUE,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
       );
     `);
     console.log("✅ Database table 'admins' iko tayari!");
@@ -43,11 +45,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ── Session (Sasa inahifadhiwa PostgreSQL) ───
+// ── Session (Inahifadhiwa PostgreSQL/Supabase) ───
 app.use(session({
   store: new pgSession({
     pool: pool,
-    tableName: 'session', // Itaundwa automatically
+    tableName: 'session',
     createTableIfMissing: true,
   }),
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
