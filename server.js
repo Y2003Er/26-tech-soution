@@ -27,7 +27,6 @@ async function initializeDatabase() {
       );
     `);
 
-    // Ongeza columns mpya kama hazipo (kwa table za zamani)
     await pool.query(`
       ALTER TABLE admins ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE;
     `);
@@ -35,9 +34,14 @@ async function initializeDatabase() {
       ALTER TABLE admins ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
     `);
 
-    console.log("✅ Database table 'admins' iko tayari!");
+    // Ongeza column ya icon kwenye apps
+    await pool.query(`
+      ALTER TABLE apps ADD COLUMN IF NOT EXISTS icon_file_id VARCHAR(500);
+    `);
+
+    console.log("✅ Database tables ziko tayari!");
   } catch (err) {
-    console.error("❌ Hitilafu kuunda table ya admins:", err.message);
+    console.error("❌ Hitilafu kuunda/kusasisha tables:", err.message);
   }
 }
 
