@@ -13,7 +13,12 @@
 
     <h1><%= app.name %> - <%= app.version || 'v1.0' %> - Mod</h1>
 
-    <div id="dlGenerating">
+    <div id="dlStart">
+      <p class="dl-filename">Ready to download <%= fileName %></p>
+      <button type="button" class="btn-download" id="dlStartBtn">Download</button>
+    </div>
+
+    <div id="dlGenerating" hidden>
       <p class="dl-filename">You are downloading <%= fileName %></p>
       <p class="dl-status-sub">Your link is almost ready, please wait a few seconds...</p>
       <div class="progress-track"><div class="progress-fill" id="dlProgressFill"></div></div>
