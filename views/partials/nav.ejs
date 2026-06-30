@@ -1,18 +1,10 @@
 <nav class="site-nav" data-nav>
-  <a href="/" class="brand" aria-label="26 Tech Solution home"><span class="brand-mark">26</span><span>Tech</span></a>
-  <form class="nav-search" action="/" method="GET" role="search" data-search-form>
-    <span class="search-icon">Search</span>
-    <input type="search" name="q" value="<%= typeof query !== 'undefined' ? query : '' %>" placeholder="Search apps, games, tools..." autocomplete="off" data-instant-search>
-    <button type="submit">Go</button>
-    <div class="suggestions" data-suggestions>
-      <div class="suggestion-title">Popular searches</div>
-      <a href="/?q=VPN">VPN</a>
-      <a href="/?q=Video editor">Video editor</a>
-      <a href="/?q=Game">Game</a>
-      <a href="/?q=Android">Android tools</a>
-    </div>
-  </form>
+  <a href="/" class="brand" aria-label="26 Tech Solution home">
+    <span class="brand-mark">26</span><span>Tech</span>
+  </a>
+
   <button class="nav-toggle" type="button" aria-label="Open menu" data-nav-toggle><span></span><span></span></button>
+
   <div class="nav-links" data-nav-links>
     <a href="/#categories">Categories</a>
     <a href="/#trending">Trending</a>
@@ -20,4 +12,12 @@
     <a href="/?sort=newest#latest">Latest</a>
     <a href="/contact">Contact</a>
   </div>
+
+  <form class="nav-search" action="/" method="GET" role="search" data-search-form>
+    <span class="search-icon">Search</span>
+    <input type="search" name="q" value="<%= typeof query !== 'undefined' ? query : '' %>" placeholder="Search apps, games, tools..." autocomplete="off" data-instant-search>
+    <button type="submit">Go</button>
+    
+    <div class="suggestions" data-suggestions style="display: none;"></div>
+  </form>
 </nav>
