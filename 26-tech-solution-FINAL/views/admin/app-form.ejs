@@ -1,0 +1,121 @@
+<%- include('../partials/head', { title: (app ? 'Edit App' : 'New App') + ' - 26 Tech Admin' }) %>
+<%- include('../partials/admin-nav') %>
+
+<div class="admin-wrap">
+
+  <div class="admin-header">
+    <h1><%= app ? 'Edit App' : 'Add New App' %></h1>
+    <a href="/admin" class="btn btn-ghost">Back</a>
+  </div>
+
+  <% if (error && error.length > 0) { %><div class="flash error"><%= error %></div><% } %>
+
+  <div class="form-card">
+    <form method="POST" action="<%= app ? '/admin/apps/' + app.id + '/edit' : '/admin/apps' %>">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">APP NAME *</label>
+          <input class="form-input" type="text" name="name"
+                 value="<%= app ? app.name : '' %>" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">CATEGORY *</label>
+          <input class="form-input" type="text" name="category"
+                 placeholder="e.g. Android, Games, Windows..."
+                 value="<%= app ? app.category : '' %>" required/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">DESCRIPTION *</label>
+        <textarea class="form-textarea" name="description" required><%= app ? app.description : '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">DOWNLOAD URL / TELEGRAM FILE ID *</label>
+        <input class="form-input" type="text" name="download_url"
+               placeholder="Weka URL ya kawaida au Telegram File ID"
+               value="<%= app ? app.download_url : '' %>" required/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">APP ICON (TELEGRAM FILE ID) — hiari</label>
+        <input class="form-input" type="text" name="icon_file_id"
+               placeholder="Tuma picha kwa Bot, copy File ID, paste hapa"
+               value="<%= app && app.icon_file_id ? app.icon_file_id : '' %>"/>
+        <% if (app && app.icon_file_id) { %>
+          <img src="/icon/<%= app.icon_file_id %>" style="width:48px;height:48px;border-radius:10px;margin-top:.5rem;object-fit:cover;" alt="icon preview"/>
+        <% } %>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">VERSION</label>
+          <input class="form-input" type="text" name="version"
+                 value="<%= app ? app.version : 'v1.0' %>"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">FILE SIZE</label>
+          <input class="form-input" type="text" name="file_size"
+                 placeholder="e.g. 45 MB"
+                 value="<%= app ? app.file_size : '' %>"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">PLATFORM</label>
+          <select class="form-select" name="os">
+            <option value="Windows"  <%= app && app.os === 'Windows'  ? 'selected' : '' %>>Windows</option>
+            <option value="Android"  <%= app && app.os === 'Android'  ? 'selected' : '' %>>Android</option>
+            <option value="macOS"    <%= app && app.os === 'macOS'    ? 'selected' : '' %>>macOS</option>
+            <option value="iOS"      <%= app && app.os === 'iOS'      ? 'selected' : '' %>>iOS</option>
+            <option value="Linux"    <%= app && app.os === 'Linux'    ? 'selected' : '' %>>Linux</option>
+            <option value="Multi"    <%= app && app.os === 'Multi'    ? 'selected' : '' %>>Multi-platform</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">TYPE</label>
+          <select class="form-select" name="is_free">
+            <option value="true"  <%= !app || app.is_free  ? 'selected' : '' %>>Free</option>
+            <option value="false" <%= app && !app.is_free  ? 'selected' : '' %>>Premium</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">FEATURED</label>
+        <select class="form-select" name="is_featured">
+          <option value="false" <%= !app || !app.is_featured ? 'selected' : '' %>>No</option>
+          <option value="true"  <%= app && app.is_featured   ? 'selected' : '' %>>Yes</option>
+        </select>
+      </div>
+
+      <% if (app) { %>
+      <div class="form-group">
+        <label class="form-label">STATUS</label>
+        <select class="form-select" name="is_active">
+          <option value="true"  <%= app.is_active  ? 'selected' : '' %>>Active (visible)</option>
+          <option value="false" <%= !app.is_active ? 'selected' : '' %>>Hidden</option>
+        </select>
+      </div>
+      <% } %>
+
+      <div style="display:flex;gap:.5rem;margin-top:1.25rem;">
+        <button class="btn btn-green" type="submit" style="padding:.6rem 1.25rem;">
+          <%= app ? 'Save Changes' : 'Add App' %>
+        </button>
+        <a href="/admin" class="btn btn-ghost" style="padding:.6rem 1rem;">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+
+<div style="text-align: center; padding: 2rem; color: #8a8a98; font-size: 0.85rem; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 3rem;">
+  © 2026 26 TECH SOLUTION — ADMIN PANEL
+</div>
+
+<%- include('../partials/foot') %>

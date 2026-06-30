@@ -1,0 +1,14 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav') %>
+
+<div class="error-page">
+  <div class="error-code"><%= code || 404 %></div>
+  <div style="font-size:1.1rem;font-weight:800;color:var(--dark);margin-bottom:.5rem;">
+    <%= code === '404' ? 'Ukurasa Haupatikani' : 'Hitilafu Imetokea' %>
+  </div>
+  <div class="error-msg"><%= message || 'Ukurasa unaotafuta haupo au umehamishwa.' %></div>
+  <a href="/" class="btn-primary" style="margin-top:1rem;display:inline-block;">Rudi Nyumbani</a>
+</div>
+
+<%- include('partials/footer') %>
+<%- include('partials/foot') %>
