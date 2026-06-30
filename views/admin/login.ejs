@@ -6,7 +6,9 @@
   .login-card { width: 100%; max-width: 420px; background: #1e1e24; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 2.5rem 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
   .login-title { font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
   .login-subtitle { font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.1em; }
-  .flash.error { background: rgba(255,74,74,0.1); border: 1px solid rgba(255,74,74,0.3); color: #ff4a4a; padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.85rem; margin-bottom: 1.2rem; }
+  .flash { padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.85rem; margin-bottom: 1.2rem; }
+  .flash.error { background: rgba(255,74,74,0.1); border: 1px solid rgba(255,74,74,0.3); color: #ff4a4a; }
+  .flash.success { background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); color: #00ff88; }
   .form-group { margin-bottom: 1.2rem; }
   .form-label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.5rem; }
   .form-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.8rem 1rem; color: #ffffff; font-size: 0.95rem; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
@@ -22,6 +24,9 @@
     <div class="login-title"><span style="color:#6366f1">26</span>Tech Admin</div>
     <div class="login-subtitle">Ingia kwenye panel yako</div>
 
+    <% if (success && success.length > 0) { %>
+      <div class="flash success">✅ <%= success %></div>
+    <% } %>
     <% if (error && error.length > 0) { %>
       <div class="flash error">⚠️ <%= error %></div>
     <% } %>
