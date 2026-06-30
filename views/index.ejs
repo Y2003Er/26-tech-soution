@@ -39,10 +39,10 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
     <div class="eyebrow">Verified marketplace</div>
     <h1>Software Hub</h1>
     <div class="tag-row">
-      <a href="/?platform=Windows">Windows</a>
-      <a href="/?platform=Android">Android</a>
-      <a href="/?platform=macOS">macOS</a>
-      <a href="/?cat=Games">Games</a>
+      <a href="/?platform=Windows#results">Windows</a>
+      <a href="/?platform=Android#results">Android</a>
+      <a href="/?platform=macOS#results">macOS</a>
+      <a href="/?cat=Games#results">Games</a>
     </div>
   </section>
 
@@ -64,79 +64,28 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
             <p><%= app.description || 'Verified software ready for download.' %></p>
             <span><%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></span>
             <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
-            <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
           </div>
         </a>
       <% }) %>
     </div>
   </section>
 
-  <!-- ════════ TRENDING ════════ -->
-  <section class="section" id="trending">
-    <div class="section-head"><div><span>Trending Downloads</span><h2>Moving fast</h2></div></div>
-    <div class="trend-list">
-      <% trending.forEach(app => { %>
-        <article class="trend-card">
-          <a href="/app/<%= app.slug %>" class="trend-main">
-            <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-            <div>
-              <h3><%= app.name %></h3>
-              <p>
-                <%= app.category %>
-                <% if (ratingText(app)) { %> - ★ <%= ratingText(app) %><% } %>
-                - <%= fmt(app.downloads) %> downloads - <%= app.version || 'v1.0' %>
-              </p>
-              <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
-            </div>
-          </a>
-          <a class="btn btn-primary" href="/app/<%= app.slug %>">Download</a>
-        </article>
-      <% }) %>
-    </div>
-  </section>
-
-  <!-- ════════ POPULAR (grid) ════════ -->
-  <section class="section" id="popular">
-    <div class="section-head"><div><span>Popular Software</span><h2>Community favorites</h2></div></div>
-    <div class="software-grid">
-      <% popular.forEach(app => { %>
-        <a class="software-card" href="/app/<%= app.slug %>">
-          <% const badges = buildBadges(app); %>
-          <% if (badges.length) { %>
-            <div class="badge-wrap">
-              <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
-            </div>
-          <% } %>
-          <div class="card-top">
-            <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-            <span><%= app.is_free ? 'Free' : 'Premium' %></span>
-          </div>
-          <h3><%= app.name %></h3>
-          <p><%= app.category %> - <%= app.os || 'Multi' %></p>
-          <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
-          <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
-          <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
-        </a>
-      <% }) %>
-    </div>
-  </section>
-
-  <!-- ════════ LATEST / UPDATED (haijabadilika) ════════ -->
+  <!-- ════════ TRENDING / POPULAR / UPDATED (split) ════════ -->
   <section class="section split-section">
-    <div id="latest">
-      <div class="section-head compact"><div><span>Latest Uploads</span><h2>Fresh files</h2></div></div>
-      <div class="mini-list"><% latest.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= dateFmt(app.created_at) %></span></a><% }) %></div>
+    <div class="compact">
+      <div class="section-head compact"><div><span>Trending</span><h2>Hot right now</h2></div></div>
+      <div class="mini-list"><% trending.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= fmt(app.downloads) %> downloads</span></a><% }) %></div>
     </div>
-    <div id="updated">
+    <div class="compact">
       <div class="section-head compact"><div><span>Recently Updated</span><h2>New versions</h2></div></div>
-      <div class="mini-list"><% updated.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= app.version || 'Latest' %> - <%= dateFmt(app.updated_at || app.created_at) %></span></a><% }) %></div>
+      <div id="latest"><% updated.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= app.version || 'Latest' %> - <%= dateFmt(app.updated_at || app.created_at) %></span></a><% }) %></div>
     </div>
   </section>
 
   <!-- ════════ CATEGORIES (haijabadilika) ════════ -->
   <section class="section" id="categories">
     <div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div></div>
-    <div class="category-grid"><% shownCategories.slice(0,6).forEach(c => { %><a class="category-card" href="/?cat=<%= encodeURIComponent(c.category) %>"><span><%= c.category.slice(0,2).toUpperCase() %></span><h3><%= c.category %></h3><p><%= c.total || 0 %> apps</p></a><% }) %></div>
+    <div class="category-grid"><% shownCategories.slice(0,6).forEach(c => { %><a class="category-card" href="/?cat=<%= encodeURIComponent(c.category) %>#results"><span><%= c.category.slice(0,2).toUpperCase() %></span><h3><%= c.category %></h3><p><%= c.total || 0 %> apps</p></a><% }) %></div>
   </section>
 
   <!-- ════════ RECOMMENDED ════════ -->
@@ -146,7 +95,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
   </section>
 
   <!-- ════════ DIRECTORY / FILTER RESULTS ════════ -->
-  <section class="section directory">
+  <section class="section directory" id="results">
     <div class="section-head"><div><span>Search Results</span><h2><%= currentCat !== 'Zote' ? currentCat : 'All Software' %></h2></div><span><%= total %> results</span></div>
     <form class="filter-panel" action="/" method="GET">
       <input type="hidden" name="q" value="<%= query || '' %>">
