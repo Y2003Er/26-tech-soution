@@ -37,6 +37,26 @@
 
 <div class="page-wrap" style="flex: 1; display: flex; flex-direction: column;">
 
+  <!-- ══════════════════════════
+       COLLECTIONS (background kutoka category_image_url)
+  ══════════════════════════ -->
+  <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+  <div class="section-head" style="margin-top: 0;">
+    <div class="section-title">Vikundi</div>
+  </div>
+  <div class="coll-grid">
+    <% categories.slice(0, 4).forEach(c => { %>
+    <a href="/?cat=<%= encodeURIComponent(c.category) %>" class="coll-card">
+      <div class="coll-card-bg" <% if (c.category_image_url) { %>style="background-image:url('<%= c.category_image_url %>')"<% } %>></div>
+      <div class="coll-ov"></div>
+      <div class="coll-body">
+        <div class="coll-title"><%= c.category %></div>
+      </div>
+    </a>
+    <% }) %>
+  </div>
+  <% } %>
+
   <div class="filter-bar">
     <a href="/" class="filter-pill <%= currentCat === 'Zote' && !query ? 'active' : '' %>">Zote</a>
     <% categories.forEach(c => { %>
@@ -62,7 +82,7 @@
       <% apps.forEach(app => {
         const stars = (3 + Math.random() * 2).toFixed(1);
       %> 
-      <a href="/details/<%= app.slug %>" class="app-card">
+      <a href="/app/<%= app.slug %>" class="app-card">
         <div class="app-card-icon">
           <% if (app.icon_file_id) { %>
             <img src="/icon/<%= app.icon_file_id %>" alt="<%= app.name %>" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"/>
