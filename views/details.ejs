@@ -1,4 +1,4 @@
-<%- include('partials/head', { title: app ? app.name + ' - 26 Tech' : 'Software Details' }) %>
+l<%- include('partials/head', { title: app ? app.name + ' - 26 Tech' : 'Software Details' }) %>
 <%- include('partials/nav') %>
 <%
 const fmt = n => Number(n || 0).toLocaleString();
@@ -87,7 +87,16 @@ const badges = app ? buildBadges(app) : [];
         <% if (ratingText(app)) { %><div><dt>Rating</dt><dd class="rating-row">★ <%= ratingText(app) %> / 5.0</dd></div><% } %>
         <div><dt>Views</dt><dd><%= fmt(app.views) %></dd></div>
       </dl>
-      <div class="share-row"><button type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">Share</button><button type="button" data-copy-link>Copy Link</button></div>
+      <div class="share-row">
+        <button type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          <span>Share</span>
+        </button>
+        <button type="button" data-copy-link>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>Copy Link</span>
+        </button>
+      </div>
     </aside>
   </section>
 
