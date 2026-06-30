@@ -38,9 +38,9 @@
 <div class="page-wrap" style="flex: 1; display: flex; flex-direction: column;">
 
   <!-- ══════════════════════════
-       COLLECTIONS (background kutoka category_image_url)
+       COLLECTIONS
   ══════════════════════════ -->
-  <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+  <% if (categories.length > 0) { %>
   <div class="section-head" style="margin-top: 0;">
     <div class="section-title">Vikundi</div>
   </div>
@@ -71,6 +71,9 @@
 
   <div class="section-head">
     <div class="section-title"><%= currentCat !== 'Zote' ? currentCat : 'Software Zote' %></div>
+    <% if (totalPages > 1) { %>
+      <span style="font-size:12px; color:var(--dim); margin-left:auto;">Ukurasa <%= currentPage %> / <%= totalPages %></span>
+    <% } %>
   </div>
 
   <% if (apps.length === 0) { %>
@@ -81,14 +84,10 @@
     <div class="app-grid">
       <% apps.forEach(app => {
         const stars = (3 + Math.random() * 2).toFixed(1);
-      %> 
+      %>
       <a href="/app/<%= app.slug %>" class="app-card">
         <div class="app-card-icon">
-          <% if (app.icon_file_id) { %>
-            <img src="/icon/<%= app.icon_file_id %>" alt="<%= app.name %>" style="width:100%;height:100%;object-fit:cover;border-radius:14px;"/>
-          <% } else { %>
-            <%- include('partials/app-icon', { category: app.category }) %>
-          <% } %>
+          <%- include('partials/app-icon', { category: app.category }) %>
         </div>
         <div class="app-card-body">
           <div class="app-card-name"><%= app.name %></div>
@@ -107,6 +106,20 @@
       </a>
       <% }) %>
     </div>
+
+    <% if (totalPages > 1) { %>
+    <div class="pager">
+      <% if (currentPage > 1) { %>
+        <a href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= currentPage - 1 %>">&larr; Iliyopita</a>
+      <% } %>
+      <% for (let p = Math.max(1, currentPage - 2); p <= Math.min(totalPages, currentPage + 2); p++) { %>
+        <a href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= p %>" class="<%= p === currentPage ? 'on' : '' %>"><%= p %></a>
+      <% } %>
+      <% if (currentPage < totalPages) { %>
+        <a href="/?cat=<%= currentCat %>&q=<%= query %>&page=<%= currentPage + 1 %>">Inayofuata &rarr;</a>
+      <% } %>
+    </div>
+    <% } %>
   <% } %>
 
 </div>
