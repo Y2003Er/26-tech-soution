@@ -47,7 +47,7 @@ const badges = app ? buildBadges(app) : [];
 
     <aside class="download-panel">
       <div class="price-pill"><%= app.is_free ? 'Free download' : 'Premium listing' %></div>
-      <a class="btn btn-primary big" href="/download/<%= app.slug %>" data-download-url="/go/<%= app.slug %>" data-download-name="<%= app.name %>">Download Now</a>
+      <a class="btn btn-primary big" href="/download/<%= app.slug %>">Download Now</a>
       <button class="btn btn-secondary" type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">Share</button>
     </aside>
   </section>
