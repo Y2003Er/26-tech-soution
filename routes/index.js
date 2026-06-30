@@ -6,7 +6,7 @@ const appController = require('../controllers/appController');
 router.get('/', appController.index);
 
 // Ukurasa wa undani wa app (Details Page)
-router.get('/details/:slug', appController.details);
+router.get('/app/:slug', appController.details);
 
 // Kurasa za kisheria na mawasiliano (Footer Pages)
 router.get('/about', appController.about);
