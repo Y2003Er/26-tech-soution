@@ -1,24 +1,119 @@
 <%- include('partials/head', { title: app ? app.name + ' - 26 Tech' : 'Software Details' }) %>
 <%- include('partials/nav') %>
-<% const fmt = n => Number(n || 0).toLocaleString(); const dateFmt = d => d ? new Date(d).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Recently'; %>
+<%
+const fmt = n => Number(n || 0).toLocaleString();
+const dateFmt = d => d ? new Date(d).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Recently';
+
+// Helper: badges za app (Editor's Choice, MOD/PREMIUM, ONLINE/OFFLINE)
+const buildBadges = (a) => {
+  const list = [];
+  if (a.is_editors_choice) list.push({ text: "Editor's Choice", cls: 'badge-choice' });
+  if (a.badges && a.badges.length) {
+    a.badges.forEach(b => {
+      const lower = b.toLowerCase();
+      let cls = 'badge-mod';
+      if (lower === 'online') cls = 'badge-online';
+      else if (lower === 'offline') cls = 'badge-offline';
+      else if (lower === 'premium') cls = 'badge-premium';
+      list.push({ text: b, cls });
+    });
+  }
+  return list;
+};
+const ratingText = (a) => (a && a.rating && a.rating > 0) ? Number(a.rating).toFixed(1) : null;
+const badges = app ? buildBadges(app) : [];
+%>
 <main class="details-page">
   <% if (app) { %>
+
   <section class="details-hero">
     <div class="details-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="<%= app.name %>"><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-    <div class="details-title-block"><div class="eyebrow"><%= app.category || 'Software' %> by verified developer</div><h1><%= app.name %></h1><p><%= app.description || 'Verified software available from 26 Tech Solution.' %></p><div class="detail-tags"><span>Rating 4.<%= (app.id || 8) % 9 %></span><span><%= fmt(app.downloads) %> downloads</span><span><%= app.version || 'v1.0' %></span><span>Virus scan passed</span></div></div>
-    <aside class="download-panel"><div class="price-pill"><%= app.is_free ? 'Free download' : 'Premium listing' %></div><a class="btn btn-primary big" href="/download/<%= app.slug %>" data-download-url="/go/<%= app.slug %>" data-download-name="<%= app.name %>">Download Now</a><button class="btn btn-secondary" type="button" data-copy-link>Copy Link</button></aside>
+
+    <div class="details-title-block">
+      <% if (badges.length) { %>
+        <div class="badge-wrap"><% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %></div>
+      <% } %>
+      <div class="eyebrow"><%= app.category || 'Software' %> by <%= app.developer || 'Verified Publisher' %></div>
+      <h1><%= app.name %></h1>
+      <p><%= app.description || 'Verified software available from 26 Tech Solution.' %></p>
+      <div class="detail-tags">
+        <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } else { %><span>No ratings yet</span><% } %>
+        <span><%= fmt(app.downloads) %> downloads</span>
+        <span><%= app.version || 'v1.0' %></span>
+        <span>Virus scan passed</span>
+      </div>
+      <% if (app.mod_info) { %><div class="mod-line details-mod-line"><%= app.mod_info %></div><% } %>
+    </div>
+
+    <aside class="download-panel">
+      <div class="price-pill"><%= app.is_free ? 'Free download' : 'Premium listing' %></div>
+      <a class="btn btn-primary big" href="/download/<%= app.slug %>" data-download-url="/go/<%= app.slug %>" data-download-name="<%= app.name %>">Download Now</a>
+      <button class="btn btn-secondary" type="button" data-copy-link>Copy Link</button>
+    </aside>
   </section>
+
   <section class="details-grid">
     <div class="details-main">
-      <div class="screenshot-gallery"><div>Screenshot Gallery</div><div>Preview</div><div>Interface</div></div>
+
+      <!-- ════════ SCREENSHOTS - sasa za kweli, fallback ya placeholder ════════ -->
+      <% if (app.screenshots && app.screenshots.length) { %>
+        <div class="screenshot-gallery has-images">
+          <% app.screenshots.forEach(shot => { %>
+            <a href="<%= shot %>" target="_blank" rel="noopener" class="screenshot-thumb">
+              <img src="<%= shot %>" alt="<%= app.name %> screenshot" loading="lazy">
+            </a>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <div class="screenshot-gallery"><div>Screenshot Gallery</div><div>Preview</div><div>Interface</div></div>
+      <% } %>
+
       <article class="glass-panel"><h2>Description</h2><p><%= app.description || 'No additional description has been added yet.' %></p></article>
       <article class="glass-panel"><h2>Features</h2><ul class="feature-list"><li>Verified download source</li><li>Fast secure server handoff</li><li>Clean version and file metadata</li><li>Compatible with <%= app.os || 'modern platforms' %></li></ul></article>
       <article class="glass-panel"><h2>Changelog</h2><p>Latest version <strong><%= app.version || 'v1.0' %></strong> was updated <%= dateFmt(app.updated_at || app.created_at) %>.</p></article>
       <article class="glass-panel comments"><h2>Comments</h2><p>Community comments can connect here when moderation is added. The layout is ready without changing the current backend.</p></article>
     </div>
-    <aside class="spec-panel glass-panel"><h2>File Information</h2><dl><div><dt>Developer</dt><dd>Verified Publisher</dd></div><div><dt>Version</dt><dd><%= app.version || 'v1.0' %></dd></div><div><dt>File Size</dt><dd><%= app.file_size || 'N/A' %></dd></div><div><dt>Compatibility</dt><dd><%= app.os || 'Multi-platform' %></dd></div><div><dt>Last Update</dt><dd><%= dateFmt(app.updated_at || app.created_at) %></dd></div><div><dt>Virus Scan</dt><dd class="safe">Passed</dd></div><div><dt>Views</dt><dd><%= fmt(app.views) %></dd></div></dl><div class="share-row"><button type="button" data-copy-link>Share</button><button type="button" data-copy-link>Copy Link</button></div></aside>
+
+    <aside class="spec-panel glass-panel">
+      <h2>File Information</h2>
+      <dl>
+        <div><dt>Developer</dt><dd><%= app.developer || 'Verified Publisher' %></dd></div>
+        <% if (app.package_name) { %><div><dt>Package Name</dt><dd><%= app.package_name %></dd></div><% } %>
+        <div><dt>Version</dt><dd><%= app.version || 'v1.0' %></dd></div>
+        <div><dt>File Size</dt><dd><%= app.file_size || 'N/A' %></dd></div>
+        <div><dt>Compatibility</dt><dd><%= app.os || 'Multi-platform' %></dd></div>
+        <div><dt>Last Update</dt><dd><%= dateFmt(app.updated_at || app.created_at) %></dd></div>
+        <% if (ratingText(app)) { %><div><dt>Rating</dt><dd class="rating-row">★ <%= ratingText(app) %> / 5.0</dd></div><% } %>
+        <div><dt>Virus Scan</dt><dd class="safe">Passed</dd></div>
+        <div><dt>Views</dt><dd><%= fmt(app.views) %></dd></div>
+      </dl>
+      <div class="share-row"><button type="button" data-copy-link>Share</button><button type="button" data-copy-link>Copy Link</button></div>
+    </aside>
   </section>
-  <section class="section"><div class="section-head"><div><span>Related Software</span><h2>You may also like</h2></div></div><div class="software-grid"><% related.forEach(item => { %><a class="software-card" href="/app/<%= item.slug %>"><div class="card-top"><div class="app-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: item.category }) %><% } %></div><span><%= item.version || 'v1.0' %></span></div><h3><%= item.name %></h3><p><%= item.category %></p><div class="metric-row"><span><%= fmt(item.downloads) %> downloads</span><span><%= item.file_size || 'N/A' %></span></div></a><% }) %></div></section>
+
+  <section class="section">
+    <div class="section-head"><div><span>Related Software</span><h2>You may also like</h2></div></div>
+    <div class="software-grid">
+      <% related.forEach(item => { %>
+        <a class="software-card" href="/app/<%= item.slug %>">
+          <% const itemBadges = buildBadges(item); %>
+          <% if (itemBadges.length) { %>
+            <div class="badge-wrap"><% itemBadges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %></div>
+          <% } %>
+          <div class="card-top">
+            <div class="app-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: item.category }) %><% } %></div>
+            <span><%= item.version || 'v1.0' %></span>
+          </div>
+          <h3><%= item.name %></h3>
+          <p><%= item.category %></p>
+          <% if (ratingText(item)) { %><span class="rating-row">★ <%= ratingText(item) %></span><% } %>
+          <% if (item.mod_info) { %><div class="mod-line"><%= item.mod_info %></div><% } %>
+          <div class="metric-row"><span><%= fmt(item.downloads) %> downloads</span><span><%= item.file_size || 'N/A' %></span></div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+
   <% } else { %><div class="empty-state">Software not found.</div><% } %>
 </main>
 <%- include('partials/footer') %>
