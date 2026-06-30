@@ -39,6 +39,16 @@
                value="<%= app ? app.download_url : '' %>" required/>
       </div>
 
+      <div class="form-group">
+        <label class="form-label">APP ICON (TELEGRAM FILE ID) — hiari</label>
+        <input class="form-input" type="text" name="icon_file_id"
+               placeholder="Tuma picha kwa Bot, copy File ID, paste hapa"
+               value="<%= app && app.icon_file_id ? app.icon_file_id : '' %>"/>
+        <% if (app && app.icon_file_id) { %>
+          <img src="/icon/<%= app.icon_file_id %>" style="width:48px;height:48px;border-radius:10px;margin-top:.5rem;object-fit:cover;" alt="icon preview"/>
+        <% } %>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">VERSION</label>
