@@ -1,7 +1,8 @@
 const TelegramBotInstance = require('node-telegram-bot-api');
 const path = require('path');
+const fs = require('fs'); // ← ONGEZA HII
 
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
@@ -147,9 +148,33 @@ async function streamTelegramIcon(fileId, res) {
   }
 }
 
+// ============================================
+// KAZI MPYA YA KUPakia PICHA
+// ============================================
+async function uploadImage(filePath, fileName) {
+  ensureBot();
+  try {
+    const result = await bot.sendPhoto(process.env.TELEGRAM_CHANNEL_ID, filePath);
+    const fileId = result.photo[result.photo.length - 1].file_id;
+    fs.unlinkSync(filePath); // Safisha faili la muda
+    return {
+      success: true,
+      fileId: fileId,
+      url: `https://api.telegram.org/file/bot${token}/` + (await bot.getFile(fileId)).file_path
+    };
+  } catch (error) {
+    console.error('Upload image error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// ============================================
+// EXPORT
+// ============================================
 module.exports = {
   getTelegramDownloadLink,
   getTelegramFilePath,
   streamTelegramFile,
-  streamTelegramIcon
+  streamTelegramIcon,
+  uploadImage // ← HII NDIO UNAONGEZA
 };

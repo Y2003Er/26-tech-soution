@@ -19,6 +19,7 @@ function isValidEmail(email) {
 
 const AdminController = {
 
+  // ── LOGIN ────────────────────────────────────
   loginPage(req, res) {
     if (req.session.admin) return res.redirect('/admin');
     res.render('admin/login', {
@@ -66,60 +67,12 @@ const AdminController = {
     }
   },
 
-  signupPage(req, res) {
-    if (req.session.admin) return res.redirect('/admin');
-    res.render('admin/signup', {
-      title: 'Sajili Admin - 26 Tech',
-      error: req.flash('error'),
-    });
-  },
-
-  async signupPost(req, res) {
-    try {
-      const { email, username, password, confirmPassword } = req.body;
-
-      if (!email || !password || !confirmPassword) {
-        req.flash('error', 'Jaza sehemu zote zinazohitajika.');
-        return res.redirect('/admin/signup');
-      }
-
-      if (!isValidEmail(email)) {
-        req.flash('error', 'Email si sahihi.');
-        return res.redirect('/admin/signup');
-      }
-
-      if (password.length < 6) {
-        req.flash('error', 'Nywila lazima iwe na herufi 6 au zaidi.');
-        return res.redirect('/admin/signup');
-      }
-
-      if (password !== confirmPassword) {
-        req.flash('error', 'Nywila hazifanani.');
-        return res.redirect('/admin/signup');
-      }
-
-      const exists = await AdminModel.emailExists(email);
-      if (exists) {
-        req.flash('error', 'Email hii tayari imesajiliwa.');
-        return res.redirect('/admin/signup');
-      }
-
-      await AdminModel.create({ email, password, username });
-
-      req.flash('success', 'Akaunti imeundwa! Sasa ingia kwa email na nywila yako.');
-      res.redirect('/admin/login');
-
-    } catch (err) {
-      console.error('signup error:', err);
-      req.flash('error', 'Hitilafu ya seva. Jaribu tena.');
-      res.redirect('/admin/signup');
-    }
-  },
-
+  // ── LOGOUT ───────────────────────────────────
   logout(req, res) {
     req.session.destroy(() => res.redirect('/admin/login'));
   },
 
+  // ── DASHBOARD ────────────────────────────────
   async dashboard(req, res) {
     try {
       const [apps, stats] = await Promise.all([
@@ -140,6 +93,7 @@ const AdminController = {
     }
   },
 
+  // ── NEW APP ──────────────────────────────────
   newAppPage(req, res) {
     res.render('admin/app-form', {
       title: 'Ongeza App - 26 Tech',
@@ -152,7 +106,7 @@ const AdminController = {
   async createApp(req, res) {
     try {
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured, icon_file_id } = req.body;
+              file_size, os, is_free, download_url, is_featured } = req.body;
 
       if (!name || !category || !description || !download_url) {
         req.flash('error', 'Jaza sehemu zote zinazohitajika.');
@@ -160,6 +114,11 @@ const AdminController = {
       }
 
       const slug = makeSlug(name);
+
+      // ============================================
+      // ICON FILE ID - Inachukuliwa kutoka upload
+      // ============================================
+      const icon_file_id = req.fileId || null;
 
       await AppModel.create({
         name, slug, category,
@@ -170,7 +129,7 @@ const AdminController = {
         download_url: download_url.trim(),
         is_featured: is_featured === 'true',
         is_active: true,
-        icon_file_id: icon_file_id ? icon_file_id.trim() : null
+        icon_file_id: icon_file_id
       });
 
       req.flash('success', `"${name}" imeongezwa.`);
@@ -182,6 +141,7 @@ const AdminController = {
     }
   },
 
+  // ── EDIT APP ─────────────────────────────────
   async editAppPage(req, res) {
     try {
       const appId = parseInt(req.params.id);
@@ -205,8 +165,13 @@ const AdminController = {
     try {
       const appId = parseInt(req.params.id);
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured, is_active, icon_file_id } = req.body;
+              file_size, os, is_free, download_url, is_featured, is_active } = req.body;
       const slug = makeSlug(name);
+
+      // ============================================
+      // ICON FILE ID - Inachukuliwa kutoka upload
+      // ============================================
+      const icon_file_id = req.fileId || null;
 
       await AppModel.update(appId, {
         name, slug, category,
@@ -218,7 +183,7 @@ const AdminController = {
         download_url: download_url.trim(),
         is_featured: is_featured === 'true',
         is_active: is_active === 'true',
-        icon_file_id: icon_file_id ? icon_file_id.trim() : null
+        icon_file_id: icon_file_id
       });
 
       req.flash('success', `"${name}" imehaririwa.`);
@@ -230,6 +195,7 @@ const AdminController = {
     }
   },
 
+  // ── DELETE APP ──────────────────────────────
   async deleteApp(req, res) {
     try {
       const appId = parseInt(req.params.id);
