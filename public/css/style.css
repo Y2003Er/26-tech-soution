@@ -70,10 +70,17 @@
 .software-card .badge-wrap {
   order: -1;
 }
-.progress-track{width:100%;height:10px;margin:18px 0 8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
-.progress-fill{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#7c3aed,#0ea5e9);transition:width 1s linear}
-.dl-status-text{font-weight:800;margin:14px 0 4px}
-.dl-status-sub{color:#94a3b8;font-size:.85rem;margin:0}
-.dl-ready-text{color:#86efac}
+.download-standalone{max-width:480px;margin:0 auto;text-align:center;padding:32px 24px}
+.dl-icon{width:96px;height:96px;margin:0 auto 14px;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+.dl-icon img{width:100%;height:100%;object-fit:cover}
+.download-standalone h1{font-size:1.2rem;margin:0 0 22px;font-weight:700}
+.dl-filename{color:#cbd5e1;font-size:.9rem;margin:0 0 6px;word-break:break-all}
+.dl-status-sub{color:#94a3b8;font-size:.85rem;margin:0 0 14px}
+.progress-track{width:100%;height:10px;margin:0 0 22px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.progress-fill{display:block;height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#22c55e,#16a34a);transition:width 1s linear}
+.btn-download{display:inline-block;width:100%;padding:15px 18px;margin:6px 0 18px;border-radius:14px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;font-weight:800;font-size:1rem;box-shadow:0 14px 34px rgba(34,197,94,.28)}
+.dl-note{padding:13px 15px;margin-top:10px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#94a3b8;font-size:.82rem;text-align:left}
+.dl-note-ad{color:#cbd5e1}
+.dl-status-text{font-weight:800;margin:14px 0}
 .dl-error-text{color:#fecaca}
-.dl-auto-note{margin-top:10px;color:#94a3b8;font-size:.82rem}
+.telegram-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;padding:13px 18px;border-radius:999px;background:#229ed9;color:white;font-weight:700;font-size:.88rem}
