@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Scroll laini kwenda kwenye anchor (#results, #latest n.k) hata baada ya full page reload ──
+  if (location.hash) {
+    var scrollTarget = document.querySelector(location.hash);
+    if (scrollTarget) {
+      setTimeout(function () {
+        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 60);
+    }
+  }
+
   var searchToggle = document.querySelector('[data-search-toggle]');
   var searchOverlay = document.querySelector('[data-search-overlay]');
   var searchClose = document.querySelector('[data-search-close]');
@@ -86,4 +97,44 @@ document.addEventListener('DOMContentLoaded', function () {
       if (e.key === 'Escape') input.blur();
     });
   });
+
+  var newsletterForm = document.getElementById('newsletterForm');
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var emailInput = document.getElementById('newsletterEmail');
+      var btn = document.getElementById('newsletterBtn');
+      var msg = document.getElementById('newsletterMsg');
+      var email = emailInput.value.trim();
+
+      if (!email) return;
+
+      btn.disabled = true;
+      var originalText = btn.textContent;
+      btn.textContent = 'Inatuma...';
+      msg.hidden = true;
+
+      try {
+        var res = await fetch('/newsletter/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email }),
+        });
+        var data = await res.json();
+
+        msg.textContent = data.message || (data.success ? 'Umejisajili!' : 'Hitilafu imetokea.');
+        msg.classList.toggle('is-error', !data.success);
+        msg.hidden = false;
+
+        if (data.success) emailInput.value = '';
+      } catch (err) {
+        msg.textContent = 'Imeshindikana kuunganisha na seva, jaribu tena.';
+        msg.classList.add('is-error');
+        msg.hidden = false;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+  }
 });
