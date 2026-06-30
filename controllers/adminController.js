@@ -20,7 +20,6 @@ function isValidEmail(email) {
 
 const AdminController = {
 
-  // GET /admin/login
   loginPage(req, res) {
     if (req.session.admin) return res.redirect('/admin');
     res.render('admin/login', {
@@ -30,7 +29,6 @@ const AdminController = {
     });
   },
 
-  // POST /admin/login
   async loginPost(req, res) {
     try {
       const { email, password } = req.body;
@@ -69,7 +67,6 @@ const AdminController = {
     }
   },
 
-  // GET /admin/signup
   signupPage(req, res) {
     if (req.session.admin) return res.redirect('/admin');
     res.render('admin/signup', {
@@ -78,7 +75,6 @@ const AdminController = {
     });
   },
 
-  // POST /admin/signup
   async signupPost(req, res) {
     try {
       const { email, username, password, confirmPassword } = req.body;
@@ -111,7 +107,6 @@ const AdminController = {
 
       await AdminModel.create({ email, password, username });
 
-      // ✅ Hapana auto-login — mpeleke kwenye login page
       req.flash('success', 'Akaunti imeundwa! Sasa ingia kwa email na nywila yako.');
       res.redirect('/admin/login');
 
@@ -122,12 +117,10 @@ const AdminController = {
     }
   },
 
-  // POST /admin/logout
   logout(req, res) {
     req.session.destroy(() => res.redirect('/admin/login'));
   },
 
-  // GET /admin - Dashboard
   async dashboard(req, res) {
     try {
       const [apps, stats] = await Promise.all([
@@ -160,7 +153,7 @@ const AdminController = {
   async createApp(req, res) {
     try {
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured } = req.body;
+              file_size, os, is_free, download_url, is_featured, icon_file_id } = req.body;
 
       if (!name || !category || !description || !download_url) {
         req.flash('error', 'Jaza sehemu zote zinazohitajika.');
@@ -177,7 +170,8 @@ const AdminController = {
         is_free: is_free === 'true',
         download_url: download_url.trim(),
         is_featured: is_featured === 'true',
-        is_active: true
+        is_active: true,
+        icon_file_id: icon_file_id ? icon_file_id.trim() : null
       });
 
       req.flash('success', `"${name}" imeongezwa.`);
@@ -212,7 +206,7 @@ const AdminController = {
     try {
       const appId = parseInt(req.params.id);
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured, is_active } = req.body;
+              file_size, os, is_free, download_url, is_featured, is_active, icon_file_id } = req.body;
       const slug = makeSlug(name);
 
       await AppModel.update(appId, {
@@ -225,6 +219,7 @@ const AdminController = {
         download_url: download_url.trim(),
         is_featured: is_featured === 'true',
         is_active: is_active === 'true',
+        icon_file_id: icon_file_id ? icon_file_id.trim() : null
       });
 
       req.flash('success', `"${name}" imehariwiwa.`);
