@@ -83,7 +83,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
               <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
             </div>
           </a>
-          <button class="btn btn-primary" data-download-url="/go/<%= app.slug %>" data-download-name="<%= app.name %>">Download</button>
+          <a class="btn btn-primary" href="/app/<%= app.slug %>">Download</a>
         </article>
       <% }) %>
     </div>
