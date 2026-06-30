@@ -36,24 +36,8 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
 %>
 <main>
   <section class="hero-shell">
-    <div class="hero-content">
-      <div class="eyebrow">Verified marketplace</div>
-      <h1>Download Premium Software Faster.</h1>
-      <p>Thousands of verified apps, games, software and tools, arranged for fast discovery and secure downloads.</p>
-      <form class="hero-search" action="/" method="GET" data-search-form>
-        <input type="search" name="q" value="<%= query || '' %>" placeholder="Search software, apps, games, utilities..." data-instant-search>
-        <button type="submit">Search</button>
-      </form>
-      <div class="tag-row"><a href="/?q=editing">Editing</a><a href="/?cat=Android">Android</a><a href="/?cat=Windows">Windows</a><a href="/?cat=Games">Games</a><a href="/?sort=downloads">Top Downloads</a></div>
-    </div>
-    <div class="hero-showcase">
-      <% featured.slice(0,3).forEach((app, i) => { %>
-        <a class="showcase-card <%= i === 0 ? 'is-main' : '' %>" href="/app/<%= app.slug %>">
-          <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-          <div><strong><%= app.name %></strong><span><%= app.category %> - <%= fmt(app.downloads) %> downloads</span></div>
-        </a>
-      <% }) %>
-    </div>
+    <div class="eyebrow">Verified marketplace</div>
+    <h1>Software Hub</h1>
   </section>
 
   <!-- ════════ FEATURED (carousel) na badges ════════ -->
