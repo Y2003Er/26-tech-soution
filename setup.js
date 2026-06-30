@@ -1,19 +1,24 @@
-// Endesha: node setup.js
+// Endesha: ADMIN_EMAIL=wewe@mfano.com ADMIN_PASSWORD=password_yako node setup.js
 // Inaunda admin user wa kwanza kwenye database
 require('dotenv').config();
 const crypto = require('crypto');
 const AdminModel = require('./models/adminModel');
 
 async function setup() {
+  const email = process.env.ADMIN_EMAIL;
   const username = process.env.ADMIN_USERNAME || 'admin';
-  // Kama hujaweka ADMIN_PASSWORD kwenye .env, tunatengeneza password ya random
-  // na kuiprint mara moja - usiitumie default ya kubahatisha.
+
+  if (!email) {
+    console.error('Weka ADMIN_EMAIL kwenye .env au kwenye amri kabla ya kuendesha setup.js');
+    process.exit(1);
+  }
+
   const password = process.env.ADMIN_PASSWORD || crypto.randomBytes(9).toString('base64');
   const isGenerated = !process.env.ADMIN_PASSWORD;
 
   try {
-    const admin = await AdminModel.create(username, password);
-    console.log(`Admin imeundwa: ${admin.username}`);
+    const admin = await AdminModel.create({ email, password, username });
+    console.log(`Admin imeundwa: ${admin.email}`);
     if (isGenerated) {
       console.log(`Password ya kiotomatiki: ${password}`);
       console.log('Iandike mahali salama - haitaonyeshwa tena.');

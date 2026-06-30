@@ -1,8 +1,9 @@
 const AppModel = require('../models/appModel');
-const TelegramService = require('../telegramService'); 
+const TelegramService = require('../telegramService');
 
 const DownloadController = {
 
+  // Inaonyesha ukurasa wa maandalizi ya kupakua (Download Page)
   async downloadPage(req, res) {
     try {
       const app = await AppModel.getBySlug(req.params.slug);
@@ -20,46 +21,39 @@ const DownloadController = {
     }
   },
 
+  // Inapakua faili lenyewe (Inaitwa mwishoni mtumiaji akibonyeza download)
   async goDownload(req, res) {
-    console.log(`⚡ [SERVER]: Request imepokelewa kwa slug: ${req.params.slug}`);
-
     try {
       const app = await AppModel.getBySlug(req.params.slug);
       if (!app) {
-        console.log("❌ [SERVER]: App haikupatikana kwenye DB");
         return res.redirect('/');
       }
 
       await AppModel.incrementDownloads(app.id);
-
       const urlOrId = app.download_url ? app.download_url.trim() : '';
 
       if (urlOrId.startsWith('http')) {
-        console.log("🔗 [SERVER]: Redirect ya kawaida...");
         return res.redirect(urlOrId);
       }
 
-      else if (urlOrId !== '') {
-        console.log(`☁️ [SERVER]: Inastream faili kutoka Telegram kwa ID: ${urlOrId}`);
+      if (urlOrId !== '') {
         try {
           await TelegramService.streamTelegramFile(urlOrId, res, app.name);
         } catch (teleErr) {
-          console.error("❌ [SERVER]: Telegram Error:", teleErr.message);
-          return res.status(500).render('error', { 
-            title: 'Hitilafu ya Server', 
-            code: '500', 
-            message: 'Faili halipatikani kwenye seva ya Telegram.' 
+          console.error('Telegram Error:', teleErr.message);
+          return res.status(500).render('error', {
+            title: 'Hitilafu ya Server',
+            code: '500',
+            message: 'Faili halipatikani kwenye seva ya Telegram.'
           });
         }
+        return;
       }
 
-      else {
-        console.log("⚠️ [SERVER]: App haina download link.");
-        return res.redirect('/');
-      }
+      return res.redirect('/');
 
     } catch (err) {
-      console.error('❌ [SERVER]: goDownload Error:', err);
+      console.error('goDownload Error:', err);
       return res.redirect('/');
     }
   },

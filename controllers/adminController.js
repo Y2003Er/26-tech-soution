@@ -1,10 +1,9 @@
 // ═══════════════════════════════════════════
-// 26-TECH ADMIN CONTROLLER (TELEGRAM COMPATIBLE)
+// 26-TECH ADMIN CONTROLLER
 // ═══════════════════════════════════════════
 
 const AppModel = require('../models/appModel');
 const AdminModel = require('../models/adminModel');
-const TelegramService = require('../telegramService');
 
 function makeSlug(name) {
   return name.toLowerCase()
@@ -137,7 +136,7 @@ const AdminController = {
       });
     } catch (err) {
       console.error('dashboard error:', err);
-      res.status(500).render('error', { message: 'Hitilafu ya seva.' });
+      res.status(500).render('error', { title: 'Hitilafu', code: '500', message: 'Hitilafu ya seva.' });
     }
   },
 
@@ -198,7 +197,7 @@ const AdminController = {
         error: req.flash('error'),
       });
     } catch (err) {
-      res.status(500).render('error', { message: 'Hitilafu ya seva.' });
+      res.status(500).render('error', { title: 'Hitilafu', code: '500', message: 'Hitilafu ya seva.' });
     }
   },
 
@@ -222,7 +221,7 @@ const AdminController = {
         icon_file_id: icon_file_id ? icon_file_id.trim() : null
       });
 
-      req.flash('success', `"${name}" imehariwiwa.`);
+      req.flash('success', `"${name}" imehaririwa.`);
       res.redirect('/admin');
     } catch (err) {
       console.error('updateApp error:', err);

@@ -5,71 +5,86 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
+let bot = null;
+
 if (!token) {
-  console.error("❌ Hitilafu Kuu: TELEGRAM_BOT_TOKEN haijapatikana kabisa kwenye .env!");
-  process.exit(1); 
-}
-
-let TelegramBot;
-if (typeof TelegramBotInstance === 'function') {
-  TelegramBot = TelegramBotInstance;
-} else if (TelegramBotInstance.default && typeof TelegramBotInstance.default === 'function') {
-  TelegramBot = TelegramBotInstance.default;
+  console.error('TELEGRAM_BOT_TOKEN haijapatikana — sifa za icon/file za Telegram zitazimwa, lakini website itaendelea kufanya kazi.');
 } else {
-  TelegramBot = require('node-telegram-bot-api/src/telegram');
+  let TelegramBot;
+  if (typeof TelegramBotInstance === 'function') {
+    TelegramBot = TelegramBotInstance;
+  } else if (TelegramBotInstance.default && typeof TelegramBotInstance.default === 'function') {
+    TelegramBot = TelegramBotInstance.default;
+  } else {
+    TelegramBot = require('node-telegram-bot-api/src/telegram');
+  }
+
+  try {
+    bot = new TelegramBot(token, { polling: true });
+    console.log('Bot ya 26-Tech imewaka vizuri na inasikiliza faili zako Telegram...');
+
+    bot.on('polling_error', (err) => {
+      console.error('Telegram polling error:', err.message);
+    });
+
+    bot.on('message', async (msg) => {
+      const chatId = msg.chat.id;
+
+      if (msg.document) {
+        const fileId = msg.document.file_id;
+        return bot.sendMessage(chatId, `Faili limepokelewa.\n\nTELEGRAM FILE ID:\n\`${fileId}\`\n\nCopy hiyo kodi kisha ipache kwenye Admin Panel ya website yako.`, { parse_mode: 'Markdown' });
+      }
+
+      if (msg.audio) {
+        const fileId = msg.audio.file_id;
+        return bot.sendMessage(chatId, `Mziki umepokelewa.\n\nTELEGRAM FILE ID:\n\`${fileId}\`\n\nCopy hiyo kodi hapo juu.`, { parse_mode: 'Markdown' });
+      }
+
+      if (msg.photo) {
+        const photoArray = msg.photo;
+        const fileId = photoArray[photoArray.length - 1].file_id;
+        return bot.sendMessage(chatId, `Picha imepokelewa (ICON).\n\nTELEGRAM FILE ID:\n\`${fileId}\`\n\nCopy hii kodi kisha ipache kwenye sehemu ya "APP ICON" kwenye Admin Panel.`, { parse_mode: 'Markdown' });
+      }
+
+      if (msg.text && msg.text !== '/start') {
+        return bot.sendMessage(chatId, "Mkuu, mimi sisomi meseji za kawaida. Nitumie faili la App (.apk, .zip, n.k) au picha (icon) ili nikupe File ID yake mara moja!");
+      }
+    });
+  } catch (err) {
+    console.error('Imeshindwa kuanzisha Telegram bot:', err.message);
+    bot = null;
+  }
 }
 
-const bot = new TelegramBot(token, { polling: true });
-
-console.log("🤖 Bot ya 26-Tech imewaka vizuri na inasikiliza faili zako Telegram...");
-
-bot.on('message', async (msg) => {
-  const chatId = msg.chat.id;
-
-  if (msg.document) {
-    const fileId = msg.document.file_id;
-    return bot.sendMessage(chatId, `🚀 *Faili Limepokelewa!*\n\n📋 *TELEGRAM FILE ID YAKO:*\n\`${fileId}\`\n\n_Copy hiyo kodi hapo juu kisha ipache (paste) kwenye Admin Panel ya website yako._`, { parse_mode: 'Markdown' });
-  }
-
-  if (msg.audio) {
-    const fileId = msg.audio.file_id;
-    return bot.sendMessage(chatId, `🎵 *Mziki Umepokelewa!*\n\n📋 *TELEGRAM FILE ID YAKO:*\n\`${fileId}\`\n\n_Copy hiyo kodi hapo juu._`, { parse_mode: 'Markdown' });
-  }
-
-  if (msg.photo) {
-    // Chukua picha yenye ubora wa juu zaidi (ya mwisho kwenye array)
-    const photoArray = msg.photo;
-    const fileId = photoArray[photoArray.length - 1].file_id;
-    return bot.sendMessage(chatId, `🖼️ *Picha Imepokelewa!*\n\n📋 *TELEGRAM FILE ID YAKO (ICON):*\n\`${fileId}\`\n\n_Copy hii kodi kisha ipache kwenye sehemu ya "APP ICON" kwenye Admin Panel._`, { parse_mode: 'Markdown' });
-  }
-
-  if (msg.text && msg.text !== '/start') {
-    return bot.sendMessage(chatId, "Mkuu, mimi sisomi meseji za kawaida. Nitumie faili la App (.apk, .zip, nk) au picha (icon) ili nikupe File ID yake mara moja!");
-  }
-});
+function ensureBot() {
+  if (!bot) throw new Error('Telegram bot haijawekwa sawa (TELEGRAM_BOT_TOKEN haipo au si sahihi).');
+}
 
 async function getTelegramDownloadLink(fileId) {
+  ensureBot();
   try {
     const fileInfo = await bot.getFile(fileId);
     return `https://api.telegram.org/file/bot${token}/${fileInfo.file_path}`;
   } catch (error) {
-    console.error("❌ Imefeli kuvuta link kutoka Telegram:", error.message);
+    console.error('Imefeli kuvuta link kutoka Telegram:', error.message);
     throw error;
   }
 }
 
 async function getTelegramFilePath(fileId) {
+  ensureBot();
   try {
     const fileInfo = await bot.getFile(fileId);
     return fileInfo.file_path;
   } catch (error) {
-    console.error("❌ Imefeli kuvuta file path kutoka Telegram:", error.message);
+    console.error('Imefeli kuvuta file path kutoka Telegram:', error.message);
     throw error;
   }
 }
 
 async function streamTelegramFile(fileId, res, fileName) {
   try {
+    ensureBot();
     const fileInfo = await bot.getFile(fileId);
     const filePath = fileInfo.file_path;
 
@@ -96,18 +111,16 @@ async function streamTelegramFile(fileId, res, fileName) {
     Readable.fromWeb(fileRes.body).pipe(res);
 
   } catch (error) {
-    console.error("❌ Stream imefeli:", error.message);
+    console.error('Stream imefeli:', error.message);
     if (!res.headersSent) {
       res.status(500).json({ error: 'Imeshindwa kupakua faili' });
     }
   }
 }
 
-/**
- * Stream ICON/picha — inaonekana moja kwa moja browser (siyo download)
- */
 async function streamTelegramIcon(fileId, res) {
   try {
+    ensureBot();
     const fileInfo = await bot.getFile(fileId);
     const filePath = fileInfo.file_path;
 
@@ -127,7 +140,7 @@ async function streamTelegramIcon(fileId, res) {
     Readable.fromWeb(fileRes.body).pipe(res);
 
   } catch (error) {
-    console.error("❌ Icon stream imefeli:", error.message);
+    console.error('Icon stream imefeli:', error.message);
     if (!res.headersSent) {
       res.status(404).end();
     }

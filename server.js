@@ -1,7 +1,4 @@
-// 1. Ulinzi wa SSL
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
-// 2. Load environment variables
+// 1. Load environment variables
 require('dotenv').config();
 
 const express = require('express');
@@ -39,9 +36,17 @@ async function initializeDatabase() {
       ALTER TABLE apps ADD COLUMN IF NOT EXISTS icon_file_id VARCHAR(500);
     `);
 
-    console.log("✅ Database tables ziko tayari!");
+    // Jedwali la categories (kwa collections / background images)
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        category            VARCHAR(80) PRIMARY KEY,
+        category_image_url  TEXT
+      );
+    `);
+
+    console.log("Database tables ziko tayari!");
   } catch (err) {
-    console.error("❌ Hitilafu kuunda/kusasisha tables:", err.message);
+    console.error("Hitilafu kuunda/kusasisha tables:", err.message);
   }
 }
 
@@ -100,7 +105,7 @@ app.use((req, res) => {
 
 // ── Error handler ────────────────────────────
 app.use((err, req, res, next) => {
-  console.error('💥 Unhandled error:', err);
+  console.error('Unhandled error:', err);
   res.status(500).render('error', {
     title: 'Hitilafu — 26 Tech Solution',
     code: '500',
@@ -113,6 +118,6 @@ const PORT = process.env.PORT || 3000;
 
 initializeDatabase().then(() => {
   app.listen(PORT, () => {
-    console.log(`🚀 26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
+    console.log(`26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
   });
 });

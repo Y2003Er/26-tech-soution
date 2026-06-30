@@ -8,8 +8,9 @@ dns.setDefaultResultOrder('ipv4first');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    // Inazuia Node.js kukataa cheti cha Supabase (Inamaliza kosa la self-signed certificate)
-    rejectUnauthorized: false 
+    // Supabase pooler ina cheti kinachojulikana - rejectUnauthorized: true
+    // ni salama hapa. Usizime uthibitisho wa TLS kabisa.
+    rejectUnauthorized: true
   },
   max: 10,
   idleTimeoutMillis: 30000,
@@ -17,17 +18,16 @@ const pool = new Pool({
 });
 
 pool.on('error', (err) => {
-  console.error('⚠️  PostgreSQL pool error:', err.message);
+  console.error('PostgreSQL pool error:', err.message);
 });
 
-// Test connection wakati wa kuanza seva
 pool.connect()
   .then(client => {
-    console.log('✅ PostgreSQL imeungana kikamilifu na Supabase Pooler!');
+    console.log('PostgreSQL imeungana kikamilifu na Supabase Pooler!');
     client.release();
   })
   .catch(err => {
-    console.error('❌ PostgreSQL haiwezi kuungana:', err.message);
+    console.error('PostgreSQL haiwezi kuungana:', err.message);
   });
 
 module.exports = pool;
