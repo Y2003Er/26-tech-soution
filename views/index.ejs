@@ -6,7 +6,6 @@
     <div class="hero-text">
       <div class="hero-tag"><span class="hero-tag-dot"></span> SOFTWARE HUB</div>
       <h1 class="hero-h1" style="text-transform: uppercase;">SOFTWARE HUB</h1>
-
       <div style="margin-top: 1.2rem; display: flex; flex-wrap: wrap; gap: 0.8rem; font-family: var(--f-mono); font-size: 0.85rem;">
         <a href="/?cat=Windows" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);">Windows</a>
         <span style="color: var(--dim);">·</span>
@@ -17,7 +16,6 @@
         <a href="/?cat=Games" style="color: var(--accent); text-decoration: none; font-weight: 700; border-bottom: 1px dashed var(--accent);">Games</a>
       </div>
     </div>
-
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="hero-stat-num"><%= total %>+</div>
@@ -37,9 +35,6 @@
 
 <div class="page-wrap" style="flex: 1; display: flex; flex-direction: column;">
 
-  <!-- ══════════════════════════
-       COLLECTIONS
-  ══════════════════════════ -->
   <% if (categories.length > 0) { %>
   <div class="section-head" style="margin-top: 0;">
     <div class="section-title">Vikundi</div>
@@ -57,7 +52,6 @@
   </div>
   <% } %>
 
-  <!-- Filter Bar -->
   <div class="filter-bar">
     <a href="/" class="filter-pill <%= currentCat === 'Zote' && !query ? 'active' : '' %>">Zote</a>
     <% categories.forEach(c => { %>
@@ -99,7 +93,6 @@
     </div>
   <% } %>
 
-  <!-- Pagination -->
   <% if (totalPages > 1) { %>
   <div class="pager">
     <% if (currentPage > 1) { %>
@@ -115,7 +108,7 @@
   </div>
   <% } %>
 
-</div><!-- /.page-wrap -->
+</div>
 
 <%- include('partials/footer') %>
 <%- include('partials/foot') %>
