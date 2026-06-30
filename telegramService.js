@@ -36,8 +36,15 @@ bot.on('message', async (msg) => {
     return bot.sendMessage(chatId, `🎵 *Mziki Umepokelewa!*\n\n📋 *TELEGRAM FILE ID YAKO:*\n\`${fileId}\`\n\n_Copy hiyo kodi hapo juu._`, { parse_mode: 'Markdown' });
   }
 
+  if (msg.photo) {
+    // Chukua picha yenye ubora wa juu zaidi (ya mwisho kwenye array)
+    const photoArray = msg.photo;
+    const fileId = photoArray[photoArray.length - 1].file_id;
+    return bot.sendMessage(chatId, `🖼️ *Picha Imepokelewa!*\n\n📋 *TELEGRAM FILE ID YAKO (ICON):*\n\`${fileId}\`\n\n_Copy hii kodi kisha ipache kwenye sehemu ya "APP ICON" kwenye Admin Panel._`, { parse_mode: 'Markdown' });
+  }
+
   if (msg.text && msg.text !== '/start') {
-    return bot.sendMessage(chatId, "Mkuu, mimi sisomi meseji za kawaida. Nitumie faili la App (.apk, .zip, nk) ili nikupe File ID yake mara moja!");
+    return bot.sendMessage(chatId, "Mkuu, mimi sisomi meseji za kawaida. Nitumie faili la App (.apk, .zip, nk) au picha (icon) ili nikupe File ID yake mara moja!");
   }
 });
 
@@ -96,8 +103,40 @@ async function streamTelegramFile(fileId, res, fileName) {
   }
 }
 
+/**
+ * Stream ICON/picha — inaonekana moja kwa moja browser (siyo download)
+ */
+async function streamTelegramIcon(fileId, res) {
+  try {
+    const fileInfo = await bot.getFile(fileId);
+    const filePath = fileInfo.file_path;
+
+    const fileRes = await fetch(
+      `https://api.telegram.org/file/bot${token}/${filePath}`
+    );
+
+    if (!fileRes.ok) {
+      throw new Error(`Telegram ilikataa ombi: ${fileRes.status}`);
+    }
+
+    const contentType = fileRes.headers.get('content-type') || 'image/jpeg';
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+
+    const { Readable } = require('stream');
+    Readable.fromWeb(fileRes.body).pipe(res);
+
+  } catch (error) {
+    console.error("❌ Icon stream imefeli:", error.message);
+    if (!res.headersSent) {
+      res.status(404).end();
+    }
+  }
+}
+
 module.exports = {
   getTelegramDownloadLink,
   getTelegramFilePath,
-  streamTelegramFile
+  streamTelegramFile,
+  streamTelegramIcon
 };
