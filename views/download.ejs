@@ -87,35 +87,34 @@
 
   .dl-app-meta strong { color: rgba(255,255,255,0.65); }
 
-  /* Timer */
+  /* Loading State (Rotation animation badala ya countdown) */
   .timer-wrapper {
     position: relative;
     width: 110px; height: 110px;
     margin: 0 auto 2rem;
   }
 
-  .timer-wrapper svg { transform: rotate(-90deg); }
+  .timer-wrapper svg { animation: rotateLoading 2s linear infinite; }
+
+  @keyframes rotateLoading {
+    100% { transform: rotate(270deg); }
+  }
 
   .timer-label {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-  }
-
-  .timer-label span {
-    display: block;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #fff;
-    line-height: 1;
+    width: 100%;
   }
 
   .timer-label small {
-    font-size: 0.6rem;
-    color: rgba(255,255,255,0.4);
+    display: block;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.6);
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    font-weight: bold;
   }
 
   /* Info strip */
@@ -175,6 +174,8 @@
     box-shadow: 0 8px 25px rgba(99,102,241,0.45);
     transition: transform 0.2s, box-shadow 0.2s;
     box-sizing: border-box;
+    cursor: pointer;
+    border: none;
   }
 
   .dl-btn:hover {
@@ -204,18 +205,27 @@
       </svg>
     </div>
 
-    <div class="dl-badge">Pakua Sasa</div>
+    <div class="dl-badge" id="statusBadge">Maandalizi</div>
     <div class="dl-app-name"><%= app.name %></div>
-    <div class="dl-app-meta">
-      Subiri kidogo. Link ya download itaonekana hivi karibuni.<br/>
-      Faili salama na halisi kutoka kwa wasambazaji wetu.
+    
+    <div class="dl-app-meta" id="dlMetaText">
+      Bofya kitufe hapo chini ili kuanza kutengeneza kiungo cha kupakua.
     </div>
 
-    <div class="timer-wrapper" id="timerSection">
+    <div id="actionStep1">
+      <button onclick="triggerSilentDownload()" class="dl-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+        </svg>
+        Anza Maandalizi ya APK
+      </button>
+    </div>
+
+    <div class="timer-wrapper" id="timerSection" style="display: none;">
       <svg viewBox="0 0 100 100" width="110" height="110">
         <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
         <circle id="timerCircle" cx="50" cy="50" r="45" fill="none"
-          stroke="url(#grad)" stroke-width="6" stroke-linecap="round"/>
+          stroke="url(#grad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="70"/>
         <defs>
           <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" style="stop-color:#6366f1"/>
@@ -224,14 +234,13 @@
         </defs>
       </svg>
       <div class="timer-label">
-        <span id="timerNum">15</span>
-        <small>sekunde</small>
+        <small>Inaprosesi...</small>
       </div>
     </div>
 
     <div class="dl-info-strip">
       <div class="dl-info-item">
-        <div class="val"><%= app.file_size %></div>
+        <div class="val" id="infoSize"><%= app.file_size || 'Kutafuta...' %></div>
         <div class="lbl">Ukubwa</div>
       </div>
       <div class="dl-divider"></div>
@@ -248,13 +257,13 @@
 
     <div id="downloadAction" style="display:none;">
       <div class="dl-link-box">
-        <div class="dl-link-label">🔗 Link yako ya Download</div>
+        <div class="dl-link-label">🔗 Link yako iko tayari</div>
         <div class="dl-link-url" id="dlLinkUrl"></div>
-        <a id="dlLinkBtn" href="/go/<%= app.slug %>" class="dl-btn">
+        <a id="dlLinkBtn" href="#" class="dl-btn">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
           </svg>
-          Anza Kupakua
+          Download APK Sasa
         </a>
       </div>
       <div class="dl-secure">
@@ -269,36 +278,58 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  let timeLeft = 15;
-  const timerNum = document.getElementById("timerNum");
-  const timerCircle = document.getElementById("timerCircle");
+function triggerSilentDownload() {
+  const actionStep1 = document.getElementById("actionStep1");
   const timerSection = document.getElementById("timerSection");
   const downloadAction = document.getElementById("downloadAction");
   const dlLinkUrl = document.getElementById("dlLinkUrl");
+  const dlLinkBtn = document.getElementById("dlLinkBtn");
+  const statusBadge = document.getElementById("statusBadge");
+  const dlMetaText = document.getElementById("dlMetaText");
+  const infoSize = document.getElementById("infoSize");
 
-  const radius = 45;
-  const strokeDash = 2 * Math.PI * radius;
-  timerCircle.style.strokeDasharray = strokeDash;
-  timerCircle.style.strokeDashoffset = 0;
+  // 1. Ficha kitufe cha kwanza, weka loading spinner ya kimya kimya
+  actionStep1.style.display = "none";
+  timerSection.style.display = "block";
+  statusBadge.textContent = "Inatengeneza...";
+  dlMetaText.innerHTML = "Tafadhali subiri kidogo, mfumo unatengeneza kiungo salama cha kupakua...";
 
-  const interval = setInterval(() => {
-    timeLeft--;
-    timerNum.textContent = timeLeft;
-    timerCircle.style.strokeDashoffset = strokeDash - (timeLeft / 15) * strokeDash;
+  const slug = "<%= app.slug %>";
 
-    if (timeLeft <= 0) {
-      clearInterval(interval);
-      timerSection.style.display = "none";
+  // 2. Tuma ombi la chini kwa chini (Fetch) kwenda kutafuta link na size ya faili
+  fetch(`/download/${slug}/generate`)
+    .then(response => {
+      if (!response.ok) throw new Error('Hitilafu ya mtandao');
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        // Nenda kwenye hatua ya 3: Ficha spinner, onyesha kitufe cha mwisho
+        timerSection.style.display = "none";
+        statusBadge.textContent = "Tayari";
+        statusBadge.style.background = "rgba(16, 185, 129, 0.15)";
+        statusBadge.style.color = "#10b981";
+        statusBadge.style.borderColor = "rgba(16, 185, 129, 0.3)";
+        dlMetaText.innerHTML = "Kiungo kimetengenezwa kwa ufanisi! Unaweza kupakua faili lako sasa.";
 
-      // Onesha link halisi
-      const fullLink = window.location.origin + "/go/<%= app.slug %>";
-      dlLinkUrl.textContent = fullLink;
+        // Weka taarifa sahihi zilizotoka kwenye seva
+        infoSize.textContent = data.size;
+        dlLinkUrl.textContent = window.location.origin + data.downloadUrl;
+        dlLinkBtn.href = data.downloadUrl;
 
-      downloadAction.style.display = "block";
-    }
-  }, 1000);
-});
+        // Fungua kibox cha mwisho cha download
+        downloadAction.style.display = "block";
+      } else {
+        alert("Hitilafu: " + (data.message || "Imeshindwa kupata faili."));
+        window.location.reload();
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching download link:", err);
+      alert("Mchakato umeshindwa. Tafadhali jaribu tena.");
+      window.location.reload();
+    });
+}
 </script>
 
 <%- include('partials/foot') %>
