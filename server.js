@@ -112,6 +112,15 @@ async function initializeDatabase() {
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_download_tokens_token ON download_tokens(token);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_download_tokens_expires ON download_tokens(expires_at);`);
 
+    // ── MPYA: subscribers — newsletter signups ──
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS subscribers (
+        id          SERIAL PRIMARY KEY,
+        email       VARCHAR(255) NOT NULL UNIQUE,
+        created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+      );
+    `);
+
     console.log("Database tables ziko tayari!");
   } catch (err) {
     console.error("Hitilafu kuunda/kusasisha tables:", err.message);
