@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS apps (
   name          VARCHAR(200)  NOT NULL,
   slug          VARCHAR(200)  NOT NULL UNIQUE,
   category      VARCHAR(80)   NOT NULL,
+  icon          VARCHAR(10),
   description   TEXT          NOT NULL,
   version       VARCHAR(50)   NOT NULL,
   file_size     VARCHAR(30)   NOT NULL,
@@ -20,6 +21,12 @@ CREATE TABLE IF NOT EXISTS apps (
   is_active     BOOLEAN       NOT NULL DEFAULT true,
   created_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
   updated_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+);
+
+-- Jedwali la categories (kwa collections / background images)
+CREATE TABLE IF NOT EXISTS categories (
+  category            VARCHAR(80) PRIMARY KEY,
+  category_image_url  TEXT
 );
 
 -- Jedwali la admin users
