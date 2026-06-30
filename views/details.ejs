@@ -40,13 +40,11 @@ const badges = app ? buildBadges(app) : [];
         <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } else { %><span>No ratings yet</span><% } %>
         <span><%= fmt(app.downloads) %> downloads</span>
         <span><%= app.version || 'v1.0' %></span>
-        <span>Virus scan passed</span>
       </div>
       <% if (app.mod_info) { %><div class="mod-line details-mod-line"><%= app.mod_info %></div><% } %>
     </div>
 
     <aside class="download-panel">
-      <div class="price-pill"><%= app.is_free ? 'Free download' : 'Premium listing' %></div>
       <a class="btn btn-primary big" href="/download/<%= app.slug %>">Download Now</a>
       <button class="btn btn-secondary" type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">Share</button>
     </aside>
@@ -84,7 +82,6 @@ const badges = app ? buildBadges(app) : [];
         <div><dt>Compatibility</dt><dd><%= app.os || 'Multi-platform' %></dd></div>
         <div><dt>Last Update</dt><dd><%= dateFmt(app.updated_at || app.created_at) %></dd></div>
         <% if (ratingText(app)) { %><div><dt>Rating</dt><dd class="rating-row">★ <%= ratingText(app) %> / 5.0</dd></div><% } %>
-        <div><dt>Virus Scan</dt><dd class="safe">Passed</dd></div>
         <div><dt>Views</dt><dd><%= fmt(app.views) %></dd></div>
       </dl>
       <div class="share-row"><button type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">Share</button><button type="button" data-copy-link>Copy Link</button></div>
