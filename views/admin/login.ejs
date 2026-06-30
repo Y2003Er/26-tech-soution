@@ -1,26 +1,46 @@
 <%- include('../partials/head', { title: 'Admin Login - 26 Tech' }) %>
 
-<div class="login-wrap">
+<style>
+  body { background: #0a0a0f !important; min-height: 100vh; }
+  .login-page { min-height: 90vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+  .login-card { width: 100%; max-width: 420px; background: #1e1e24; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 2.5rem 2rem; box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
+  .login-title { font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+  .login-subtitle { font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .flash.error { background: rgba(255,74,74,0.1); border: 1px solid rgba(255,74,74,0.3); color: #ff4a4a; padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.85rem; margin-bottom: 1.2rem; }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.5rem; }
+  .form-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.8rem 1rem; color: #ffffff; font-size: 0.95rem; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+  .form-input:focus { border-color: rgba(99,102,241,0.6); background: rgba(99,102,241,0.05); }
+  .btn-login { width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 8px 25px rgba(99,102,241,0.35); transition: transform 0.2s, box-shadow 0.2s; margin-top: 0.5rem; }
+  .btn-login:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(99,102,241,0.5); }
+  .login-footer { text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+  .login-footer a { color: #a5b4fc; font-weight: 700; }
+</style>
+
+<div class="login-page">
   <div class="login-card">
-    <div class="login-title"><span style="color:var(--accent)">26</span>Tech Admin</div>
+    <div class="login-title"><span style="color:#6366f1">26</span>Tech Admin</div>
+    <div class="login-subtitle">Ingia kwenye panel yako</div>
 
     <% if (error && error.length > 0) { %>
-      <div class="flash error"><%= error %></div>
+      <div class="flash error">⚠️ <%= error %></div>
     <% } %>
 
     <form method="POST" action="/admin/login">
       <div class="form-group">
-        <label class="form-label">USERNAME</label>
-        <input class="form-input" type="text" name="username" autocomplete="username" required/>
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" name="email" autocomplete="email" required placeholder="wewe@mfano.com"/>
       </div>
       <div class="form-group">
-        <label class="form-label">PASSWORD</label>
-        <input class="form-input" type="password" name="password" autocomplete="current-password" required/>
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" name="password" autocomplete="current-password" required placeholder="••••••••"/>
       </div>
-      <button class="btn btn-green" type="submit" style="width:100%;justify-content:center;padding:.65rem;">
-        Login
-      </button>
+      <button class="btn-login" type="submit">🔐 Ingia</button>
     </form>
+
+    <div class="login-footer">
+      Huna akaunti? <a href="/admin/signup">Sajili hapa</a>
+    </div>
   </div>
 </div>
 
