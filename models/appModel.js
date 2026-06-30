@@ -7,7 +7,9 @@ const AppModel = {
     let query = `
       SELECT id, name, slug, category, icon_file_id, description,
              version, file_size, os, is_free, is_featured,
-             views, downloads, created_at, updated_at
+             views, downloads, created_at, updated_at,
+             developer, package_name, rating, mod_info,
+             badges, screenshots, is_editors_choice
       FROM apps
       WHERE is_active = true
     `;
@@ -147,7 +149,9 @@ const AppModel = {
       const baseSelect = `
         SELECT id, name, slug, category, icon_file_id, description,
                version, file_size, os, is_free, is_featured,
-               views, downloads, created_at, updated_at
+               views, downloads, created_at, updated_at,
+               developer, package_name, rating, mod_info,
+               badges, screenshots, is_editors_choice
         FROM apps
         WHERE is_active = true
       `;
@@ -178,7 +182,8 @@ const AppModel = {
   async getRelated(appId, category, limit = 4) {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, icon_file_id, version, file_size, is_free, downloads
+        `SELECT id, name, slug, category, icon_file_id, version, file_size,
+                is_free, downloads, rating, mod_info, badges
          FROM apps
          WHERE is_active = true AND id != $1 AND category = $2
          ORDER BY downloads DESC LIMIT $3`,
@@ -198,7 +203,8 @@ const AppModel = {
       const { rows } = await pool.query(
         `SELECT id, name, slug, category, icon_file_id, version,
                 file_size, os, is_free, is_featured, is_active,
-                views, downloads, created_at
+                views, downloads, created_at, rating, mod_info,
+                badges, is_editors_choice
          FROM apps ORDER BY created_at DESC`
       );
       return rows;
@@ -210,18 +216,23 @@ const AppModel = {
 
   async create({ name, slug, category, description, version,
                  file_size, os, is_free, download_url, is_featured,
-                 is_active, icon_file_id }) {
+                 is_active, icon_file_id, developer, package_name,
+                 rating, mod_info, badges, screenshots, is_editors_choice }) {
     try {
       const { rows } = await pool.query(
         `INSERT INTO apps
            (name, slug, category, description, version,
             file_size, os, is_free, download_url, is_featured,
-            is_active, icon_file_id)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+            is_active, icon_file_id, developer, package_name,
+            rating, mod_info, badges, screenshots, is_editors_choice)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
          RETURNING *`,
         [name, slug, category, description, version,
          file_size, os, is_free, download_url, is_featured,
-         is_active !== undefined ? is_active : true, icon_file_id || null]
+         is_active !== undefined ? is_active : true, icon_file_id || null,
+         developer || 'Verified Publisher', package_name || null,
+         rating || 0, mod_info || null, badges || [], screenshots || [],
+         is_editors_choice || false]
       );
       return rows[0];
     } catch (err) {
@@ -232,17 +243,23 @@ const AppModel = {
 
   async update(id, { name, slug, category, description, version,
                      file_size, os, is_free, download_url, is_featured,
-                     is_active, icon_file_id }) {
+                     is_active, icon_file_id, developer, package_name,
+                     rating, mod_info, badges, screenshots, is_editors_choice }) {
     try {
       const { rows } = await pool.query(
         `UPDATE apps SET
            name=$1, slug=$2, category=$3, description=$4,
            version=$5, file_size=$6, os=$7, is_free=$8,
-           download_url=$9, is_featured=$10, is_active=$11, icon_file_id=$12
-         WHERE id=$13 RETURNING *`,
+           download_url=$9, is_featured=$10, is_active=$11, icon_file_id=$12,
+           developer=$13, package_name=$14, rating=$15, mod_info=$16,
+           badges=$17, screenshots=$18, is_editors_choice=$19
+         WHERE id=$20 RETURNING *`,
         [name, slug, category, description, version,
          file_size, os, is_free, download_url, is_featured,
-         is_active, icon_file_id || null, id]
+         is_active, icon_file_id || null,
+         developer || 'Verified Publisher', package_name || null,
+         rating || 0, mod_info || null, badges || [], screenshots || [],
+         is_editors_choice || false, id]
       );
       return rows[0];
     } catch (err) {
