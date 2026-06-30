@@ -84,3 +84,6 @@
 .dl-status-text{font-weight:800;margin:14px 0}
 .dl-error-text{color:#fecaca}
 .telegram-btn{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;padding:13px 18px;border-radius:999px;background:#229ed9;color:white;font-weight:700;font-size:.88rem}
+.nav-links a{display:inline-flex;align-items:center;gap:7px}
+.nav-links svg{flex-shrink:0;opacity:.8}
+.nav-links a:hover svg{opacity:1}
