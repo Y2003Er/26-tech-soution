@@ -1,5 +1,5 @@
 const AppModel = require('../models/appModel');
-const TelegramService = require('../telegramService');
+const TelegramService = require('../services/telegramService');
 
 const DownloadController = {
 
