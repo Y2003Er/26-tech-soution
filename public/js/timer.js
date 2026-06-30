@@ -1,16 +1,18 @@
-// 26 Tech Solution — Real Download Link Generator (auto-start)
+// 26 Tech Solution — Real Download Link Generator
 (function () {
   const panel = document.getElementById('dlPanel');
   if (!panel) return; // si ukurasa wa download
 
   const slug = panel.dataset.slug;
 
+  const startWrap       = document.getElementById('dlStart');
+  const startBtn         = document.getElementById('dlStartBtn');
   const generatingWrap = document.getElementById('dlGenerating');
   const progressFill   = document.getElementById('dlProgressFill');
-  const readyWrap       = document.getElementById('dlReady');
-  const finalBtn         = document.getElementById('dlFinalBtn');
-  const errorWrap         = document.getElementById('dlError');
-  const retryBtn           = document.getElementById('dlRetryBtn');
+  const readyWrap        = document.getElementById('dlReady');
+  const finalBtn          = document.getElementById('dlFinalBtn');
+  const errorWrap          = document.getElementById('dlError');
+  const retryBtn            = document.getElementById('dlRetryBtn');
 
   function show(el) { if (el) el.hidden = false; }
   function hide(el) { if (el) el.hidden = true; }
@@ -29,7 +31,7 @@
   }
 
   async function generateLink() {
-    hide(errorWrap); hide(readyWrap); show(generatingWrap);
+    hide(startWrap); hide(errorWrap); hide(readyWrap); show(generatingWrap);
 
     try {
       const res = await fetch('/download/' + encodeURIComponent(slug) + '/prepare', {
@@ -48,13 +50,7 @@
         hide(generatingWrap);
         show(readyWrap);
         finalBtn.href = data.downloadUrl;
-
-        setTimeout(function () {
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          iframe.src = data.downloadUrl;
-          document.body.appendChild(iframe);
-        }, 2000);
+        // AUTO-DOWNLOAD IMEZIMWA — mtumiaji lazima abonyeze "Download" mwenyewe
       });
 
     } catch (err) {
@@ -64,8 +60,6 @@
     }
   }
 
+  if (startBtn) startBtn.addEventListener('click', generateLink);
   if (retryBtn) retryBtn.addEventListener('click', generateLink);
-
-  // Inaanza moja kwa moja mara ukurasa unapofunguka — kama kwenye picha
-  generateLink();
 })();
