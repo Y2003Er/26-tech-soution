@@ -12,13 +12,16 @@ const appController = {
     try {
       const currentCategory = req.query.cat || 'Zote';
       const searchQuery = req.query.q || '';
+      const platform = req.query.platform || 'All';
+      const sort = req.query.sort || 'trending';
       const currentPage = Math.max(1, parseInt(req.query.page, 10) || 1);
       const offset = (currentPage - 1) * PAGE_SIZE;
 
-      const [apps, categories, totalApps] = await Promise.all([
-        AppModel.getAll({ category: currentCategory, search: searchQuery, limit: PAGE_SIZE, offset }),
+      const [apps, categories, totalApps, sections] = await Promise.all([
+        AppModel.getAll({ category: currentCategory, search: searchQuery, platform, sort, limit: PAGE_SIZE, offset }),
         AppModel.getCategories(),
-        AppModel.count({ category: currentCategory, search: searchQuery })
+        AppModel.count({ category: currentCategory, search: searchQuery, platform }),
+        AppModel.getHomeSections()
       ]);
 
       const totalPages = Math.max(1, Math.ceil(totalApps / PAGE_SIZE));
@@ -30,6 +33,9 @@ const appController = {
         total: totalApps,
         currentCat: currentCategory,
         query: searchQuery,
+        platform,
+        sort,
+        sections,
         currentPage,
         totalPages
       });

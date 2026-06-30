@@ -106,7 +106,7 @@ const AdminController = {
   async createApp(req, res) {
     try {
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured } = req.body;
+              file_size, os, is_free, download_url, is_featured, icon_file_id: manualIconFileId } = req.body;
 
       if (!name || !category || !description || !download_url) {
         req.flash('error', 'Jaza sehemu zote zinazohitajika.');
@@ -118,7 +118,7 @@ const AdminController = {
       // ============================================
       // ICON FILE ID - Inachukuliwa kutoka upload
       // ============================================
-      const icon_file_id = req.fileId || null;
+      const icon_file_id = req.fileId || (manualIconFileId && manualIconFileId.trim()) || null;
 
       await AppModel.create({
         name, slug, category,
@@ -165,13 +165,13 @@ const AdminController = {
     try {
       const appId = parseInt(req.params.id);
       const { name, category, description, version,
-              file_size, os, is_free, download_url, is_featured, is_active } = req.body;
+              file_size, os, is_free, download_url, is_featured, is_active, icon_file_id: manualIconFileId } = req.body;
       const slug = makeSlug(name);
 
       // ============================================
       // ICON FILE ID - Inachukuliwa kutoka upload
       // ============================================
-      const icon_file_id = req.fileId || null;
+      const icon_file_id = req.fileId || (manualIconFileId && manualIconFileId.trim()) || null;
 
       await AppModel.update(appId, {
         name, slug, category,

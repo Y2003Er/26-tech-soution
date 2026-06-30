@@ -1,45 +1,4 @@
-<style>
-  .admin-navbar {
-    background: #141419;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 0.75rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-  }
-  .admin-brand {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #00ff88;
-    text-decoration: none;
-  }
-  .admin-menu-links {
-    display: flex;
-    gap: 1.5rem;
-  }
-  .admin-menu-links a {
-    color: #8a8a98;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  .admin-menu-links a:hover {
-    color: #ffffff;
-  }
-  .admin-menu-links a.active {
-    color: #00ff88;
-    font-weight: 600;
-  }
-</style>
-
-<nav class="admin-navbar">
-  <a href="/admin" class="admin-brand">26 Tech <span style="color:#ffffff; font-size:0.85rem; font-weight:normal;">| Admin</span></a>
-  
-  <div class="admin-menu-links">
-    <a href="/admin" class="active">Dashboard</a>
-    <a href="/admin/apps/new">+ Add New App</a>
-    <a href="/" target="_blank" style="color: #00bfff;">Angalia Tovuti (Live) ↗</a>
-  </div>
-</nav>
+<aside class="admin-sidebar">
+  <a href="/admin" class="brand"><span class="brand-mark">26</span><span>Admin</span></a>
+  <nav><a href="/admin" class="active">Dashboard Overview</a><a href="/admin#software">Software</a><a href="/admin#categories">Categories</a><a href="/admin/apps/new">Uploads</a><a href="/admin#analytics">Downloads Analytics</a><a href="/admin#activity">Recent Activity</a><a href="/" target="_blank">View Website</a></nav>
+</aside>

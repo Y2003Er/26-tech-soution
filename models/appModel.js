@@ -3,11 +3,11 @@ const pool = require('../config/db');
 const AppModel = {
 
   // Leta apps zote (na filter + search + pagination)
-  async getAll({ category, search, limit = 20, offset = 0 } = {}) {
+  async getAll({ category, search, platform, sort = 'trending', limit = 20, offset = 0 } = {}) {
     let query = `
       SELECT id, name, slug, category, icon_file_id, description,
              version, file_size, os, is_free, is_featured,
-             views, downloads, created_at
+             views, downloads, created_at, updated_at
       FROM apps
       WHERE is_active = true
     `;
@@ -21,8 +21,19 @@ const AppModel = {
       params.push(`%${search}%`);
       query += ` AND (name ILIKE $${params.length} OR description ILIKE $${params.length} OR category ILIKE $${params.length})`;
     }
+    if (platform && platform !== 'All') {
+      params.push(platform);
+      query += ` AND os = $${params.length}`;
+    }
 
-    query += ` ORDER BY is_featured DESC, downloads DESC, created_at DESC`;
+    const orderMap = {
+      trending: 'downloads DESC, views DESC, created_at DESC',
+      popular: 'views DESC, downloads DESC, created_at DESC',
+      newest: 'created_at DESC',
+      oldest: 'created_at ASC',
+      downloads: 'downloads DESC, created_at DESC'
+    };
+    query += ` ORDER BY is_featured DESC, ${orderMap[sort] || orderMap.trending}`;
     params.push(limit);   query += ` LIMIT $${params.length}`;
     params.push(offset);  query += ` OFFSET $${params.length}`;
 
@@ -36,7 +47,7 @@ const AppModel = {
   },
 
   // Hesabu jumla ya apps (kwa pagination)
-  async count({ category, search } = {}) {
+  async count({ category, search, platform } = {}) {
     let query = `SELECT COUNT(*) FROM apps WHERE is_active = true`;
     const params = [];
     if (category && category !== 'Zote') {
@@ -44,7 +55,11 @@ const AppModel = {
     }
     if (search) {
       params.push(`%${search}%`);
-      query += ` AND (name ILIKE $${params.length} OR description ILIKE $${params.length})`;
+      query += ` AND (name ILIKE $${params.length} OR description ILIKE $${params.length} OR category ILIKE $${params.length})`;
+    }
+    if (platform && platform !== 'All') {
+      params.push(platform);
+      query += ` AND os = $${params.length}`;
     }
     try {
       const { rows } = await pool.query(query, params);
@@ -123,6 +138,38 @@ const AppModel = {
       return rows;
     } catch (err) {
       console.error('Hitilafu kwenye AppModel.getCategories:', err.message);
+      throw err;
+    }
+  },
+
+  async getHomeSections() {
+    try {
+      const baseSelect = `
+        SELECT id, name, slug, category, icon_file_id, description,
+               version, file_size, os, is_free, is_featured,
+               views, downloads, created_at, updated_at
+        FROM apps
+        WHERE is_active = true
+      `;
+      const [featured, trending, popular, latest, updated, recommended] = await Promise.all([
+        pool.query(`${baseSelect} AND is_featured = true ORDER BY downloads DESC, created_at DESC LIMIT 8`),
+        pool.query(`${baseSelect} ORDER BY downloads DESC, views DESC, created_at DESC LIMIT 8`),
+        pool.query(`${baseSelect} ORDER BY views DESC, downloads DESC, created_at DESC LIMIT 12`),
+        pool.query(`${baseSelect} ORDER BY created_at DESC LIMIT 8`),
+        pool.query(`${baseSelect} ORDER BY updated_at DESC, created_at DESC LIMIT 8`),
+        pool.query(`${baseSelect} ORDER BY (downloads + views) DESC, is_featured DESC, created_at DESC LIMIT 6`)
+      ]);
+
+      return {
+        featured: featured.rows,
+        trending: trending.rows,
+        popular: popular.rows,
+        latest: latest.rows,
+        updated: updated.rows,
+        recommended: recommended.rows
+      };
+    } catch (err) {
+      console.error('Hitilafu kwenye AppModel.getHomeSections:', err.message);
       throw err;
     }
   },
