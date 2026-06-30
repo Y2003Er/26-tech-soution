@@ -1,15 +1,35 @@
 <%- include('partials/head', { title: 'Preparing Download - ' + app.name }) %>
 <%- include('partials/nav') %>
 <main class="download-page">
-  <section class="modal-panel download-standalone">
+  <section class="modal-panel download-standalone" id="dlPanel" data-slug="<%= app.slug %>">
     <div class="modal-kicker">Secure Download</div>
     <h1>Preparing Download...</h1>
     <p class="download-name"><%= app.name %> - <%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></p>
     <div class="modal-checks"><span>Secure Server Connected</span><span>Virus Scan Passed</span><span>Fast Download Ready</span></div>
-    <div class="countdown" id="standaloneCountdown">3</div>
-    <a class="btn btn-primary manual-link" href="/go/<%= app.slug %>" id="manualDownload">Download Manually</a>
+
+    <div id="dlStart">
+      <button type="button" class="btn btn-primary big" id="dlStartBtn">Generate Download Link</button>
+    </div>
+
+    <div id="dlGenerating" hidden>
+      <p class="dl-status-text">Link inazalishwa, tafadhali subiri...</p>
+      <div class="progress-track"><div class="progress-fill" id="dlProgressFill"></div></div>
+      <p class="dl-status-sub" id="dlCountdownText">5</p>
+    </div>
+
+    <div id="dlReady" hidden>
+      <p class="dl-status-text dl-ready-text">Link imekamilika!</p>
+      <a class="btn btn-primary big manual-link" id="dlFinalBtn" href="#">Download Manually</a>
+      <p class="dl-auto-note">Auto-download itaanza yenyewe baada ya sekunde chache...</p>
+    </div>
+
+    <div id="dlError" hidden>
+      <p class="dl-status-text dl-error-text">Hitilafu imetokea. Jaribu tena.</p>
+      <button type="button" class="btn btn-secondary" id="dlRetryBtn">Jaribu Tena</button>
+    </div>
+
     <div class="download-related"><h2>Recommended after download</h2><p>Explore related apps from the marketplace once your file starts.</p><a href="/">Browse software</a></div>
   </section>
 </main>
-<script>(function(){var count=3;var el=document.getElementById('standaloneCountdown');var target='/go/<%= app.slug %>';var timer=setInterval(function(){count-=1;el.textContent=count>0?count:'Ready';if(count<=0){clearInterval(timer);window.location.href=target;}},1000);})();</script>
+<script src="/js/timer.js" defer></script>
 <%- include('partials/foot') %>
