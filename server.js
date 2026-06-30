@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const express = require('express');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 const flash   = require('connect-flash');
 const path    = require('path');
 const pool    = require('./config/db');
@@ -42,8 +43,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ── Session ──────────────────────────────────
+// ── Session (Sasa inahifadhiwa PostgreSQL) ───
 app.use(session({
+  store: new pgSession({
+    pool: pool,
+    tableName: 'session', // Itaundwa automatically
+    createTableIfMissing: true,
+  }),
   secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
   resave: false,
   saveUninitialized: false,
@@ -51,7 +57,7 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 8 * 60 * 60 * 1000,
-    sameSite: 'lax', // ✅ Imeongezwa
+    sameSite: 'lax',
   },
 }));
 
