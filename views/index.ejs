@@ -133,9 +133,9 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
     <div class="category-grid"><% shownCategories.slice(0,6).forEach(c => { %><a class="category-card" href="/?cat=<%= encodeURIComponent(c.category) %>"><span><%= c.category.slice(0,2).toUpperCase() %></span><h3><%= c.category %></h3><p><%= c.total || 0 %> apps</p></a><% }) %></div>
   </section>
 
-  <!-- ════════ RECOMMENDED (haijabadilika) ════════ -->
+  <!-- ════════ RECOMMENDED ════════ -->
   <section class="section recommendation">
-    <div><span>Recommended Software</span><h2>Smart picks based on momentum</h2><p>Downloads, views, and featured status are blended to surface strong options without changing your backend.</p></div>
+    <div><span>Recommended Software</span><h2>Smart picks based on momentum</h2><p>Apps people are downloading and viewing the most right now — updated as activity changes.</p></div>
     <div class="recommend-grid"><% recommended.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= app.category %> - <%= fmt((app.downloads || 0) + (app.views || 0)) %> signals</span></a><% }) %></div>
   </section>
 
@@ -173,7 +173,14 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
     <% if (apps.length === 0) { %><div class="empty-state">No software matched your filters.</div><% } %>
   </section>
 
-  <section class="newsletter"><h2>Stay updated with latest software.</h2><form><input type="email" placeholder="you@example.com"><button class="btn btn-primary" type="button">Notify me</button></form></section>
+  <section class="newsletter">
+    <h2>Stay updated with latest software.</h2>
+    <form id="newsletterForm">
+      <input type="email" id="newsletterEmail" name="email" placeholder="you@example.com" required>
+      <button class="btn btn-primary" type="submit" id="newsletterBtn">Notify me</button>
+    </form>
+    <p id="newsletterMsg" class="newsletter-msg" hidden></p>
+  </section>
 </main>
 <%- include('partials/footer') %>
 <%- include('partials/foot') %>
