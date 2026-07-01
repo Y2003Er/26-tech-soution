@@ -48,7 +48,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
 
   <!-- ════════ FEATURED (carousel) na badges ════════ -->
   <section class="section" id="featured">
-    <div class="section-head"><div><span>Featured Software</span><h2>Editor picks</h2></div><a href="/?sort=popular">View all</a></div>
+    <div class="section-head"><div><span>Featured Software</span><h2>Editor picks</h2></div><% if (featured.length >= 8) { %><a href="/?sort=popular#results">View all</a><% } %></div>
     <div class="carousel-row">
       <% featured.forEach(app => { %>
         <a class="feature-card" href="/app/<%= app.slug %>">
@@ -170,7 +170,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
 
   <!-- ════════ CATEGORIES (na collage ya app icons) ════════ -->
   <section class="section" id="categories">
-    <div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div></div>
+    <div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div><% if (shownCategories.length > 6) { %><a href="/categories">View all</a><% } %></div>
     <div class="category-grid">
       <% shownCategories.slice(0,6).forEach(c => { %>
         <% const previews = (c.previewApps || []).slice(0, 4); %>
@@ -186,7 +186,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
             <% } %>
           </div>
           <h3><%= c.category %></h3>
-          <p><%= c.total || 0 %> apps · <a href="/category/<%= encodeURIComponent(c.category) %>" class="see-all-link">See all</a></p>
+          <p><%= c.total || 0 %> apps<% if ((c.total || 0) >= 4) { %> · <a href="/category/<%= encodeURIComponent(c.category) %>" class="see-all-link">View all</a><% } %></p>
         </div>
       <% }) %>
     </div>
