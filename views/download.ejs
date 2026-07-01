@@ -14,14 +14,7 @@
     return dt.toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' });
   };
 
-  const faqs = [
-    { q: 'What is APK INSTALLER? How to install?', a: 'An APK installer is just the Android package file itself. Download it, open your file manager, tap the .apk file, and choose "Install". If prompted, allow installs from this source in your settings.' },
-    { q: 'What is XAPK? How to install?', a: 'XAPK bundles the APK together with extra data (OBB) files. Use an XAPK installer app to open it directly, or extract it manually and place the OBB folder in Android/obb/.' },
-    { q: 'The download link is broken!', a: 'Links can expire or fail temporarily. Go back and generate a fresh download link — if it still fails after a few tries, please use the Report link in the footer so we can fix it.' },
-    { q: 'What causes mods not to work properly?', a: 'Mods can break after the original app updates its server-side checks, or if you already have the official version installed. Uninstall the official version first, then install the mod fresh.' },
-    { q: 'How to fix "App not installed" error?', a: 'This usually means a signature mismatch with an existing install, insufficient storage, or a corrupted download. Uninstall any existing version, clear some storage space, and re-download the file.' },
-    { q: 'How to update mods without losing data?', a: 'Only install an update over an existing mod if both versions share the same package signature. When in doubt, back up your save data first using the app in-game cloud/export option before updating.' },
-  ];
+  const faqs = (typeof downloadFaqs !== 'undefined' && downloadFaqs && downloadFaqs.length) ? downloadFaqs : [];
 %>
 <main class="download-page">
   <nav class="dl-breadcrumb">
@@ -101,6 +94,7 @@
 
   </section>
 
+  <% if (faqs && faqs.length) { %>
   <section class="dl-faq-section">
     <h2 class="dl-section-title">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -118,6 +112,7 @@
       <% }) %>
     </div>
   </section>
+  <% } %>
 
   <% if (related && related.length) { %>
   <section class="dl-related-section">
@@ -129,10 +124,10 @@
       <% related.forEach(item => { %>
         <a class="dl-related-card" href="/app/<%= item.slug %>">
           <div class="dl-related-banner" <% if (item.banner_file_id) { %>style="background-image:url('/icon/<%= item.banner_file_id %>')"<% } %>>
-            <% if (!item.banner_file_id) { %><%- include('partials/app-icon', { category: item.category }) %><% } %>
+            <% if (!item.banner_file_id) { %><div class="app-icon lg"><%- include('partials/app-icon', { category: item.category }) %></div><% } %>
           </div>
           <div class="dl-related-info">
-            <div class="dl-related-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: item.category }) %><% } %></div>
+            <div class="dl-related-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><div class="app-icon sm"><%- include('partials/app-icon', { category: item.category }) %></div><% } %></div>
             <div>
               <strong><%= item.name %></strong>
               <span><%= item.category %></span>
@@ -145,6 +140,7 @@
   </section>
   <% } %>
 </main>
+<%- include('partials/footer') %>
 <script src="/js/timer.js" defer></script>
 <script>
 (function () {
