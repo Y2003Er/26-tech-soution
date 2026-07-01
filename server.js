@@ -62,8 +62,6 @@ async function initializeDatabase() {
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS badges TEXT[] DEFAULT '{}';`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS screenshots TEXT[] DEFAULT '{}';`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS is_editors_choice BOOLEAN NOT NULL DEFAULT false;`);
-
-    // ── FIX: ongeza app_type column inayokosekana ──
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS app_type VARCHAR(30) DEFAULT 'app';`);
 
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_category ON apps(category);`);
@@ -154,10 +152,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+// ── FIX: Port binding sahihi kwa Railway ──
+const PORT = process.env.RAILWAY_PORT || process.env.PORT || 3000;
+const HOST = process.env.RAILWAY_STATIC_URL ? '0.0.0.0' : 'localhost';
 
 initializeDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`26 Tech Solution inaendesha kwenye http://${HOST}:${PORT}`);
   });
 });
