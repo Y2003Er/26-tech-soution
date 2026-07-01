@@ -10,10 +10,8 @@ const requireAdmin = require('./middleware/admin');
 
 const app = express();
 
-// ── Trust Proxy ──────────────────────────────
 app.set('trust proxy', 1);
 
-// ── Database Initialization ──────────────────
 async function initializeDatabase() {
   try {
     await pool.query(`
@@ -23,13 +21,8 @@ async function initializeDatabase() {
         password VARCHAR(255) NOT NULL
       );
     `);
-
-    await pool.query(`
-      ALTER TABLE admins ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE;
-    `);
-    await pool.query(`
-      ALTER TABLE admins ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();
-    `);
+    await pool.query(`ALTER TABLE admins ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE;`);
+    await pool.query(`ALTER TABLE admins ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();`);
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS apps (
@@ -54,6 +47,7 @@ async function initializeDatabase() {
     `);
 
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS icon_file_id VARCHAR(500);`);
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS banner_file_id VARCHAR(500);`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS views INTEGER NOT NULL DEFAULT 0;`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS downloads INTEGER NOT NULL DEFAULT 0;`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;`);
@@ -61,8 +55,6 @@ async function initializeDatabase() {
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();`);
 
-    // ── Fields mpya (LiteAPKs-style): developer, package_name, rating,
-    //    mod_info, badges, screenshots, is_editors_choice ──
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS developer VARCHAR(150) DEFAULT 'Verified Publisher';`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS package_name VARCHAR(150);`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS rating NUMERIC(2,1) DEFAULT 0.0;`);
@@ -76,8 +68,6 @@ async function initializeDatabase() {
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_active ON apps(is_active);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_rating ON apps(rating DESC);`);
 
-    // ── FIX: dollar-quote ilikuwa "$" moja badala ya "$$" - hii ndiyo
-    //    iliyokuwa ikitupa "syntax error at or near $" ──
     await pool.query(`
       CREATE OR REPLACE FUNCTION update_updated_at()
       RETURNS TRIGGER AS $$
@@ -98,7 +88,6 @@ async function initializeDatabase() {
       );
     `);
 
-    // ── MPYA: download_tokens — link za download salama, single-use, zenye muda ──
     await pool.query(`
       CREATE TABLE IF NOT EXISTS download_tokens (
         id          SERIAL PRIMARY KEY,
@@ -112,7 +101,6 @@ async function initializeDatabase() {
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_download_tokens_token ON download_tokens(token);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_download_tokens_expires ON download_tokens(expires_at);`);
 
-    // ── MPYA: subscribers — newsletter signups ──
     await pool.query(`
       CREATE TABLE IF NOT EXISTS subscribers (
         id          SERIAL PRIMARY KEY,
@@ -127,36 +115,25 @@ async function initializeDatabase() {
   }
 }
 
-// ── View engine ──────────────────────────────
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// ── Static files ─────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
-
-// ── Body parsers ─────────────────────────────
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// ── Session (Inatumia config/session.js) ────
 app.use(sessionConfig);
-
-// ── Flash messages ───────────────────────────
 app.use(flash());
 
-// ── Global locals ────────────────────────────
 app.use((req, res, next) => {
   res.locals.siteName = '26 Tech Solution';
   res.locals.year = new Date().getFullYear();
   next();
 });
 
-// ── Routes ───────────────────────────────────
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/download'));
 app.use('/admin', require('./routes/admin'));
 
-// ── 404 handler ──────────────────────────────
 app.use((req, res) => {
   res.status(404).render('error', {
     title: '404 — Ukurasa Haupatikani',
@@ -165,7 +142,6 @@ app.use((req, res) => {
   });
 });
 
-// ── Error handler ────────────────────────────
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).render('error', {
@@ -175,7 +151,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ── Start ────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 
 initializeDatabase().then(() => {
