@@ -6,7 +6,10 @@ const NewsletterController = require('../controllers/newsletterController');
 // Ukurasa wa nyumbani (Home Page)
 router.get('/', appController.index);
 
-// Ukurasa wa category (grid kamili ya apps za category moja)
+// Ukurasa wa Categories zote (grid kamili ya categories)
+router.get('/categories', appController.categoriesPage);
+
+// Ukurasa wa category moja (grid kamili ya apps za category moja)
 router.get('/category/:name', appController.categoryPage);
 
 // Ukurasa wa undani wa app (Details Page)
