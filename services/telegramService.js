@@ -27,6 +27,9 @@ if (!token) {
     bot.on('polling_error', (err) => {
       console.error('Telegram polling error:', err.message);
     });
+bot.on('channel_post', (msg) => {
+      console.log('CHANNEL POST DETECTED — Chat ID ni:', msg.chat.id, '| Jina:', msg.chat.title);
+    });
 
     bot.on('message', async (msg) => {
       const chatId = msg.chat.id;
