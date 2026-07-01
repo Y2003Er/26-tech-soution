@@ -15,7 +15,8 @@ const DownloadController = {
           message: 'App haikupatikana.',
         });
       }
-      res.render('download', { app });
+      const related = await AppModel.getRandomApps(app.id, 3);
+      res.render('download', { app, related });
     } catch (err) {
       console.error('downloadPage error:', err);
       res.status(500).render('error', { title: 'Hitilafu', code: '500', message: 'Hitilafu ya seva.' });
