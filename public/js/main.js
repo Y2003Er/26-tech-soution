@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+  // ═══════════════════════════════════════
+  // SEARCH OVERLAY (public nav)
+  // ═══════════════════════════════════════
   var searchToggle = document.querySelector('[data-search-toggle]');
   var searchOverlay = document.querySelector('[data-search-overlay]');
   var searchClose = document.querySelector('[data-search-close]');
@@ -20,6 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.key === 'Escape' && searchOverlay) searchOverlay.classList.remove('is-open');
   });
 
+  // ═══════════════════════════════════════
+  // PUBLIC MOBILE NAV (hamburger ya kawaida)
+  // ═══════════════════════════════════════
   var navToggle = document.querySelector('[data-nav-toggle]');
   var navLinks = document.querySelector('[data-nav-links]');
   if (navToggle && navLinks) {
@@ -34,6 +40,36 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // ═══════════════════════════════════════
+  // ADMIN HAMBURGER MENU (26 TECH toggle)
+  // ═══════════════════════════════════════
+  var adminToggle = document.getElementById('adminMenuToggle');
+  var adminSidebar = document.getElementById('adminSidebar');
+  var adminOverlay = document.getElementById('adminSidebarOverlay');
+
+  if (adminToggle && adminSidebar) {
+    adminToggle.addEventListener('click', function () {
+      adminSidebar.classList.toggle('is-open');
+      if (adminOverlay) adminOverlay.classList.toggle('is-open');
+    });
+    if (adminOverlay) {
+      adminOverlay.addEventListener('click', function () {
+        adminSidebar.classList.remove('is-open');
+        adminOverlay.classList.remove('is-open');
+      });
+    }
+    // Funga menu ukibonyeza link yoyote ndani ya sidebar
+    adminSidebar.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        adminSidebar.classList.remove('is-open');
+        if (adminOverlay) adminOverlay.classList.remove('is-open');
+      });
+    });
+  }
+
+  // ═══════════════════════════════════════
+  // COPY LINK + SHARE
+  // ═══════════════════════════════════════
   document.addEventListener('click', function (e) {
     var copy = e.target.closest('[data-copy-link]');
     if (copy) {
@@ -66,6 +102,9 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.dataset.originalText = btn.textContent;
   });
 
+  // ═══════════════════════════════════════
+  // ADMIN TABLE SEARCH
+  // ═══════════════════════════════════════
   var tableSearch = document.querySelector('[data-table-search]');
   if (tableSearch) {
     tableSearch.addEventListener('input', function () {
@@ -76,6 +115,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // ═══════════════════════════════════════
+  // SLUG GENERATOR
+  // ═══════════════════════════════════════
   var source = document.querySelector('[data-slug-source]');
   var preview = document.querySelector('[data-slug-preview]');
   if (source && preview) {
@@ -88,12 +130,18 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!preview.value) sync();
   }
 
+  // ═══════════════════════════════════════
+  // INSTANT SEARCH (ESC to blur)
+  // ═══════════════════════════════════════
   document.querySelectorAll('[data-instant-search]').forEach(function (input) {
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') input.blur();
     });
   });
 
+  // ═══════════════════════════════════════
+  // NEWSLETTER FORM
+  // ═══════════════════════════════════════
   var newsletterForm = document.getElementById('newsletterForm');
   if (newsletterForm) {
     newsletterForm.addEventListener('submit', async function (e) {
