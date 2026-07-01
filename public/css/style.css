@@ -58,8 +58,12 @@
 .details-title-block p{margin:0 0 8px;color:#b6c3d8}
 .detail-tags{display:flex;flex-wrap:wrap;gap:9px}
 .details-hero-panel{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;background:rgba(13,17,34,.9)}
-.details-hero-panel .download-panel{display:flex;align-items:center;gap:14px}
-.details-hero-panel .btn.big{width:auto;min-width:220px}
+
+/* ════════ FIX: Download Now + Share upana sawa ════════ */
+.details-hero-panel .download-panel{display:flex;align-items:center;gap:14px;width:100%}
+.details-hero-panel .btn.big{flex:1;min-width:0}
+.details-hero-panel .btn-secondary{flex:1;min-width:0;padding:15px 18px}
+
 .price-pill.free{color:#86efac;border-color:rgba(34,197,94,.3)}
 .price-pill.paid{color:#fca5a5;border-color:rgba(239,68,68,.3)}
 .details-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;margin-top:20px}
@@ -75,8 +79,11 @@
 .spec-panel dt{color:#94a3b8}
 .spec-panel dd{margin:0;font-weight:900}
 .safe{color:#86efac}
-.share-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-.share-row button{border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.06);color:white;padding:11px;font-weight:800}
+
+/* ════════ FIX: Share row buttons upana sawa ════════ */
+.share-row{display:flex;gap:10px;margin-top:18px}
+.share-row button{flex:1;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.06);color:white;padding:12px 14px;font-weight:800;white-space:nowrap}
+
 @media(max-width:640px){
   .details-hero-overlay{padding:14px 16px;gap:12px}
   .details-icon{width:60px;height:60px}
