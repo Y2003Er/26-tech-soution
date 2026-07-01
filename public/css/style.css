@@ -223,3 +223,10 @@
   background:rgba(14,165,233,.07);color:#93c5fd;font-weight:700;font-size:.86rem
 }
 .cat-manage-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+/* ════════════════════════════════════════
+   FIX: sticky navbar inafunika sections
+   wakati wa anchor scroll (#results, #latest)
+   ════════════════════════════════════════ */
+#results, #latest, #featured, #trending, #popular, #categories {
+  scroll-margin-top: 80px;
+}
