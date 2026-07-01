@@ -63,6 +63,9 @@ async function initializeDatabase() {
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS screenshots TEXT[] DEFAULT '{}';`);
     await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS is_editors_choice BOOLEAN NOT NULL DEFAULT false;`);
 
+    // ── FIX: ongeza app_type column inayokosekana ──
+    await pool.query(`ALTER TABLE apps ADD COLUMN IF NOT EXISTS app_type VARCHAR(30) DEFAULT 'app';`);
+
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_category ON apps(category);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_slug ON apps(slug);`);
     await pool.query(`CREATE INDEX IF NOT EXISTS idx_apps_active ON apps(is_active);`);
