@@ -51,10 +51,10 @@
 .dl-source{color:#93c5fd;text-transform:uppercase;letter-spacing:.1em;font-weight:700;font-size:.72rem;display:flex;align-items:center;justify-content:center;gap:8px}.dl-dot{color:#5b6579}
 .download-standalone h1{margin:8px 0 20px;font-weight:600;font-size:clamp(1.25rem,2.6vw,1.7rem);letter-spacing:-.02em;line-height:1.25}
 
-.dl-version-card{border:1px solid rgba(255,255,255,.11);border-radius:24px;background:rgba(13,17,34,.76);backdrop-filter:blur(18px);box-shadow:0 18px 60px rgba(0,0,0,.28);overflow:hidden;text-align:left}
-.dl-version-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(255,255,255,.04);color:white;font-weight:700;font-size:.95rem}
+.dl-version-card{text-align:left}
+.dl-version-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 0;color:white;font-weight:700;font-size:.95rem}
 .dl-version-toggle svg{transition:.2s}.dl-version-toggle.is-open svg{transform:rotate(180deg)}
-.dl-version-body{padding:18px 20px 20px;display:grid;gap:14px}
+.dl-version-body{padding:10px 0 0;display:grid;gap:14px}
 .dl-row{display:grid;gap:10px}
 .dl-row-btn{width:100%;display:flex;align-items:center;gap:12px;border:0;border-radius:16px;padding:16px 18px;font-weight:700;font-size:.92rem;color:white;background:linear-gradient(135deg,#7c3aed,#0ea5e9);box-shadow:0 14px 34px rgba(79,70,229,.28);text-decoration:none}
 .dl-row-icon{display:flex;flex-shrink:0}
