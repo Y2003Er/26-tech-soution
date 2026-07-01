@@ -14,7 +14,6 @@ const recommended = s.recommended.length ? s.recommended : allApps.slice(0, 6);
 const catFallback = ['Android','Windows','Games','Design','Tools','Utilities'];
 const shownCategories = categories.length ? categories : catFallback.map(category => ({ category, total: 0 }));
 
-// Helper: jenga badges za app (Editor's Choice, MOD/PREMIUM, ONLINE/OFFLINE)
 const buildBadges = (app) => {
   const list = [];
   if (app.is_editors_choice) list.push({ text: "Editor's Choice", cls: 'badge-choice' });
@@ -31,7 +30,6 @@ const buildBadges = (app) => {
   return list;
 };
 
-// Helper: nyota za rating (e.g. "★ 4.2")
 const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).toFixed(1) : null;
 %>
 <main>
@@ -46,31 +44,39 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
     </div>
   </section>
 
-  <!-- ════════ FEATURED (carousel) na badges ════════ -->
+  <!-- ════════ FEATURED (banner + icon overlay) ════════ -->
   <section class="section" id="featured">
     <div class="section-head"><div><span>Featured Software</span><h2>Editor picks</h2></div><a href="/?sort=popular">View all</a></div>
     <div class="carousel-row">
       <% featured.forEach(app => { %>
         <a class="feature-card" href="/app/<%= app.slug %>">
-          <% const badges = buildBadges(app); %>
-          <% if (badges.length) { %>
-            <div class="badge-wrap">
-              <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+          <div class="feature-banner">
+            <% if (app.banner_file_id) { %>
+              <img src="/icon/<%= app.banner_file_id %>" alt="">
+            <% } else { %>
+              <div class="feature-banner-fallback"><%- include('partials/app-icon', { category: app.category }) %></div>
+            <% } %>
+            <% const badges = buildBadges(app); %>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+          </div>
+          <div class="feature-footer">
+            <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+            <div class="feature-footer-text">
+              <h3><%= app.name %></h3>
+              <span><%= app.category %></span>
+              <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
             </div>
-          <% } %>
-          <div class="app-icon lg"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-          <div>
-            <h3><%= app.name %></h3>
-            <p><%= app.description || 'Verified software ready for download.' %></p>
-            <span><%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></span>
-            <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
           </div>
         </a>
       <% }) %>
     </div>
   </section>
 
-  <!-- ════════ TRENDING / POPULAR / UPDATED (split) ════════ -->
+  <!-- ════════ TRENDING / RECENTLY UPDATED ════════ -->
   <section class="section split-section">
     <div class="compact">
       <div class="section-head compact"><div><span>Trending</span><h2>Hot right now</h2></div></div>
@@ -82,7 +88,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
     </div>
   </section>
 
-  <!-- ════════ CATEGORIES (haijabadilika) ════════ -->
+  <!-- ════════ CATEGORIES ════════ -->
   <section class="section" id="categories">
     <div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div></div>
     <div class="category-grid"><% shownCategories.slice(0,6).forEach(c => { %><a class="category-card" href="/?cat=<%= encodeURIComponent(c.category) %>#results"><span><%= c.category.slice(0,2).toUpperCase() %></span><h3><%= c.category %></h3><p><%= c.total || 0 %> apps</p></a><% }) %></div>
@@ -97,7 +103,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
   <!-- ════════ DIRECTORY / FILTER RESULTS ════════ -->
   <section class="section directory" id="results">
     <div class="section-head"><div><span>Search Results</span><h2><%= currentCat !== 'Zote' ? currentCat : 'All Software' %></h2></div><span><%= total %> results</span></div>
-    <form class="filter-panel" action="/" method="GET">
+    <form class="filter-panel" action="/#results" method="GET">
       <input type="hidden" name="q" value="<%= query || '' %>">
       <select name="cat"><option value="Zote">All Categories</option><% categories.forEach(c => { %><option value="<%= c.category %>" <%= currentCat === c.category ? 'selected' : '' %>><%= c.category %></option><% }) %></select>
       <select name="platform"><% ['All','Windows','Android','macOS','iOS','Linux','Multi'].forEach(p => { %><option value="<%= p %>" <%= platform === p ? 'selected' : '' %>><%= p === 'All' ? 'All platforms' : p %></option><% }) %></select>
