@@ -163,7 +163,7 @@ const AdminController = {
 
   async createApp(req, res) {
     try {
-      const { name, category, description, version,
+      const { name, category, app_type, description, version,
               file_size, os, is_free, download_url, is_featured,
               icon_file_id: manualIconFileId, banner_file_id: manualBannerFileId,
               developer, package_name,
@@ -180,7 +180,7 @@ const AdminController = {
       const banner_file_id = req.bannerFileId || (manualBannerFileId && manualBannerFileId.trim()) || null;
 
       await AppModel.create({
-        name, slug, category,
+        name, slug, category, app_type: app_type === 'Game' ? 'Game' : 'App',
         description, version: version || 'v1.0',
         file_size: file_size || '-',
         os: os || 'Windows',
@@ -231,7 +231,7 @@ const AdminController = {
   async updateApp(req, res) {
     try {
       const appId = parseInt(req.params.id);
-      const { name, category, description, version,
+      const { name, category, app_type, description, version,
               file_size, os, is_free, download_url, is_featured, is_active,
               icon_file_id: manualIconFileId, banner_file_id: manualBannerFileId,
               developer, package_name,
@@ -242,7 +242,7 @@ const AdminController = {
       const banner_file_id = req.bannerFileId || (manualBannerFileId && manualBannerFileId.trim()) || null;
 
       await AppModel.update(appId, {
-        name, slug, category,
+        name, slug, category, app_type: app_type === 'Game' ? 'Game' : 'App',
         description,
         version: version || 'v1.0',
         file_size: file_size || '-',
