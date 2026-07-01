@@ -1,4 +1,4 @@
-l<%- include('../partials/head', { title: 'Admin Dashboard - 26 Tech' }) %>
+<%- include('../partials/head', { title: 'Admin Dashboard - 26 Tech' }) %>
 <%- include('../partials/admin-nav') %>
 <% const fmt = n => Number(n || 0).toLocaleString(); const recent = apps.slice(0,5); const maxDownloads = Math.max(1, ...apps.map(a => Number(a.downloads || 0))); %>
 <main class="admin-main">
@@ -9,7 +9,6 @@ l<%- include('../partials/head', { title: 'Admin Dashboard - 26 Tech' }) %>
       </button>
       <div>
         <span class="eyebrow">Control center</span>
-        <h1>Dashboard Overview</h1>
       </div>
     </div>
     <div class="admin-actions">
