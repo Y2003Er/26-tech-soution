@@ -25,7 +25,8 @@
 
     <section class="form-grid">
       <label>App Name *<input type="text" name="name" value="<%= app ? app.name : '' %>" required data-slug-source></label>
-      <label>Category *<input type="text" name="category" placeholder="Android, Windows, Games..." value="<%= app ? app.category : '' %>" required></label>
+      <label>App or Game? *<select name="app_type"><option value="App" <%= !app || app.app_type === 'App' ? 'selected' : '' %>>App</option><option value="Game" <%= app && app.app_type === 'Game' ? 'selected' : '' %>>Game</option></select></label>
+      <label>Category *<input type="text" name="category" placeholder="Entertainment, Productivity, Tools..." value="<%= app ? app.category : '' %>" required></label>
       <label class="full">Slug Preview<input type="text" value="<%= app ? app.slug : '' %>" readonly data-slug-preview></label>
       <label class="full">Description *<textarea name="description" required><%= app ? app.description : '' %></textarea></label>
       <label class="full">Download URL / Telegram File ID *<input type="text" name="download_url" value="<%= app ? app.download_url : '' %>" required></label>
@@ -34,8 +35,8 @@
 
       <label>Version<input type="text" name="version" value="<%= app ? app.version : 'v1.0' %>"></label>
       <label>File Size<input type="text" name="file_size" placeholder="45 MB" value="<%= app ? app.file_size : '' %>"></label>
-      <label>Platform<select name="os"><% ['Windows','Android','macOS','iOS','Linux','Multi'].forEach(os => { %><option value="<%= os %>" <%= app && app.os === os ? 'selected' : '' %>><%= os %></option><% }) %></select></label>
-      <label>Type<select name="is_free"><option value="true" <%= !app || app.is_free ? 'selected' : '' %>>Free</option><option value="false" <%= app && !app.is_free ? 'selected' : '' %>>Premium</option></select></label>
+      <label>Platform (OS)<select name="os"><% ['Windows','Android','macOS','iOS','Linux','Multi'].forEach(os => { %><option value="<%= os %>" <%= app && app.os === os ? 'selected' : '' %>><%= os %></option><% }) %></select></label>
+      <label>Pricing<select name="is_free"><option value="true" <%= !app || app.is_free ? 'selected' : '' %>>Free</option><option value="false" <%= app && !app.is_free ? 'selected' : '' %>>Premium</option></select></label>
 
       <label>Developer<input type="text" name="developer" placeholder="Verified Publisher" value="<%= app && app.developer ? app.developer : '' %>"></label>
       <label>Package Name<input type="text" name="package_name" placeholder="com.example.app" value="<%= app && app.package_name ? app.package_name : '' %>"></label>
