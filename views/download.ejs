@@ -15,7 +15,10 @@
 
     <div id="dlStart">
       <p class="dl-filename">Ready to download <%= fileName %></p>
-      <button type="button" class="btn-download" id="dlStartBtn">Download</button>
+      <button type="button" class="btn-download" id="dlStartBtn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Download</span>
+      </button>
     </div>
 
     <div id="dlGenerating" hidden>
@@ -26,7 +29,10 @@
 
     <div id="dlReady" hidden>
       <p class="dl-filename">You are downloading <%= fileName %></p>
-      <a class="btn-download" id="dlFinalBtn" href="#">Download (<%= app.file_size || 'N/A' %>)</a>
+      <a class="btn-download" id="dlFinalBtn" href="#">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Download (<%= app.file_size || 'N/A' %>)</span>
+      </a>
 
       <div class="dl-note">Some download links are giving 404 errors, we are aware of this and working on a fix, thank you for your patience.</div>
       <div class="dl-note dl-note-ad">An ad will pop up before the download. Close it, click download again — ads keep us going, thanks!</div>
@@ -34,7 +40,10 @@
 
     <div id="dlError" hidden>
       <p class="dl-status-text dl-error-text">Hitilafu imetokea, link haikupatikana.</p>
-      <button type="button" class="btn-download" id="dlRetryBtn">Jaribu Tena</button>
+      <button type="button" class="btn-download" id="dlRetryBtn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        <span>Jaribu Tena</span>
+      </button>
     </div>
 
     <% if (process.env.TELEGRAM_CHANNEL_LINK) { %>
