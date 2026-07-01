@@ -41,7 +41,72 @@
 .category-collage.count-3 .collage-icon:first-child{grid-row:1/3}
 .category-collage.count-4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
 
-.recommendation{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;align-items:center}.recommendation{margin-top:22px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(90deg,rgba(124,58,237,.12),rgba(14,165,233,.06))}.filter-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;margin-bottom:18px;padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(255,255,255,.05)}input,select,textarea{width:100%;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.06);color:white;padding:12px 13px;outline:none}select option{background:#111827}.empty-state{padding:40px;text-align:center;color:#94a3b8;border:1px dashed rgba(255,255,255,.16);border-radius:20px}.newsletter{max-width:1180px;margin:34px auto 56px;padding:32px clamp(18px,4vw,34px);display:flex;align-items:center;justify-content:space-between;gap:24px;border:1px solid rgba(255,255,255,.12);border-radius:28px;background:linear-gradient(135deg,rgba(124,58,237,.28),rgba(14,165,233,.16))}.newsletter form{display:flex;gap:10px;min-width:min(100%,420px)}.site-footer{padding:46px clamp(18px,4vw,44px) 24px;border-top:1px solid rgba(255,255,255,.1);background:#080a14}.footer-grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:28px}.site-footer p,.footer-bottom{color:#94a3b8}.site-footer h3{margin:0 0 12px}.site-footer a{display:block;color:#cbd5e1;margin:8px 0}.social-row{display:flex;gap:10px}.footer-bottom{max-width:1240px;margin:26px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);font-size:.86rem}.download-modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;padding:18px;background:rgba(2,6,23,.72);backdrop-filter:blur(14px)}.download-modal.is-open{display:grid}.modal-panel{position:relative;width:min(100%,520px);padding:28px;text-align:center}.modal-close{position:absolute;right:14px;top:14px;width:38px;height:38px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.06);color:white}.modal-checks{display:grid;gap:10px;margin:18px 0}.modal-checks span{padding:12px;border-radius:14px;background:rgba(34,197,94,.1);color:#bbf7d0;border:1px solid rgba(34,197,94,.18)}.countdown{display:grid;place-items:center;margin:18px auto;width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#0ea5e9);font-size:2.4rem;font-weight:900}.download-page{min-height:calc(100vh - 72px);display:grid;place-items:center;padding:40px 18px}.download-standalone{max-width:560px}.download-related{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);color:#94a3b8}
+.recommendation{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px;align-items:center}.recommendation{margin-top:22px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(90deg,rgba(124,58,237,.12),rgba(14,165,233,.06))}.filter-panel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:10px;margin-bottom:18px;padding:12px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(255,255,255,.05)}input,select,textarea{width:100%;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:rgba(255,255,255,.06);color:white;padding:12px 13px;outline:none}select option{background:#111827}.empty-state{padding:40px;text-align:center;color:#94a3b8;border:1px dashed rgba(255,255,255,.16);border-radius:20px}.newsletter{max-width:1180px;margin:34px auto 56px;padding:32px clamp(18px,4vw,34px);display:flex;align-items:center;justify-content:space-between;gap:24px;border:1px solid rgba(255,255,255,.12);border-radius:28px;background:linear-gradient(135deg,rgba(124,58,237,.28),rgba(14,165,233,.16))}.newsletter form{display:flex;gap:10px;min-width:min(100%,420px)}.site-footer{padding:46px clamp(18px,4vw,44px) 24px;border-top:1px solid rgba(255,255,255,.1);background:#080a14}.footer-grid{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:28px}.site-footer p,.footer-bottom{color:#94a3b8}.site-footer h3{margin:0 0 12px}.site-footer a{display:block;color:#cbd5e1;margin:8px 0}.social-row{display:flex;gap:10px}.footer-bottom{max-width:1240px;margin:26px auto 0;padding-top:18px;border-top:1px solid rgba(255,255,255,.08);font-size:.86rem}.download-modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;padding:18px;background:rgba(2,6,23,.72);backdrop-filter:blur(14px)}.download-modal.is-open{display:grid}.modal-panel{position:relative;width:min(100%,520px);padding:28px;text-align:center}.modal-close{position:absolute;right:14px;top:14px;width:38px;height:38px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.06);color:white}.modal-checks{display:grid;gap:10px;margin:18px 0}.modal-checks span{padding:12px;border-radius:14px;background:rgba(34,197,94,.1);color:#bbf7d0;border:1px solid rgba(34,197,94,.18)}.countdown{display:grid;place-items:center;margin:18px auto;width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#0ea5e9);font-size:2.4rem;font-weight:900}.download-page{min-height:calc(100vh - 72px);display:flex;flex-direction:column;align-items:center;gap:36px;padding:32px 18px 56px;max-width:1240px;margin:0 auto}.download-standalone{width:100%;max-width:560px;text-align:center}.download-related{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);color:#94a3b8}
+
+/* ---- Download breadcrumb ---- */
+.dl-breadcrumb{width:100%;max-width:1080px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;color:#94a3b8;font-size:.82rem;margin-bottom:4px}.dl-breadcrumb a{color:#94a3b8;transition:.2s}.dl-breadcrumb a:hover{color:#c7d2e6}.dl-breadcrumb span{color:#5b6579}.dl-breadcrumb-current{color:#c7d2e6;font-weight:600}
+
+/* ---- Download standalone panel ---- */
+.dl-icon{display:grid;place-items:center;width:84px;height:84px;margin:0 auto 14px;border-radius:22px;overflow:hidden;color:#c4b5fd;background:linear-gradient(135deg,rgba(124,58,237,.26),rgba(14,165,233,.14));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 50px rgba(0,0,0,.35)}.dl-icon img{width:100%;height:100%;object-fit:cover}.dl-icon svg{width:40px;height:40px}
+.dl-source{color:#93c5fd;text-transform:uppercase;letter-spacing:.1em;font-weight:700;font-size:.72rem;display:flex;align-items:center;justify-content:center;gap:8px}.dl-dot{color:#5b6579}
+.download-standalone h1{margin:8px 0 20px;font-weight:600;font-size:clamp(1.25rem,2.6vw,1.7rem);letter-spacing:-.02em;line-height:1.25}
+
+.dl-version-card{border:1px solid rgba(255,255,255,.11);border-radius:24px;background:rgba(13,17,34,.76);backdrop-filter:blur(18px);box-shadow:0 18px 60px rgba(0,0,0,.28);overflow:hidden;text-align:left}
+.dl-version-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(255,255,255,.04);color:white;font-weight:700;font-size:.95rem}
+.dl-version-toggle svg{transition:.2s}.dl-version-toggle.is-open svg{transform:rotate(180deg)}
+.dl-version-body{padding:18px 20px 20px;display:grid;gap:14px}
+.dl-row{display:grid;gap:10px}
+.dl-row-btn{width:100%;display:flex;align-items:center;gap:12px;border:0;border-radius:16px;padding:16px 18px;font-weight:700;font-size:.92rem;color:white;background:linear-gradient(135deg,#7c3aed,#0ea5e9);box-shadow:0 14px 34px rgba(79,70,229,.28);text-decoration:none}
+.dl-row-icon{display:flex;flex-shrink:0}
+.dl-row-label{flex:1;text-align:left}
+.dl-row-size{color:rgba(255,255,255,.8);font-size:.8rem;font-weight:600}
+.dl-filename{color:#c7d2e6;font-size:.86rem;word-break:break-all}
+.dl-status-sub{color:#94a3b8;font-size:.82rem}
+.dl-status-text{font-size:.9rem;font-weight:600}
+.dl-error-text{color:#fca5a5}
+.progress-track{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.progress-fill{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#7c3aed,#0ea5e9);transition:width .3s linear}
+
+.dl-note{width:100%;max-width:560px;margin-top:16px;padding:12px 16px;border-radius:14px;font-size:.82rem;line-height:1.5}
+.dl-note-ad{border:1px solid rgba(250,204,21,.2);background:rgba(250,204,21,.08);color:#fde68a}
+
+.dl-instructions{width:100%;text-align:left;margin-top:18px;padding:18px 20px;border:1px solid rgba(255,255,255,.1);border-radius:20px;background:rgba(255,255,255,.04);color:#c7d2e6;font-size:.88rem}
+.dl-instructions p{margin:0 0 8px}
+.dl-instructions ol{margin:0;padding-left:20px;display:grid;gap:6px;color:#aab7cc}
+
+.telegram-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;padding:13px 22px;border-radius:14px;border:1px solid rgba(56,189,248,.3);background:rgba(14,165,233,.1);color:#7dd3fc;font-weight:700;font-size:.88rem;text-decoration:none;transition:.2s}
+.telegram-btn:hover{background:rgba(14,165,233,.18);border-color:rgba(56,189,248,.5)}
+
+/* ---- Shared section title for FAQ / related on download page ---- */
+.dl-faq-section,.dl-related-section{width:100%;max-width:1080px}
+.dl-section-title{display:flex;align-items:center;gap:10px;margin:0 0 18px;color:white;font-weight:600;font-size:clamp(1.1rem,2vw,1.4rem);letter-spacing:-.02em}
+.dl-section-title svg{flex-shrink:0;color:#93c5fd}
+
+/* ---- FAQ list (data-driven, styled with existing glass-panel language) ---- */
+.dl-faq-list{display:grid;gap:12px;text-align:left}
+.dl-faq-item{border:1px solid rgba(255,255,255,.11);border-radius:18px;background:rgba(13,17,34,.76);backdrop-filter:blur(18px);overflow:hidden}
+.dl-faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;color:white;font-weight:600;font-size:.92rem;text-align:left}
+.dl-faq-question svg{flex-shrink:0;color:#94a3b8;transition:.2s}
+.dl-faq-item.is-open .dl-faq-question svg{transform:rotate(180deg);color:#93c5fd}
+.dl-faq-answer{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.dl-faq-item.is-open .dl-faq-answer{max-height:400px}
+.dl-faq-answer p{margin:0;padding:0 18px 16px;color:#aab7cc;font-size:.86rem;line-height:1.6}
+
+/* ---- Maybe You Like grid: reuses .software-card visual language ---- */
+.dl-related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.dl-related-card{display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.11);border-radius:24px;background:rgba(13,17,34,.76);backdrop-filter:blur(18px);box-shadow:0 18px 60px rgba(0,0,0,.28);overflow:hidden;transition:.22s;text-decoration:none}
+.dl-related-card:hover{transform:translateY(-3px);border-color:rgba(129,140,248,.4);box-shadow:0 18px 60px rgba(79,70,229,.2)}
+.dl-related-banner{position:relative;width:100%;aspect-ratio:16/9;background-color:#0d1122;background-image:linear-gradient(135deg,rgba(124,58,237,.35),rgba(14,165,233,.18));background-size:cover;background-position:center;background-repeat:no-repeat;display:flex;align-items:center;justify-content:center}
+.dl-related-info{display:flex;align-items:center;gap:12px;padding:14px}
+.dl-related-icon{width:44px;height:44px;flex-shrink:0;border-radius:12px;overflow:hidden}
+.dl-related-icon img{width:100%;height:100%;object-fit:cover}
+.dl-related-info strong{display:block;color:white;font-weight:600;font-size:.9rem;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-related-info span{display:block;color:#94a3b8;font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dl-related-info .rating-row{color:#fbbf24;margin-top:2px}
+
+@media(max-width:1050px){.dl-related-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.dl-related-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dl-faq-question{font-size:.86rem}}
+@media(max-width:480px){.dl-related-grid{grid-template-columns:1fr}}
 
 /* ════════════════════════════════════════
    DETAILS HERO — layout mpya ya banner+overlay
