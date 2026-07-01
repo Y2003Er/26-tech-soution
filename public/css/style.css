@@ -190,3 +190,36 @@
 .category-icon svg{width:24px;height:24px}
 .category-card h3{margin:0 0 4px}
 .category-card p{margin:0;color:#9fb0c8}
+/* ════════════════════════════════════════
+   Admin Category Images page
+   ════════════════════════════════════════ */
+
+.cat-hint{color:#94a3b8;margin-bottom:18px}
+
+.cat-manage-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px
+}
+
+.cat-manage-card{
+  display:flex;flex-direction:column;gap:10px;padding:16px;
+  border:1px solid rgba(255,255,255,.11);border-radius:20px;
+  background:rgba(13,17,34,.76)
+}
+
+.cat-manage-preview{
+  width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;
+  background:rgba(255,255,255,.06);display:grid;place-items:center;
+  color:#64748b;font-size:.82rem
+}
+.cat-manage-preview img{width:100%;height:100%;object-fit:cover}
+
+.cat-manage-info{display:flex;align-items:center;justify-content:space-between}
+.cat-manage-info span{color:#94a3b8;font-size:.82rem}
+
+.cat-manage-upload{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  padding:10px;border:1px dashed rgba(147,197,253,.35);border-radius:12px;
+  background:rgba(14,165,233,.07);color:#93c5fd;font-weight:700;font-size:.86rem
+}
+.cat-manage-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
