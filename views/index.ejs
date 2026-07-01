@@ -173,21 +173,21 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
     <div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div></div>
     <div class="category-grid">
       <% shownCategories.slice(0,6).forEach(c => { %>
-        <a class="category-card" href="/category/<%= encodeURIComponent(c.category) %>">
-          <div class="category-collage">
-            <% const previews = (c.previewApps || []).slice(0, 4); %>
+        <% const previews = (c.previewApps || []).slice(0, 4); %>
+        <div class="category-card">
+          <div class="category-collage count-<%= previews.length %>">
             <% previews.forEach(p => { %>
               <div class="collage-icon">
                 <% if (p.icon_file_id) { %><img src="/icon/<%= p.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: c.category }) %><% } %>
               </div>
             <% }) %>
-            <% for (let i = previews.length; i < 4; i++) { %>
-              <div class="collage-icon collage-empty"></div>
+            <% if (previews.length === 0) { %>
+              <div class="collage-icon collage-empty"><%- include('partials/app-icon', { category: c.category }) %></div>
             <% } %>
           </div>
           <h3><%= c.category %></h3>
-          <p><%= c.total || 0 %> apps · See all</p>
-        </a>
+          <p><%= c.total || 0 %> apps · <a href="/category/<%= encodeURIComponent(c.category) %>" class="see-all-link">See all</a></p>
+        </div>
       <% }) %>
     </div>
   </section>
