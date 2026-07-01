@@ -5,9 +5,23 @@
   <% if (error && error.length > 0) { %><div class="flash error"><%= error %></div><% } %>
   <form class="upload-form" method="POST" enctype="multipart/form-data" action="<%= app ? '/admin/apps/' + app.id + '/edit' : '/admin/apps' %>">
 
-    <section class="upload-drop"><input type="file" name="icon" accept="image/*"><div><strong>Drag and drop app icon</strong><span>or click to choose a new image</span></div><% if (app && app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="Current icon"><% } %></section>
+    <section class="upload-drop">
+      <label class="cat-manage-upload">
+        <input type="file" name="icon" accept="image/*">
+        <span>Chagua Icon</span>
+      </label>
+      <div><strong>App Icon</strong><span>Bofya hapo juu kuchagua picha — itapakiwa Telegram moja kwa moja.</span></div>
+      <% if (app && app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="Current icon"><% } %>
+    </section>
 
-    <section class="upload-drop"><input type="file" name="banner" accept="image/*"><div><strong>Drag and drop banner/cover image</strong><span>Inatumika kama background ya Featured card (16:9 inapendekezwa)</span></div><% if (app && app.banner_file_id) { %><img src="/icon/<%= app.banner_file_id %>" alt="Current banner"><% } %></section>
+    <section class="upload-drop">
+      <label class="cat-manage-upload">
+        <input type="file" name="banner" accept="image/*">
+        <span>Chagua Banner</span>
+      </label>
+      <div><strong>Banner/Cover Image</strong><span>Inatumika kama background ya Featured card (16:9 inapendekezwa). Bofya hapo juu kuchagua picha.</span></div>
+      <% if (app && app.banner_file_id) { %><img src="/icon/<%= app.banner_file_id %>" alt="Current banner"><% } %>
+    </section>
 
     <section class="form-grid">
       <label>App Name *<input type="text" name="name" value="<%= app ? app.name : '' %>" required data-slug-source></label>
