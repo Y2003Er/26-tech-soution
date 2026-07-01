@@ -17,13 +17,11 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// Geuza "MOD, ONLINE, Editor's Choice" kuwa ["MOD","ONLINE","Editor's Choice"]
 function parseBadges(input) {
   if (!input) return [];
   return input.split(',').map(b => b.trim()).filter(Boolean);
 }
 
-// Geuza screenshots za multi-line text kuwa array ya URLs
 function parseScreenshots(input) {
   if (!input) return [];
   return input.split('\n').map(s => s.trim()).filter(Boolean);
@@ -119,7 +117,8 @@ const AdminController = {
     try {
       const { name, category, description, version,
               file_size, os, is_free, download_url, is_featured,
-              icon_file_id: manualIconFileId, developer, package_name,
+              icon_file_id: manualIconFileId, banner_file_id: manualBannerFileId,
+              developer, package_name,
               rating, mod_info, badges, screenshots, is_editors_choice } = req.body;
 
       if (!name || !category || !description || !download_url) {
@@ -129,10 +128,8 @@ const AdminController = {
 
       const slug = makeSlug(name);
 
-      // ============================================
-      // ICON FILE ID - Inachukuliwa kutoka upload
-      // ============================================
       const icon_file_id = req.fileId || (manualIconFileId && manualIconFileId.trim()) || null;
+      const banner_file_id = req.bannerFileId || (manualBannerFileId && manualBannerFileId.trim()) || null;
 
       await AppModel.create({
         name, slug, category,
@@ -144,6 +141,7 @@ const AdminController = {
         is_featured: is_featured === 'true',
         is_active: true,
         icon_file_id: icon_file_id,
+        banner_file_id: banner_file_id,
         developer: developer && developer.trim() ? developer.trim() : 'Verified Publisher',
         package_name: package_name && package_name.trim() ? package_name.trim() : null,
         rating: rating ? parseFloat(rating) : 0,
@@ -187,14 +185,13 @@ const AdminController = {
       const appId = parseInt(req.params.id);
       const { name, category, description, version,
               file_size, os, is_free, download_url, is_featured, is_active,
-              icon_file_id: manualIconFileId, developer, package_name,
+              icon_file_id: manualIconFileId, banner_file_id: manualBannerFileId,
+              developer, package_name,
               rating, mod_info, badges, screenshots, is_editors_choice } = req.body;
       const slug = makeSlug(name);
 
-      // ============================================
-      // ICON FILE ID - Inachukuliwa kutoka upload
-      // ============================================
       const icon_file_id = req.fileId || (manualIconFileId && manualIconFileId.trim()) || null;
+      const banner_file_id = req.bannerFileId || (manualBannerFileId && manualBannerFileId.trim()) || null;
 
       await AppModel.update(appId, {
         name, slug, category,
@@ -207,6 +204,7 @@ const AdminController = {
         is_featured: is_featured === 'true',
         is_active: is_active === 'true',
         icon_file_id: icon_file_id,
+        banner_file_id: banner_file_id,
         developer: developer && developer.trim() ? developer.trim() : 'Verified Publisher',
         package_name: package_name && package_name.trim() ? package_name.trim() : null,
         rating: rating ? parseFloat(rating) : 0,
