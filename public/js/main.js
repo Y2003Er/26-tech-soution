@@ -4,9 +4,12 @@ document.addEventListener('DOMContentLoaded', function () {
   if (location.hash) {
     var scrollTarget = document.querySelector(location.hash);
     if (scrollTarget) {
-      setTimeout(function () {
-        scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 60);
+      // Subiri layout ikamilike kabisa (fonts, images) kabla ya kupima nafasi
+      window.requestAnimationFrame(function () {
+        setTimeout(function () {
+          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+      });
     }
   }
 
@@ -37,6 +40,13 @@ document.addEventListener('DOMContentLoaded', function () {
       navLinks.classList.toggle('is-open');
     });
   }
+
+  // ── Funga mobile menu / search overlay baada ya kubofya link ya ndani ──
+  document.querySelectorAll('[data-nav-links] a').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (navLinks) navLinks.classList.remove('is-open');
+    });
+  });
 
   document.addEventListener('click', function (e) {
     var copy = e.target.closest('[data-copy-link]');
