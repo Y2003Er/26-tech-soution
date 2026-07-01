@@ -88,12 +88,14 @@
 /* ---- FAQ list ---- */
 .dl-faq-list{display:grid;gap:12px;text-align:left}
 .dl-faq-item{border:1px solid rgba(255,255,255,.11);border-radius:18px;background:rgba(13,17,34,.9);backdrop-filter:blur(18px);overflow:hidden}
-.dl-faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;color:#eef2ff;font-weight:600;font-size:.92rem;text-align:left}
+.dl-faq-question{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;color:#c7d2e6;font-weight:600;font-size:.92rem;text-align:left;background:transparent;border:0;cursor:pointer}
+.dl-faq-question:hover{color:#eef2ff}
 .dl-faq-question svg{flex-shrink:0;color:#94a3b8;transition:.2s}
+.dl-faq-item.is-open .dl-faq-question{color:#eef2ff}
 .dl-faq-item.is-open .dl-faq-question svg{transform:rotate(180deg);color:#93c5fd}
 .dl-faq-answer{max-height:0;overflow:hidden;transition:max-height .25s ease}
 .dl-faq-item.is-open .dl-faq-answer{max-height:400px}
-.dl-faq-answer p{margin:0;padding:0 18px 16px;color:#cbd5e1;font-size:.86rem;line-height:1.6}
+.dl-faq-answer p{margin:0;padding:0 18px 16px;color:#aab7cc;font-size:.86rem;line-height:1.6}
 
 /* ---- Maybe You Like grid ---- */
 .dl-related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
