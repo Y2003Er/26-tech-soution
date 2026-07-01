@@ -33,7 +33,7 @@
 
     <div class="dl-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="<%= app.name %>"><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
 
-    <p class="dl-source">DTP NETWORK <span class="dl-dot">&middot;</span> <%= timeAgoLabel(app.updated_at || app.created_at) %></p>
+    <p class="dl-source"><%= app.developer || siteName %> <span class="dl-dot">&middot;</span> <%= timeAgoLabel(app.updated_at || app.created_at) %></p>
     <h1>Download: <%= app.name %> <%= app.mod_info ? 'MOD' : '' %> <%= osExtMap[app.os] === 'apk' ? 'APK' : '' %> <%= app.version || 'v1.0' %></h1>
 
     <div class="dl-version-card">
