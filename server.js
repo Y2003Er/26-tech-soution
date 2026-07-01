@@ -157,7 +157,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 initializeDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`26 Tech Solution inaendesha kwenye http://localhost:${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`26 Tech Solution inaendesha kwenye http://0.0.0.0:${PORT}`);
   });
 });
