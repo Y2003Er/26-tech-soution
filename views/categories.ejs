@@ -1,0 +1,29 @@
+<%- include('partials/head', { title: 'Categories — 26 TECH' }) %>
+<%- include('partials/nav') %>
+<main>
+  <section class="section">
+    <div class="section-head"><div><span>Browse</span><h2>All Categories</h2></div></div>
+    <div class="category-grid">
+      <% categories.forEach(c => { %>
+        <% const previews = (c.previewApps || []).slice(0, 4); %>
+        <div class="category-card">
+          <div class="category-collage count-<%= previews.length %>">
+            <% previews.forEach(p => { %>
+              <div class="collage-icon">
+                <% if (p.icon_file_id) { %><img src="/icon/<%= p.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: c.category }) %><% } %>
+              </div>
+            <% }) %>
+            <% if (previews.length === 0) { %>
+              <div class="collage-icon collage-empty"><%- include('partials/app-icon', { category: c.category }) %></div>
+            <% } %>
+          </div>
+          <h3><%= c.category %></h3>
+          <p><%= c.total || 0 %> apps<% if ((c.total || 0) >= 4) { %> · <a href="/category/<%= encodeURIComponent(c.category) %>" class="see-all-link">View all</a><% } %></p>
+        </div>
+      <% }) %>
+    </div>
+    <% if (categories.length === 0) { %><div class="empty-state">Hakuna categories bado.</div><% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/foot') %>
