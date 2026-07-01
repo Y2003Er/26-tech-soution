@@ -8,18 +8,18 @@
     <section class="upload-drop">
       <label class="cat-manage-upload">
         <input type="file" name="icon" accept="image/*" data-preview-target="icon-preview" data-name-target="icon-filename">
-        <span id="icon-filename">Chagua Icon</span>
+        <span id="icon-filename">Choose Icon</span>
       </label>
-      <div><strong>App Icon</strong><span>Bofya hapo juu kuchagua picha — itapakiwa Telegram moja kwa moja.</span></div>
+      <div><strong>App Icon</strong><span>Click above to choose an image — it will be uploaded to Telegram automatically.</span></div>
       <img id="icon-preview" src="<%= app && app.icon_file_id ? '/icon/' + app.icon_file_id : '' %>" alt="Icon preview" style="<%= app && app.icon_file_id ? '' : 'display:none' %>">
     </section>
 
     <section class="upload-drop">
       <label class="cat-manage-upload">
         <input type="file" name="banner" accept="image/*" data-preview-target="banner-preview" data-name-target="banner-filename">
-        <span id="banner-filename">Chagua Banner</span>
+        <span id="banner-filename">Choose Banner</span>
       </label>
-      <div><strong>Banner/Cover Image</strong><span>Inatumika kama background ya Featured card (16:9 inapendekezwa). Bofya hapo juu kuchagua picha.</span></div>
+      <div><strong>Banner/Cover Image</strong><span>Used as the background of the Featured card (16:9 recommended). Click above to choose an image.</span></div>
       <img id="banner-preview" src="<%= app && app.banner_file_id ? '/icon/' + app.banner_file_id : '' %>" alt="Banner preview" style="<%= app && app.banner_file_id ? '' : 'display:none' %>">
     </section>
 
@@ -50,11 +50,11 @@
       <label>Popular Toggle<select disabled><option>Auto by views</option></select></label>
       <label>Auto Timestamp<input type="text" value="Managed by database" readonly></label>
 
-      <label class="full">Mod Info (maelezo mafupi yanayoonekana chini ya card)<input type="text" name="mod_info" placeholder="Unlimited Money, VIP Unlocked, Premium Unlocked" value="<%= app && app.mod_info ? app.mod_info : '' %>"></label>
+      <label class="full">Mod Info (short text shown under the card)<input type="text" name="mod_info" placeholder="Unlimited Money, VIP Unlocked, Premium Unlocked" value="<%= app && app.mod_info ? app.mod_info : '' %>"></label>
 
-      <label class="full">Badges (tenganisha kwa koma: MOD, ONLINE, OFFLINE, PREMIUM, Paid)<input type="text" name="badges" placeholder="MOD, ONLINE" value="<%= app && app.badges && app.badges.length ? app.badges.join(', ') : '' %>"></label>
+      <label class="full">Badges (comma separated: MOD, ONLINE, OFFLINE, PREMIUM, Paid)<input type="text" name="badges" placeholder="MOD, ONLINE" value="<%= app && app.badges && app.badges.length ? app.badges.join(', ') : '' %>"></label>
 
-      <label class="full">Screenshots (URL moja kwa kila mstari)<textarea name="screenshots" placeholder="https://.../screenshot1.jpg&#10;https://.../screenshot2.jpg"><%= app && app.screenshots && app.screenshots.length ? app.screenshots.join('\n') : '' %></textarea></label>
+      <label class="full">Screenshots (one URL per line)<textarea name="screenshots" placeholder="https://.../screenshot1.jpg&#10;https://.../screenshot2.jpg"><%= app && app.screenshots && app.screenshots.length ? app.screenshots.join('\n') : '' %></textarea></label>
 
       <label class="full">Version History<textarea placeholder="Optional release notes for the changelog layout"></textarea></label>
       <label class="full">SEO Fields<textarea placeholder="Meta title, keywords, and search notes"></textarea></label>
@@ -80,7 +80,7 @@
 
         if (nameEl) {
           if (!nameEl.dataset.defaultLabel) nameEl.dataset.defaultLabel = nameEl.textContent;
-          nameEl.textContent = 'Umechagua: ' + file.name;
+          nameEl.textContent = 'Selected: ' + file.name;
         }
 
         if (imgEl) {
