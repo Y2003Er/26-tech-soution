@@ -2,6 +2,7 @@
 // 26-TECH ADMIN CONTROLLER
 // ═══════════════════════════════════════════
 
+const fs = require('fs');
 const AppModel = require('../models/appModel');
 const AdminModel = require('../models/adminModel');
 
@@ -100,6 +101,51 @@ const AdminController = {
     } catch (err) {
       console.error('dashboard error:', err);
       res.status(500).render('error', { title: 'Hitilafu', code: '500', message: 'Hitilafu ya seva.' });
+    }
+  },
+
+  // ── CATEGORIES ───────────────────────────────
+  async categoriesPage(req, res) {
+    try {
+      const categories = await AppModel.getCategories();
+      res.render('admin/categories', {
+        title: 'Category Images - 26 Tech Admin',
+        admin: req.session.admin,
+        categories,
+        success: req.flash('success'),
+        error: req.flash('error'),
+      });
+    } catch (err) {
+      console.error('categoriesPage error:', err);
+      res.status(500).render('error', { title: 'Hitilafu', code: '500', message: 'Hitilafu ya seva.' });
+    }
+  },
+
+  async saveCategoryImage(req, res) {
+    try {
+      const { category } = req.body;
+      if (!category || !req.file) {
+        req.flash('error', 'Chagua category na picha.');
+        return res.redirect('/admin/categories');
+      }
+
+      const TelegramService = require('../services/telegramService');
+      const result = await TelegramService.uploadImage(req.file.path);
+
+      try { fs.unlinkSync(req.file.path); } catch (e) {}
+
+      if (!result.success) {
+        req.flash('error', result.error || 'Upload ya picha imeshindikana.');
+        return res.redirect('/admin/categories');
+      }
+
+      await AppModel.setCategoryImage(category, result.url);
+      req.flash('success', `Picha ya "${category}" imehifadhiwa.`);
+      res.redirect('/admin/categories');
+    } catch (err) {
+      console.error('saveCategoryImage error:', err);
+      req.flash('error', 'Hitilafu ya seva.');
+      res.redirect('/admin/categories');
     }
   },
 
