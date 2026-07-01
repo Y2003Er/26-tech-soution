@@ -53,7 +53,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
       <% featured.forEach(app => { %>
         <a class="feature-card" href="/app/<%= app.slug %>">
           <% const badges = buildBadges(app); %>
-          <div class="card-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+          <div class="card-banner" <% if (app.banner_file_id) { %>style="background-image:url('/icon/<%= app.banner_file_id %>')"<% } else if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
             <% if (badges.length) { %>
               <div class="badge-wrap">
                 <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
@@ -111,7 +111,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
       <% popular.forEach(app => { %>
         <a class="software-card" href="/app/<%= app.slug %>">
           <% const badges = buildBadges(app); %>
-          <div class="card-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+          <div class="card-banner" <% if (app.banner_file_id) { %>style="background-image:url('/icon/<%= app.banner_file_id %>')"<% } else if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
             <% if (badges.length) { %>
               <div class="badge-wrap">
                 <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
@@ -212,7 +212,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
       <% apps.forEach(app => { %>
         <a class="software-card" href="/app/<%= app.slug %>">
           <% const badges = buildBadges(app); %>
-          <div class="card-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+          <div class="card-banner" <% if (app.banner_file_id) { %>style="background-image:url('/icon/<%= app.banner_file_id %>')"<% } else if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
             <% if (badges.length) { %>
               <div class="badge-wrap">
                 <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
