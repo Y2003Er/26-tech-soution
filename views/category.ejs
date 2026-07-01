@@ -1,0 +1,67 @@
+<%- include('partials/head', { title: `${categoryName} — 26 TECH` }) %>
+<%- include('partials/nav') %>
+<%
+const fmt = n => Number(n || 0).toLocaleString();
+const buildBadges = (app) => {
+  const list = [];
+  if (app.is_editors_choice) list.push({ text: "Editor's Choice", cls: 'badge-choice' });
+  if (app.badges && app.badges.length) {
+    app.badges.forEach(b => {
+      const lower = b.toLowerCase();
+      let cls = 'badge-mod';
+      if (lower === 'online') cls = 'badge-online';
+      else if (lower === 'offline') cls = 'badge-offline';
+      else if (lower === 'premium') cls = 'badge-premium';
+      list.push({ text: b, cls });
+    });
+  }
+  return list;
+};
+const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).toFixed(1) : null;
+%>
+<main>
+  <section class="section">
+    <div class="section-head">
+      <div><span>Category</span><h2><%= categoryName %></h2></div>
+      <span><%= total %> results</span>
+    </div>
+
+    <div class="software-grid">
+      <% apps.forEach(app => { %>
+        <a class="software-card" href="/app/<%= app.slug %>">
+          <% const badges = buildBadges(app); %>
+          <div class="card-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <div>
+                <strong><%= app.name %></strong>
+                <span><%= app.category %> - <%= app.os || 'Multi' %></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
+            <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
+            <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+    <% if (apps.length === 0) { %><div class="empty-state">Hakuna software kwenye category hii bado.</div><% } %>
+
+    <% if (totalPages > 1) { %>
+      <div class="pagination" style="display:flex;gap:8px;justify-content:center;margin-top:24px">
+        <% for (let p = 1; p <= totalPages; p++) { %>
+          <a class="btn <%= p === currentPage ? 'btn-primary' : 'btn-secondary' %>" href="/category/<%= encodeURIComponent(categoryName) %>?page=<%= p %>&sort=<%= sort %>"><%= p %></a>
+        <% } %>
+      </div>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>
+<%- include('partials/foot') %>
