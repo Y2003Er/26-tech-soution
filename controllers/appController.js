@@ -49,7 +49,25 @@ const appController = {
     }
   },
 
-  // 1b. Ukurasa wa Category (grid kamili ya apps za category moja)
+  // 1b. Ukurasa wa Categories zote
+  async categoriesPage(req, res) {
+    try {
+      const categories = await AppModel.getCategoriesWithPreviews(4);
+      res.render('categories', {
+        title: 'Categories — 26 TECH',
+        categories
+      });
+    } catch (err) {
+      console.error('categoriesPage error:', err);
+      res.status(500).render('error', {
+        title: 'Hitilafu ya Seva — 26 TECH',
+        code: '500',
+        message: 'Imeshindwa kuvuta data kutoka kwenye hifadhi.'
+      });
+    }
+  },
+
+  // 1c. Ukurasa wa Category moja (grid kamili ya apps za category moja)
   async categoryPage(req, res) {
     try {
       const categoryName = decodeURIComponent(req.params.name);
