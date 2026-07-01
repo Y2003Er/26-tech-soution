@@ -214,8 +214,8 @@ const AppModel = {
   async getRelated(appId, category, limit = 4) {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, icon_file_id, version, file_size,
-                is_free, downloads, rating, mod_info, badges
+        `SELECT id, name, slug, category, icon_file_id, banner_file_id, version, file_size,
+                is_free, downloads, rating, mod_info, badges, screenshots
          FROM apps
          WHERE is_active = true AND id != $1 AND category = $2
          ORDER BY downloads DESC LIMIT $3`,
