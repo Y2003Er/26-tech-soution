@@ -131,6 +131,52 @@ const AppModel = {
     }
   },
 
+  // ── MPYA: pata categories pamoja na preview apps ──
+  async getCategoriesWithPreviews(previewLimit = 4) {
+    try {
+      const categories = await this.getCategories();
+      const withPreviews = await Promise.all(
+        categories.map(async (c) => {
+          const { rows } = await pool.query(
+            `SELECT icon_file_id, name
+             FROM apps
+             WHERE is_active = true AND category = $1
+             ORDER BY downloads DESC, views DESC, created_at DESC
+             LIMIT $2`,
+            [c.category, previewLimit]
+          );
+          return { ...c, previewApps: rows };
+        })
+      );
+      return withPreviews;
+    } catch (err) {
+      console.error('Hitilafu kwenye AppModel.getCategoriesWithPreviews:', err.message);
+      throw err;
+    }
+  },
+
+  // ── MPYA: pata apps kwa category fulani ──
+  async getByCategory(category, limit = 8) {
+    try {
+      const { rows } = await pool.query(
+        `SELECT id, name, slug, category, icon_file_id, banner_file_id, description,
+                version, file_size, os, is_free, is_featured,
+                views, downloads, created_at, updated_at,
+                developer, package_name, rating, mod_info,
+                badges, screenshots, is_editors_choice
+         FROM apps
+         WHERE is_active = true AND category = $1
+         ORDER BY downloads DESC, views DESC, created_at DESC
+         LIMIT $2`,
+        [category, limit]
+      );
+      return rows;
+    } catch (err) {
+      console.error('Hitilafu kwenye AppModel.getByCategory:', err.message);
+      throw err;
+    }
+  },
+
   async getHomeSections() {
     try {
       const baseSelect = `
