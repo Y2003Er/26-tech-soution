@@ -1,16 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-  // ── Scroll laini kwenda kwenye anchor (#results, #latest n.k) hata baada ya full page reload ──
+  // ── Scroll ya kuaminika kwenda kwenye anchor (#results, #latest n.k) ──
+  // Tunazuia default scroll ya browser kwanza, kisha tunafanya scroll
+  // wenyewe kwa kutumia offsetTop (si scrollIntoView) ili iwe sahihi
+  // hata kama picha/layout bado zinapakia.
   if (location.hash) {
-    var scrollTarget = document.querySelector(location.hash);
-    if (scrollTarget) {
-      // Subiri layout ikamilike kabisa (fonts, images) kabla ya kupima nafasi
-      window.requestAnimationFrame(function () {
-        setTimeout(function () {
-          scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 200);
-      });
-    }
+    // Rudisha scroll juu papo hapo ili kuzuia "jump" ya awali ya browser
+    window.scrollTo(0, 0);
+
+    var scrollToHash = function () {
+      var scrollTarget = document.querySelector(location.hash);
+      if (!scrollTarget) return;
+      var navOffset = 80;
+      var targetY = scrollTarget.getBoundingClientRect().top + window.pageYOffset - navOffset;
+      window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+    };
+
+    // Jaribu mara kadhaa: mara moja baada ya layout, na tena baada ya
+    // picha/fonts kupakia kikamilifu (window.onload inaweza kuchelewa)
+    window.requestAnimationFrame(function () {
+      setTimeout(scrollToHash, 150);
+    });
+    window.addEventListener('load', function () {
+      setTimeout(scrollToHash, 100);
+    });
   }
 
   var searchToggle = document.querySelector('[data-search-toggle]');
@@ -41,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ── Funga mobile menu / search overlay baada ya kubofya link ya ndani ──
   document.querySelectorAll('[data-nav-links] a').forEach(function (link) {
     link.addEventListener('click', function () {
       if (navLinks) navLinks.classList.remove('is-open');
