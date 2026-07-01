@@ -181,7 +181,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
   </section>
 
   <!-- ════════ DIRECTORY / FILTER RESULTS ════════ -->
-  <section class="section directory">
+  <section class="section directory" id="results">
     <div class="section-head"><div><span>Search Results</span><h2><%= currentCat !== 'Zote' ? currentCat : 'All Software' %></h2></div><span><%= total %> results</span></div>
     <form class="filter-panel" action="/" method="GET">
       <input type="hidden" name="q" value="<%= query || '' %>">
