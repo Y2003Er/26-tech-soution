@@ -17,7 +17,7 @@
         <input type="hidden" name="category" value="<%= c.category %>">
         <div class="cat-manage-preview">
           <% if (c.category_image_url) { %>
-            <img src="<%= c.category_image_url %>" alt="<%= c.category %>">
+            <img src="/icon/<%= c.category_image_url %>" alt="<%= c.category %>">
           <% } else { %>
             <span>No image</span>
           <% } %>
