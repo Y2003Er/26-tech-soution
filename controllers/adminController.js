@@ -139,7 +139,9 @@ const AdminController = {
         return res.redirect('/admin/categories');
       }
 
-      await AppModel.setCategoryImage(category, result.url);
+      // Hifadhi fileId (SIO url ya moja kwa moja ya Telegram) ili tuweze
+      // ku-proxy kupitia /icon/:fileId badala ya browser kufikia Telegram moja kwa moja
+      await AppModel.setCategoryImage(category, result.fileId);
       req.flash('success', `Picha ya "${category}" imehifadhiwa.`);
       res.redirect('/admin/categories');
     } catch (err) {
