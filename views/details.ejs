@@ -28,16 +28,13 @@ const badges = app ? buildBadges(app) : [];
 
   <!-- ════════ DETAILS HERO - banner + overlay kama LiteAPKs ════════ -->
   <section class="details-hero">
-    <!-- Banner image (screenshot ya kwanza au gradient fallback) -->
     <div class="details-hero-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image: url('<%= app.screenshots[0] %>')"<% } %>>
-      <!-- Badges juu ya banner -->
       <% if (badges.length) { %>
         <div class="details-hero-badges">
           <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
         </div>
       <% } %>
 
-      <!-- Overlay chini ya banner: icon + title + tags -->
       <div class="details-hero-overlay">
         <div class="details-icon">
           <% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="<%= app.name %>"><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %>
@@ -55,27 +52,23 @@ const badges = app ? buildBadges(app) : [];
       </div>
     </div>
 
-    <!-- Panel chini ya banner: price + download + share -->
     <div class="details-hero-panel">
       <div class="price-pill <%= app.is_free ? 'free' : 'paid' %>"><%= app.is_free ? 'Free Download' : 'Premium Listing' %></div>
       <div class="download-panel">
         <a class="btn btn-primary big" href="/download/<%= app.slug %>">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span>Download Now</span>
         </a>
         <button class="btn btn-secondary" type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
           <span>Share</span>
         </button>
       </div>
     </div>
   </section>
 
-  <!-- ════════ DETAILS GRID ════════ -->
   <section class="details-grid">
     <div class="details-main">
-
-      <!-- Screenshots gallery -->
       <% if (app.screenshots && app.screenshots.length) { %>
         <div class="screenshot-gallery has-images">
           <% app.screenshots.forEach(shot => { %>
@@ -112,18 +105,17 @@ const badges = app ? buildBadges(app) : [];
       </dl>
       <div class="share-row">
         <button type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
           <span>Share</span>
         </button>
         <button type="button" data-copy-link>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
           <span>Copy Link</span>
         </button>
       </div>
     </aside>
   </section>
 
-  <!-- ════════ RELATED SOFTWARE ════════ -->
   <section class="section">
     <div class="section-head"><div><span>Related Software</span><h2>You may also like</h2></div></div>
     <div class="software-grid">
