@@ -168,19 +168,25 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
     </div>
   </section>
 
-  <!-- ════════ CATEGORIES (na picha halisi) ════════ -->
+  <!-- ════════ CATEGORIES (na collage ya app icons) ════════ -->
   <section class="section" id="categories">
     <div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div></div>
     <div class="category-grid">
       <% shownCategories.slice(0,6).forEach(c => { %>
-        <a class="category-card" href="/?cat=<%= encodeURIComponent(c.category) %>#results">
-          <% if (c.category_image_url) { %>
-            <div class="category-image"><img src="/icon/<%= c.category_image_url %>" alt="<%= c.category %>"></div>
-          <% } else { %>
-            <span class="category-icon"><%- include('partials/app-icon', { category: c.category }) %></span>
-          <% } %>
+        <a class="category-card" href="/category/<%= encodeURIComponent(c.category) %>">
+          <div class="category-collage">
+            <% const previews = (c.previewApps || []).slice(0, 4); %>
+            <% previews.forEach(p => { %>
+              <div class="collage-icon">
+                <% if (p.icon_file_id) { %><img src="/icon/<%= p.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: c.category }) %><% } %>
+              </div>
+            <% }) %>
+            <% for (let i = previews.length; i < 4; i++) { %>
+              <div class="collage-icon collage-empty"></div>
+            <% } %>
+          </div>
           <h3><%= c.category %></h3>
-          <p><%= c.total || 0 %> apps</p>
+          <p><%= c.total || 0 %> apps · See all</p>
         </a>
       <% }) %>
     </div>
