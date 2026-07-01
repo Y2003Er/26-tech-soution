@@ -11,6 +11,9 @@ router.post('/logout', AdminController.logout);
 
 router.get('/', requireAdmin, AdminController.dashboard);
 
+router.get('/categories', requireAdmin, AdminController.categoriesPage);
+router.post('/categories', requireAdmin, upload.single('category_image'), AdminController.saveCategoryImage);
+
 const appUploads = upload.fields([
   { name: 'icon', maxCount: 1 },
   { name: 'banner', maxCount: 1 }
