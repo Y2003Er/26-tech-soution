@@ -13,36 +13,239 @@ const updated = s.updated.length ? s.updated : allApps.slice(0, 8);
 const recommended = s.recommended.length ? s.recommended : allApps.slice(0, 6);
 const catFallback = ['Android','Windows','Games','Design','Tools','Utilities'];
 const shownCategories = categories.length ? categories : catFallback.map(category => ({ category, total: 0 }));
+
+// Helper: jenga badges za app (Editor's Choice, MOD/PREMIUM, ONLINE/OFFLINE)
+const buildBadges = (app) => {
+  const list = [];
+  if (app.is_editors_choice) list.push({ text: "Editor's Choice", cls: 'badge-choice' });
+  if (app.badges && app.badges.length) {
+    app.badges.forEach(b => {
+      const lower = b.toLowerCase();
+      let cls = 'badge-mod';
+      if (lower === 'online') cls = 'badge-online';
+      else if (lower === 'offline') cls = 'badge-offline';
+      else if (lower === 'premium') cls = 'badge-premium';
+      list.push({ text: b, cls });
+    });
+  }
+  return list;
+};
+
+// Helper: nyota za rating (e.g. "★ 4.2")
+const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).toFixed(1) : null;
 %>
 <main>
   <section class="hero-shell">
-    <div class="hero-content">
-      <div class="eyebrow">Verified marketplace</div>
-      <h1>Download Premium Software Faster.</h1>
-      <p>Thousands of verified apps, games, software and tools, arranged for fast discovery and secure downloads.</p>
-      <form class="hero-search" action="/" method="GET" data-search-form>
-        <input type="search" name="q" value="<%= query || '' %>" placeholder="Search software, apps, games, utilities..." data-instant-search>
-        <button type="submit">Search</button>
-      </form>
-      <div class="tag-row"><a href="/?q=editing">Editing</a><a href="/?cat=Android">Android</a><a href="/?cat=Windows">Windows</a><a href="/?cat=Games">Games</a><a href="/?sort=downloads">Top Downloads</a></div>
+    <div class="eyebrow">Verified marketplace</div>
+    <h1>Software Hub</h1>
+    <div class="tag-row">
+      <a href="/?platform=Windows#results">Windows</a>
+      <a href="/?platform=Android#results">Android</a>
+      <a href="/?platform=macOS#results">macOS</a>
+      <a href="/?cat=Games#results">Games</a>
     </div>
-    <div class="hero-showcase">
-      <% featured.slice(0,3).forEach((app, i) => { %>
-        <a class="showcase-card <%= i === 0 ? 'is-main' : '' %>" href="/app/<%= app.slug %>">
-          <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-          <div><strong><%= app.name %></strong><span><%= app.category %> - <%= fmt(app.downloads) %> downloads</span></div>
+  </section>
+
+  <!-- ════════ FEATURED (carousel) na badges ════════ -->
+  <section class="section" id="featured">
+    <div class="section-head"><div><span>Featured Software</span><h2>Editor picks</h2></div><a href="/?sort=popular#results">View all</a></div>
+    <div class="carousel-row">
+      <% featured.forEach(app => { %>
+        <a class="feature-card" href="/app/<%= app.slug %>">
+          <% const badges = buildBadges(app); %>
+          <div class="card-banner" <% if (app.banner_file_id) { %>style="background-image:url('/icon/<%= app.banner_file_id %>')"<% } else if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <div>
+                <strong><%= app.name %></strong>
+                <span><%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <p><%= app.description || 'Verified software ready for download.' %></p>
+            <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
+            <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
+          </div>
         </a>
       <% }) %>
     </div>
   </section>
-  <section class="section" id="featured"><div class="section-head"><div><span>Featured Software</span><h2>Editor picks</h2></div><a href="/?sort=popular">View all</a></div><div class="carousel-row"><% featured.forEach(app => { %><a class="feature-card" href="/app/<%= app.slug %>"><div class="app-icon lg"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div><div><h3><%= app.name %></h3><p><%= app.description || 'Verified software ready for download.' %></p><span><%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></span></div></a><% }) %></div></section>
-  <section class="section" id="trending"><div class="section-head"><div><span>Trending Downloads</span><h2>Moving fast</h2></div></div><div class="trend-list"><% trending.forEach(app => { %><article class="trend-card"><a href="/app/<%= app.slug %>" class="trend-main"><div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div><div><h3><%= app.name %></h3><p><%= app.category %> - Rating 4.<%= (app.id || 7) % 9 %> - <%= fmt(app.downloads) %> downloads - <%= app.version || 'v1.0' %></p></div></a><button class="btn btn-primary" data-download-url="/go/<%= app.slug %>" data-download-name="<%= app.name %>">Download</button></article><% }) %></div></section>
-  <section class="section" id="popular"><div class="section-head"><div><span>Popular Software</span><h2>Community favorites</h2></div></div><div class="software-grid"><% popular.forEach(app => { %><a class="software-card" href="/app/<%= app.slug %>"><div class="card-top"><div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div><span><%= app.is_free ? 'Free' : 'Premium' %></span></div><h3><%= app.name %></h3><p><%= app.category %> - <%= app.os || 'Multi' %></p><div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div></a><% }) %></div></section>
-  <section class="section split-section"><div id="latest"><div class="section-head compact"><div><span>Latest Uploads</span><h2>Fresh files</h2></div></div><div class="mini-list"><% latest.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= dateFmt(app.created_at) %></span></a><% }) %></div></div><div id="updated"><div class="section-head compact"><div><span>Recently Updated</span><h2>New versions</h2></div></div><div class="mini-list"><% updated.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= app.version || 'Latest' %> - <%= dateFmt(app.updated_at || app.created_at) %></span></a><% }) %></div></div></section>
-  <section class="section" id="categories"><div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div></div><div class="category-grid"><% shownCategories.slice(0,6).forEach(c => { %><a class="category-card" href="/?cat=<%= encodeURIComponent(c.category) %>"><span><%= c.category.slice(0,2).toUpperCase() %></span><h3><%= c.category %></h3><p><%= c.total || 0 %> apps</p></a><% }) %></div></section>
-  <section class="section recommendation"><div><span>Recommended Software</span><h2>Smart picks based on momentum</h2><p>Downloads, views, and featured status are blended to surface strong options without changing your backend.</p></div><div class="recommend-grid"><% recommended.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= app.category %> - <%= fmt((app.downloads || 0) + (app.views || 0)) %> signals</span></a><% }) %></div></section>
-  <section class="section directory"><div class="section-head"><div><span>Search Results</span><h2><%= currentCat !== 'Zote' ? currentCat : 'All Software' %></h2></div><span><%= total %> results</span></div><form class="filter-panel" action="/" method="GET"><input type="hidden" name="q" value="<%= query || '' %>"><select name="cat"><option value="Zote">All Categories</option><% categories.forEach(c => { %><option value="<%= c.category %>" <%= currentCat === c.category ? 'selected' : '' %>><%= c.category %></option><% }) %></select><select name="platform"><% ['All','Windows','Android','macOS','iOS','Linux','Multi'].forEach(p => { %><option value="<%= p %>" <%= platform === p ? 'selected' : '' %>><%= p === 'All' ? 'All platforms' : p %></option><% }) %></select><select name="sort"><% [['trending','Trending'],['popular','Popular'],['newest','Newest'],['oldest','Oldest'],['downloads','Downloads']].forEach(item => { %><option value="<%= item[0] %>" <%= sort === item[0] ? 'selected' : '' %>><%= item[1] %></option><% }) %></select><button class="btn btn-secondary" type="submit">Apply</button></form><div class="software-grid"><% apps.forEach(app => { %><a class="software-card" href="/app/<%= app.slug %>"><div class="card-top"><div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div><span><%= app.version || 'v1.0' %></span></div><h3><%= app.name %></h3><p><%= app.category %> - <%= app.os || 'Multi' %></p><div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div></a><% }) %></div><% if (apps.length === 0) { %><div class="empty-state">No software matched your filters.</div><% } %></section>
-  <section class="newsletter"><h2>Stay updated with latest software.</h2><form><input type="email" placeholder="you@example.com"><button class="btn btn-primary" type="button">Notify me</button></form></section>
+
+  <!-- ════════ TRENDING (list) ════════ -->
+  <section class="section" id="trending">
+    <div class="section-head"><div><span>Trending Downloads</span><h2>Moving fast</h2></div></div>
+    <div class="trend-list">
+      <% trending.forEach(app => { %>
+        <article class="trend-card">
+          <a href="/app/<%= app.slug %>" class="trend-main">
+            <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+            <div>
+              <h3><%= app.name %></h3>
+              <p>
+                <%= app.category %>
+                <% if (ratingText(app)) { %> - ★ <%= ratingText(app) %><% } %>
+                - <%= fmt(app.downloads) %> downloads - <%= app.version || 'v1.0' %>
+              </p>
+              <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
+            </div>
+          </a>
+          <a class="btn btn-primary" href="/app/<%= app.slug %>">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Download</span>
+          </a>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- ════════ POPULAR (grid) ════════ -->
+  <section class="section" id="popular">
+    <div class="section-head"><div><span>Popular Software</span><h2>Community favorites</h2></div></div>
+    <div class="software-grid">
+      <% popular.forEach(app => { %>
+        <a class="software-card" href="/app/<%= app.slug %>">
+          <% const badges = buildBadges(app); %>
+          <div class="card-banner" <% if (app.banner_file_id) { %>style="background-image:url('/icon/<%= app.banner_file_id %>')"<% } else if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <div>
+                <strong><%= app.name %></strong>
+                <span><%= app.category %> - <%= app.os || 'Multi' %></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="metric-row"><span><%= app.is_free ? 'Free' : 'Premium' %></span></span>
+            <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
+            <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
+            <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- ════════ TRENDING / RECENTLY UPDATED (na icon) ════════ -->
+  <section class="section split-section">
+    <div class="compact">
+      <div class="section-head compact"><div><span>Trending</span><h2>Hot right now</h2></div></div>
+      <div class="mini-list">
+        <% trending.forEach(app => { %>
+          <a href="/app/<%= app.slug %>">
+            <div class="mini-list-left">
+              <div class="app-icon sm"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <strong><%= app.name %></strong>
+            </div>
+            <span><%= fmt(app.downloads) %> downloads</span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+    <div class="compact">
+      <div class="section-head compact"><div><span>Recently Updated</span><h2>New versions</h2></div></div>
+      <div id="latest">
+        <% updated.forEach(app => { %>
+          <a href="/app/<%= app.slug %>">
+            <div class="mini-list-left">
+              <div class="app-icon sm"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <strong><%= app.name %></strong>
+            </div>
+            <span><%= app.version || 'Latest' %> - <%= dateFmt(app.updated_at || app.created_at) %></span>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ CATEGORIES (na collage ya app icons) ════════ -->
+  <section class="section" id="categories">
+    <div class="section-head"><div><span>Categories</span><h2>Browse by platform</h2></div><a href="/categories">View all</a></div>
+    <div class="category-grid">
+      <% shownCategories.slice(0,6).forEach(c => { %>
+        <% const previews = (c.previewApps || []).slice(0, 4); %>
+        <div class="category-card">
+          <div class="category-collage count-<%= previews.length %>">
+            <% previews.forEach(p => { %>
+              <div class="collage-icon">
+                <% if (p.icon_file_id) { %><img src="/icon/<%= p.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: c.category }) %><% } %>
+              </div>
+            <% }) %>
+            <% if (previews.length === 0) { %>
+              <div class="collage-icon collage-empty"><%- include('partials/app-icon', { category: c.category }) %></div>
+            <% } %>
+          </div>
+          <h3><%= c.category %></h3>
+          <p><%= c.total || 0 %> apps · <a href="/category/<%= encodeURIComponent(c.category) %>" class="see-all-link">View all</a></p>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- ════════ RECOMMENDED ════════ -->
+  <section class="section recommendation">
+    <div><span>Recommended Software</span><h2>Smart picks based on momentum</h2><p>Apps people are downloading and viewing the most right now — updated as activity changes.</p></div>
+    <div class="recommend-grid"><% recommended.forEach(app => { %><a href="/app/<%= app.slug %>"><strong><%= app.name %></strong><span><%= app.category %> - <%= fmt((app.downloads || 0) + (app.views || 0)) %> signals</span></a><% }) %></div>
+  </section>
+
+  <!-- ════════ DIRECTORY / FILTER RESULTS ════════ -->
+  <section class="section directory" id="results">
+    <div class="section-head"><div><span>Search Results</span><h2><%= currentCat !== 'Zote' ? currentCat : 'All Software' %></h2></div><span><%= total %> results</span></div>
+    <form class="filter-panel" action="/" method="GET">
+      <input type="hidden" name="q" value="<%= query || '' %>">
+      <select name="cat"><option value="Zote">All Categories</option><% categories.forEach(c => { %><option value="<%= c.category %>" <%= currentCat === c.category ? 'selected' : '' %>><%= c.category %></option><% }) %></select>
+      <select name="platform"><% ['All','Windows','Android','macOS','iOS','Linux','Multi'].forEach(p => { %><option value="<%= p %>" <%= platform === p ? 'selected' : '' %>><%= p === 'All' ? 'All platforms' : p %></option><% }) %></select>
+      <select name="sort"><% [['trending','Trending'],['popular','Popular'],['newest','Newest'],['oldest','Oldest'],['downloads','Downloads']].forEach(item => { %><option value="<%= item[0] %>" <%= sort === item[0] ? 'selected' : '' %>><%= item[1] %></option><% }) %></select>
+      <button class="btn btn-secondary" type="submit">Apply</button>
+    </form>
+    <div class="software-grid">
+      <% apps.forEach(app => { %>
+        <a class="software-card" href="/app/<%= app.slug %>">
+          <% const badges = buildBadges(app); %>
+          <div class="card-banner" <% if (app.banner_file_id) { %>style="background-image:url('/icon/<%= app.banner_file_id %>')"<% } else if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <div>
+                <strong><%= app.name %></strong>
+                <span><%= app.category %> - <%= app.os || 'Multi' %></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="metric-row"><span><%= app.version || 'v1.0' %></span></span>
+            <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
+            <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
+            <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+    <% if (apps.length === 0) { %><div class="empty-state">No software matched your filters.</div><% } %>
+  </section>
+
+  <section class="newsletter">
+    <h2>Stay updated with latest software.</h2>
+    <form id="newsletterForm">
+      <input type="email" id="newsletterEmail" name="email" placeholder="you@example.com" required>
+      <button class="btn btn-primary" type="submit" id="newsletterBtn">Notify me</button>
+    </form>
+    <p id="newsletterMsg" class="newsletter-msg" hidden></p>
+  </section>
 </main>
 <%- include('partials/footer') %>
 <%- include('partials/foot') %>

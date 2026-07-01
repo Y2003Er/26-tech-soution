@@ -1,23 +1,44 @@
 <nav class="site-nav" data-nav>
-  <a href="/" class="brand" aria-label="26 Tech Solution home"><span class="brand-mark">26</span><span>Tech</span></a>
-  <form class="nav-search" action="/" method="GET" role="search" data-search-form>
-    <span class="search-icon">Search</span>
-    <input type="search" name="q" value="<%= typeof query !== 'undefined' ? query : '' %>" placeholder="Search apps, games, tools..." autocomplete="off" data-instant-search>
-    <button type="submit">Go</button>
-    <div class="suggestions" data-suggestions>
-      <div class="suggestion-title">Popular searches</div>
-      <a href="/?q=VPN">VPN</a>
-      <a href="/?q=Video editor">Video editor</a>
-      <a href="/?q=Game">Game</a>
-      <a href="/?q=Android">Android tools</a>
-    </div>
-  </form>
+  <a href="/" class="brand" aria-label="26 Tech Solution home">
+    <span class="brand-mark">26</span><span>Tech</span>
+  </a>
+
   <button class="nav-toggle" type="button" aria-label="Open menu" data-nav-toggle><span></span><span></span></button>
+
   <div class="nav-links" data-nav-links>
-    <a href="/#categories">Categories</a>
-    <a href="/#trending">Trending</a>
-    <a href="/#popular">Popular</a>
-    <a href="/?sort=newest#latest">Latest</a>
-    <a href="/contact">Contact</a>
+    <a href="/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="/?cat=Android#results">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Apps</span>
+    </a>
+    <a href="/?cat=Games#results">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="9" rx="4"/><line x1="7" y1="11" x2="7" y2="14"/><line x1="5.5" y1="12.5" x2="8.5" y2="12.5"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13" r="1"/></svg>
+      <span>Games</span>
+    </a>
+    <a href="/?sort=newest#results">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+      <span>Latest</span>
+    </a>
+  </div>
+
+  <button class="nav-search-toggle" type="button" aria-label="Open search" data-search-toggle>
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+  </button>
+
+  <div class="nav-search-overlay" data-search-overlay>
+    <form class="nav-search" action="/#results" method="GET" role="search" data-search-form>
+      <span class="search-icon">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </span>
+      <input type="search" name="q" value="<%= typeof query !== 'undefined' ? query : '' %>" placeholder="Search apps, games, tools..." autocomplete="off" data-instant-search>
+      <button type="submit">Go</button>
+      <button type="button" class="search-close" aria-label="Close search" data-search-close>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div class="suggestions" data-suggestions style="display: none;"></div>
+    </form>
   </div>
 </nav>

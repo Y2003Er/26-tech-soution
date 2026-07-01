@@ -1,25 +1,65 @@
-// 26 Tech Solution — Download Timer
+// 26 Tech Solution — Real Download Link Generator
 (function () {
-  const SECONDS = parseInt(document.getElementById('timer-seconds')?.value || '10', 10);
-  const numEl   = document.getElementById('timer-num');
-  const circle  = document.getElementById('timer-circle');
-  const btn     = document.getElementById('dl-go-btn');
-  const FULL    = 283; // 2 * PI * r (r=45)
+  const panel = document.getElementById('dlPanel');
+  if (!panel) return; // si ukurasa wa download
 
-  let remaining = SECONDS;
+  const slug = panel.dataset.slug;
 
-  function tick() {
-    remaining--;
-    if (numEl) numEl.textContent = remaining;
-    if (circle) {
-      const offset = FULL - (FULL * (SECONDS - remaining) / SECONDS);
-      circle.style.strokeDashoffset = offset;
-    }
-    if (remaining <= 0) {
-      clearInterval(timer);
-      if (btn) btn.classList.add('show');
+  const startWrap       = document.getElementById('dlStart');
+  const startBtn         = document.getElementById('dlStartBtn');
+  const generatingWrap = document.getElementById('dlGenerating');
+  const progressFill   = document.getElementById('dlProgressFill');
+  const readyWrap        = document.getElementById('dlReady');
+  const finalBtn          = document.getElementById('dlFinalBtn');
+  const errorWrap          = document.getElementById('dlError');
+  const retryBtn            = document.getElementById('dlRetryBtn');
+
+  function show(el) { if (el) el.hidden = false; }
+  function hide(el) { if (el) el.hidden = true; }
+
+  function runProgress(seconds, onDone) {
+    let elapsed = 0;
+    progressFill.style.width = '0%';
+    const interval = setInterval(function () {
+      elapsed += 1;
+      progressFill.style.width = Math.min((elapsed / seconds) * 100, 100) + '%';
+      if (elapsed >= seconds) {
+        clearInterval(interval);
+        onDone();
+      }
+    }, 1000);
+  }
+
+  async function generateLink() {
+    hide(startWrap); hide(errorWrap); hide(readyWrap); show(generatingWrap);
+
+    try {
+      const res = await fetch('/download/' + encodeURIComponent(slug) + '/prepare', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Imeshindikana kuzalisha link');
+      }
+
+      const waitSeconds = data.waitSeconds || 5;
+
+      runProgress(waitSeconds, function () {
+        hide(generatingWrap);
+        show(readyWrap);
+        finalBtn.href = data.downloadUrl;
+        // AUTO-DOWNLOAD IMEZIMWA — mtumiaji lazima abonyeze "Download" mwenyewe
+      });
+
+    } catch (err) {
+      console.error('generateLink error:', err);
+      hide(generatingWrap);
+      show(errorWrap);
     }
   }
 
-  const timer = setInterval(tick, 1000);
+  if (startBtn) startBtn.addEventListener('click', generateLink);
+  if (retryBtn) retryBtn.addEventListener('click', generateLink);
 })();

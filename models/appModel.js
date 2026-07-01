@@ -2,12 +2,13 @@ const pool = require('../config/db');
 
 const AppModel = {
 
-  // Leta apps zote (na filter + search + pagination)
   async getAll({ category, search, platform, sort = 'trending', limit = 20, offset = 0 } = {}) {
     let query = `
-      SELECT id, name, slug, category, icon_file_id, description,
+      SELECT id, name, slug, category, app_type, icon_file_id, banner_file_id, description,
              version, file_size, os, is_free, is_featured,
-             views, downloads, created_at, updated_at
+             views, downloads, created_at, updated_at,
+             developer, package_name, rating, mod_info,
+             badges, screenshots, is_editors_choice
       FROM apps
       WHERE is_active = true
     `;
@@ -46,7 +47,6 @@ const AppModel = {
     }
   },
 
-  // Hesabu jumla ya apps (kwa pagination)
   async count({ category, search, platform } = {}) {
     let query = `SELECT COUNT(*) FROM apps WHERE is_active = true`;
     const params = [];
@@ -70,7 +70,6 @@ const AppModel = {
     }
   },
 
-  // Leta app moja kwa slug
   async getBySlug(slug) {
     try {
       const { rows } = await pool.query(
@@ -84,7 +83,6 @@ const AppModel = {
     }
   },
 
-  // Leta app moja kwa id
   async getById(id) {
     try {
       const { rows } = await pool.query(
@@ -98,31 +96,22 @@ const AppModel = {
     }
   },
 
-  // Ongeza view count
   async incrementViews(id) {
     try {
-      await pool.query(
-        `UPDATE apps SET views = views + 1 WHERE id = $1`,
-        [id]
-      );
+      await pool.query(`UPDATE apps SET views = views + 1 WHERE id = $1`, [id]);
     } catch (err) {
       console.error('Hitilafu kwenye AppModel.incrementViews:', err.message);
     }
   },
 
-  // Ongeza download count
   async incrementDownloads(id) {
     try {
-      await pool.query(
-        `UPDATE apps SET downloads = downloads + 1 WHERE id = $1`,
-        [id]
-      );
+      await pool.query(`UPDATE apps SET downloads = downloads + 1 WHERE id = $1`, [id]);
     } catch (err) {
       console.error('Hitilafu kwenye AppModel.incrementDownloads:', err.message);
     }
   },
 
-  // Leta categories zote zilizopo (pamoja na category_image_url)
   async getCategories() {
     try {
       const { rows } = await pool.query(
@@ -142,12 +131,60 @@ const AppModel = {
     }
   },
 
+  // ── MPYA: pata categories pamoja na preview apps ──
+  async getCategoriesWithPreviews(previewLimit = 4) {
+    try {
+      const categories = await this.getCategories();
+      const withPreviews = await Promise.all(
+        categories.map(async (c) => {
+          const { rows } = await pool.query(
+            `SELECT icon_file_id, name
+             FROM apps
+             WHERE is_active = true AND category = $1
+             ORDER BY downloads DESC, views DESC, created_at DESC
+             LIMIT $2`,
+            [c.category, previewLimit]
+          );
+          return { ...c, previewApps: rows };
+        })
+      );
+      return withPreviews;
+    } catch (err) {
+      console.error('Hitilafu kwenye AppModel.getCategoriesWithPreviews:', err.message);
+      throw err;
+    }
+  },
+
+  // ── MPYA: pata apps kwa category fulani ──
+  async getByCategory(category, limit = 8) {
+    try {
+      const { rows } = await pool.query(
+        `SELECT id, name, slug, category, app_type, icon_file_id, banner_file_id, description,
+                version, file_size, os, is_free, is_featured,
+                views, downloads, created_at, updated_at,
+                developer, package_name, rating, mod_info,
+                badges, screenshots, is_editors_choice
+         FROM apps
+         WHERE is_active = true AND category = $1
+         ORDER BY downloads DESC, views DESC, created_at DESC
+         LIMIT $2`,
+        [category, limit]
+      );
+      return rows;
+    } catch (err) {
+      console.error('Hitilafu kwenye AppModel.getByCategory:', err.message);
+      throw err;
+    }
+  },
+
   async getHomeSections() {
     try {
       const baseSelect = `
-        SELECT id, name, slug, category, icon_file_id, description,
+        SELECT id, name, slug, category, app_type, icon_file_id, banner_file_id, description,
                version, file_size, os, is_free, is_featured,
-               views, downloads, created_at, updated_at
+               views, downloads, created_at, updated_at,
+               developer, package_name, rating, mod_info,
+               badges, screenshots, is_editors_choice
         FROM apps
         WHERE is_active = true
       `;
@@ -174,11 +211,11 @@ const AppModel = {
     }
   },
 
-  // Leta apps zinazofanana (same category)
   async getRelated(appId, category, limit = 4) {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, icon_file_id, version, file_size, is_free, downloads
+        `SELECT id, name, slug, category, app_type, icon_file_id, banner_file_id, version, file_size,
+                is_free, downloads, rating, mod_info, badges, screenshots
          FROM apps
          WHERE is_active = true AND id != $1 AND category = $2
          ORDER BY downloads DESC LIMIT $3`,
@@ -191,14 +228,34 @@ const AppModel = {
     }
   },
 
+  // ── MPYA: apps za random kwa "Maybe You Like" (download page) ──
+  async getRandomApps(excludeId, limit = 3) {
+    try {
+      const { rows } = await pool.query(
+        `SELECT id, name, slug, category, app_type, icon_file_id, banner_file_id,
+                rating, downloads
+         FROM apps
+         WHERE is_active = true AND id != $1
+         ORDER BY RANDOM()
+         LIMIT $2`,
+        [excludeId || 0, limit]
+      );
+      return rows;
+    } catch (err) {
+      console.error('Hitilafu kwenye AppModel.getRandomApps:', err.message);
+      throw err;
+    }
+  },
+
   // ── ADMIN QUERIES ──────────────────────────────
 
   async adminGetAll() {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, icon_file_id, version,
+        `SELECT id, name, slug, category, app_type, icon_file_id, banner_file_id, version,
                 file_size, os, is_free, is_featured, is_active,
-                views, downloads, created_at
+                views, downloads, created_at, rating, mod_info,
+                badges, is_editors_choice
          FROM apps ORDER BY created_at DESC`
       );
       return rows;
@@ -208,20 +265,25 @@ const AppModel = {
     }
   },
 
-  async create({ name, slug, category, description, version,
+  async create({ name, slug, category, app_type, description, version,
                  file_size, os, is_free, download_url, is_featured,
-                 is_active, icon_file_id }) {
+                 is_active, icon_file_id, banner_file_id, developer, package_name,
+                 rating, mod_info, badges, screenshots, is_editors_choice }) {
     try {
       const { rows } = await pool.query(
         `INSERT INTO apps
-           (name, slug, category, description, version,
+           (name, slug, category, app_type, description, version,
             file_size, os, is_free, download_url, is_featured,
-            is_active, icon_file_id)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+            is_active, icon_file_id, banner_file_id, developer, package_name,
+            rating, mod_info, badges, screenshots, is_editors_choice)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
          RETURNING *`,
-        [name, slug, category, description, version,
+        [name, slug, category, app_type || 'App', description, version,
          file_size, os, is_free, download_url, is_featured,
-         is_active !== undefined ? is_active : true, icon_file_id || null]
+         is_active !== undefined ? is_active : true, icon_file_id || null, banner_file_id || null,
+         developer || 'Verified Publisher', package_name || null,
+         rating || 0, mod_info || null, badges || [], screenshots || [],
+         is_editors_choice || false]
       );
       return rows[0];
     } catch (err) {
@@ -230,19 +292,25 @@ const AppModel = {
     }
   },
 
-  async update(id, { name, slug, category, description, version,
+  async update(id, { name, slug, category, app_type, description, version,
                      file_size, os, is_free, download_url, is_featured,
-                     is_active, icon_file_id }) {
+                     is_active, icon_file_id, banner_file_id, developer, package_name,
+                     rating, mod_info, badges, screenshots, is_editors_choice }) {
     try {
       const { rows } = await pool.query(
         `UPDATE apps SET
-           name=$1, slug=$2, category=$3, description=$4,
-           version=$5, file_size=$6, os=$7, is_free=$8,
-           download_url=$9, is_featured=$10, is_active=$11, icon_file_id=$12
-         WHERE id=$13 RETURNING *`,
-        [name, slug, category, description, version,
+           name=$1, slug=$2, category=$3, app_type=$4, description=$5,
+           version=$6, file_size=$7, os=$8, is_free=$9,
+           download_url=$10, is_featured=$11, is_active=$12, icon_file_id=$13,
+           banner_file_id=$14, developer=$15, package_name=$16, rating=$17, mod_info=$18,
+           badges=$19, screenshots=$20, is_editors_choice=$21
+         WHERE id=$22 RETURNING *`,
+        [name, slug, category, app_type || 'App', description, version,
          file_size, os, is_free, download_url, is_featured,
-         is_active, icon_file_id || null, id]
+         is_active, icon_file_id || null, banner_file_id || null,
+         developer || 'Verified Publisher', package_name || null,
+         rating || 0, mod_info || null, badges || [], screenshots || [],
+         is_editors_choice || false, id]
       );
       return rows[0];
     } catch (err) {
@@ -277,8 +345,6 @@ const AppModel = {
       throw err;
     }
   },
-
-  // ── CATEGORIES ADMIN (kwa category_image_url) ──
 
   async setCategoryImage(category, imageUrl) {
     try {

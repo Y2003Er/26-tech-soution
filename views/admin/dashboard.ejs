@@ -2,10 +2,87 @@
 <%- include('../partials/admin-nav') %>
 <% const fmt = n => Number(n || 0).toLocaleString(); const recent = apps.slice(0,5); const maxDownloads = Math.max(1, ...apps.map(a => Number(a.downloads || 0))); %>
 <main class="admin-main">
-  <header class="admin-topbar"><div><span class="eyebrow">Control center</span><h1>Dashboard Overview</h1></div><div class="admin-actions"><span>Signed in as <strong><%= admin.username || admin.email %></strong></span><a class="btn btn-primary" href="/admin/apps/new">New Upload</a><form method="POST" action="/admin/logout"><button class="btn btn-secondary" type="submit">Logout</button></form></div></header>
-  <% if (success && success.length > 0) { %><div class="flash success"><%= success %></div><% } %><% if (error && error.length > 0) { %><div class="flash error"><%= error %></div><% } %>
-  <section class="admin-stats"><article><span>Total Apps</span><strong><%= stats.total_apps %></strong></article><article><span>Active</span><strong><%= stats.active_apps %></strong></article><article><span>Featured</span><strong><%= stats.featured_apps %></strong></article><article><span>Downloads</span><strong><%= fmt(stats.total_downloads) %></strong></article><article><span>Views</span><strong><%= fmt(stats.total_views) %></strong></article></section>
-  <section class="admin-grid"><article class="admin-card" id="analytics"><div class="section-head compact"><div><span>Downloads Analytics</span><h2>Top movers</h2></div></div><div class="chart-list"><% apps.slice(0,8).forEach(app => { %><div><span><%= app.name %></span><b style="width:<%= Math.max(4, Math.round((Number(app.downloads || 0) / maxDownloads) * 100)) %>%"></b><em><%= fmt(app.downloads) %></em></div><% }) %></div></article><article class="admin-card" id="activity"><div class="section-head compact"><div><span>Recent Activity</span><h2>Latest uploads</h2></div></div><div class="activity-list"><% recent.forEach(app => { %><a href="/admin/apps/<%= app.id %>/edit"><strong><%= app.name %></strong><span><%= app.category %> - <%= app.version %></span></a><% }) %></div></article></section>
-  <section class="admin-card" id="software"><div class="table-header"><div><span class="eyebrow">Software</span><h2>Library Management</h2></div><input type="search" placeholder="Search table..." data-table-search></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Category</th><th>Version</th><th>Size</th><th>Downloads</th><th>Status</th><th>Actions</th></tr></thead><tbody><% apps.forEach(app => { %><tr><td><strong><%= app.name %></strong><small><%= app.slug %></small></td><td><span class="pill"><%= app.category %></span></td><td><%= app.version %></td><td><%= app.file_size %></td><td><%= fmt(app.downloads) %></td><td><span class="status <%= app.is_active ? 'on' : 'off' %>"><%= app.is_active ? 'Active' : 'Hidden' %></span></td><td><div class="row-actions"><a href="/app/<%= app.slug %>" target="_blank">View</a><a href="/admin/apps/<%= app.id %>/edit">Edit</a><form method="POST" action="/admin/apps/<%= app.id %>/delete" onsubmit="return confirm('Delete <%= app.name %>?')"><button type="submit">Delete</button></form></div></td></tr><% }) %></tbody></table></div></section>
+  <header class="admin-topbar">
+    <div style="display:flex;align-items:center;gap:16px">
+      <button class="admin-menu-toggle" type="button" aria-label="Open menu" id="adminMenuToggle">
+        <span class="brand-mark">26</span><span>TECH</span>
+      </button>
+      <div>
+        <span class="eyebrow">Control center</span>
+      </div>
+    </div>
+    <div class="admin-actions">
+      <span>Signed in as <strong><%= admin.username || admin.email %></strong></span>
+      <a class="btn btn-primary" href="/admin/apps/new">New Upload</a>
+      <form method="POST" action="/admin/logout">
+        <button class="btn btn-secondary" type="submit">Logout</button>
+      </form>
+    </div>
+  </header>
+
+  <% if (success && success.length > 0) { %><div class="flash success"><%= success %></div><% } %>
+  <% if (error && error.length > 0) { %><div class="flash error"><%= error %></div><% } %>
+
+  <section class="admin-stats">
+    <article><span>Total Apps</span><strong><%= stats.total_apps %></strong></article>
+    <article><span>Active</span><strong><%= stats.active_apps %></strong></article>
+    <article><span>Featured</span><strong><%= stats.featured_apps %></strong></article>
+    <article><span>Downloads</span><strong><%= fmt(stats.total_downloads) %></strong></article>
+    <article><span>Views</span><strong><%= fmt(stats.total_views) %></strong></article>
+  </section>
+
+  <section class="admin-grid">
+    <article class="admin-card" id="analytics">
+      <div class="section-head compact"><div><span>Downloads Analytics</span><h2>Top movers</h2></div></div>
+      <div class="chart-list">
+        <% apps.slice(0,8).forEach(app => { %>
+          <div><span><%= app.name %></span><b style="width:<%= Math.max(4, Math.round((Number(app.downloads || 0) / maxDownloads) * 100)) %>%"></b><em><%= fmt(app.downloads) %></em></div>
+        <% }) %>
+      </div>
+    </article>
+    <article class="admin-card" id="activity">
+      <div class="section-head compact"><div><span>Recent Activity</span><h2>Latest uploads</h2></div></div>
+      <div class="activity-list">
+        <% recent.forEach(app => { %>
+          <a href="/admin/apps/<%= app.id %>/edit"><strong><%= app.name %></strong><span><%= app.category %> - <%= app.version %></span></a>
+        <% }) %>
+      </div>
+    </article>
+  </section>
+
+  <section class="admin-card" id="software">
+    <div class="table-header">
+      <div><span class="eyebrow">Software</span><h2>Library Management</h2></div>
+      <input type="search" placeholder="Search table..." data-table-search>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Name</th><th>Category</th><th>Version</th><th>Size</th><th>Downloads</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          <% apps.forEach(app => { %>
+            <tr>
+              <td><strong><%= app.name %></strong><small><%= app.slug %></small></td>
+              <td><span class="pill"><%= app.category %></span></td>
+              <td><%= app.version %></td>
+              <td><%= app.file_size %></td>
+              <td><%= fmt(app.downloads) %></td>
+              <td><span class="status <%= app.is_active ? 'on' : 'off' %>"><%= app.is_active ? 'Active' : 'Hidden' %></span></td>
+              <td>
+                <div class="row-actions">
+                  <a href="/app/<%= app.slug %>" target="_blank">View</a>
+                  <a href="/admin/apps/<%= app.id %>/edit">Edit</a>
+                  <form method="POST" action="/admin/apps/<%= app.id %>/delete" onsubmit="return confirm('Delete <%= app.name %>?')">
+                    <button type="submit">Delete</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </main>
 <%- include('../partials/foot') %>

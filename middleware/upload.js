@@ -3,13 +3,11 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Hakikisha folder ya uploads/temp ipo
 const uploadDir = path.join(__dirname, '../uploads/temp');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Mipangilio ya multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadDir);
@@ -20,7 +18,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// Filter aina za faili zinazoruhusiwa
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
   if (allowedTypes.includes(file.mimetype)) {
@@ -32,34 +29,38 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
-  },
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: fileFilter
 });
 
-// Middleware ya kupakia picha kwenye Telegram
+// Middleware ya kupakia picha (icon + banner) kwenye Telegram
 const uploadImage = async (req, res, next) => {
   try {
-    if (!req.file) return next();
-    
+    const files = req.files || {};
     const TelegramService = require('../services/telegramService');
-    const result = await TelegramService.uploadImage(req.file.path);
-    
-    if (result.success) {
-      req.fileUrl = result.url;
-      req.fileId = result.fileId;
-    } else {
-      req.uploadError = result.error;
+
+    if (files.icon && files.icon[0]) {
+      const result = await TelegramService.uploadImage(files.icon[0].path);
+      if (result.success) {
+        req.fileUrl = result.url;
+        req.fileId = result.fileId;
+      } else {
+        req.uploadError = result.error;
+      }
+      try { fs.unlinkSync(files.icon[0].path); } catch (e) {}
     }
-    
-    // Safisha faili la muda
-    try {
-      fs.unlinkSync(req.file.path);
-    } catch (e) {
-      // ignore
+
+    if (files.banner && files.banner[0]) {
+      const result = await TelegramService.uploadImage(files.banner[0].path);
+      if (result.success) {
+        req.bannerUrl = result.url;
+        req.bannerFileId = result.fileId;
+      } else {
+        req.bannerUploadError = result.error;
+      }
+      try { fs.unlinkSync(files.banner[0].path); } catch (e) {}
     }
-    
+
     next();
   } catch (error) {
     console.error('Upload middleware error:', error);

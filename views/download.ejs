@@ -1,15 +1,166 @@
-<%- include('partials/head', { title: 'Preparing Download - ' + app.name }) %>
+<%- include('partials/head', { title: 'Download ' + app.name + ' - ' + (app.version || 'v1.0') }) %>
 <%- include('partials/nav') %>
+<%
+  const osExtMap = { Android: 'apk', Windows: 'exe', Mac: 'dmg', iOS: 'ipa', Linux: 'AppImage' };
+  const fileExt = osExtMap[app.os] || 'apk';
+  const cleanVersion = (app.version || 'v1.0').replace(/^v/i, '');
+  const fileName = `${app.slug}-v${cleanVersion}-full.${fileExt}`;
+  const fmt = n => Number(n || 0).toLocaleString();
+  const typeLabel = app.app_type === 'Game' ? 'Games' : 'Apps';
+
+  const timeAgoLabel = (d) => {
+    if (!d) return 'Recently';
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+
+  const faqs = (typeof downloadFaqs !== 'undefined' && downloadFaqs && downloadFaqs.length) ? downloadFaqs : [];
+%>
 <main class="download-page">
-  <section class="modal-panel download-standalone">
-    <div class="modal-kicker">Secure Download</div>
-    <h1>Preparing Download...</h1>
-    <p class="download-name"><%= app.name %> - <%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></p>
-    <div class="modal-checks"><span>Secure Server Connected</span><span>Virus Scan Passed</span><span>Fast Download Ready</span></div>
-    <div class="countdown" id="standaloneCountdown">3</div>
-    <a class="btn btn-primary manual-link" href="/go/<%= app.slug %>" id="manualDownload">Download Manually</a>
-    <div class="download-related"><h2>Recommended after download</h2><p>Explore related apps from the marketplace once your file starts.</p><a href="/">Browse software</a></div>
+  <nav class="dl-breadcrumb">
+    <a href="/">Home</a>
+    <span>&rsaquo;</span>
+    <a href="/"><%= typeLabel %></a>
+    <span>&rsaquo;</span>
+    <a href="/category/<%= encodeURIComponent(app.category) %>"><%= app.category %></a>
+    <span>&rsaquo;</span>
+    <a href="/app/<%= app.slug %>"><%= app.name %></a>
+    <span>&rsaquo;</span>
+    <span class="dl-breadcrumb-current">Download</span>
+  </nav>
+
+  <section class="download-standalone" id="dlPanel" data-slug="<%= app.slug %>">
+
+    <div class="dl-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="<%= app.name %>"><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+
+    <p class="dl-source"><%= app.developer || siteName %> <span class="dl-dot">&middot;</span> <%= timeAgoLabel(app.updated_at || app.created_at) %></p>
+    <h1>Download: <%= app.name %> <%= app.mod_info ? 'MOD' : '' %> <%= osExtMap[app.os] === 'apk' ? 'APK' : '' %> <%= app.version || 'v1.0' %></h1>
+
+    <div class="dl-version-card">
+      <button type="button" class="dl-version-toggle" id="dlVersionToggle">
+        <span><%= app.version || 'v1.0' %><%= app.mod_info ? '-mod' : '' %></span>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+
+      <div class="dl-version-body" id="dlVersionBody">
+
+        <div id="dlStart" class="dl-row">
+          <button type="button" class="dl-row-btn" id="dlStartBtn">
+            <span class="dl-row-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+            <span class="dl-row-label">DOWNLOAD APK</span>
+          </button>
+        </div>
+
+        <div id="dlGenerating" class="dl-row" hidden>
+          <p class="dl-filename">You are downloading <%= fileName %></p>
+          <p class="dl-status-sub">Your link is almost ready, please wait a few seconds...</p>
+          <div class="progress-track"><div class="progress-fill" id="dlProgressFill"></div></div>
+        </div>
+
+        <div id="dlReady" class="dl-row" hidden>
+          <p class="dl-filename">You are downloading <%= fileName %></p>
+          <a class="dl-row-btn" id="dlFinalBtn" href="#">
+            <span class="dl-row-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+            <span class="dl-row-label">DOWNLOAD NOW</span>
+            <span class="dl-row-size"><%= app.file_size || 'N/A' %></span>
+          </a>
+        </div>
+
+        <div id="dlError" class="dl-row" hidden>
+          <p class="dl-status-text dl-error-text">Hitilafu imetokea, link haikupatikana.</p>
+          <button type="button" class="dl-row-btn" id="dlRetryBtn">
+            <span class="dl-row-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></span>
+            <span class="dl-row-label">Jaribu Tena</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="dl-note dl-note-ad">An ad will pop up before the download. Close it, click download again — ads keep us going, thanks!</div>
+
+    <div class="dl-instructions">
+      <p>You are now ready to download <strong><%= app.name %></strong> for free. Here are some notes:</p>
+      <ol>
+        <li>Click "Install anyway (unsafe)", if your phone does not allow installation, this is because the Android system blocks it.</li>
+        <li>If there is a message like "incompatible version" most likely this version is ARMv7, it does not support many new phones, try to find another version (ARMv8, ARM64)</li>
+      </ol>
+    </div>
+
+    <% if (process.env.TELEGRAM_CHANNEL_LINK) { %>
+      <a class="telegram-btn" href="<%= process.env.TELEGRAM_CHANNEL_LINK %>" target="_blank" rel="noopener">Join @<%= siteName %> on Telegram channel</a>
+    <% } %>
+
   </section>
+
+  <% if (faqs && faqs.length) { %>
+  <section class="dl-faq-section">
+    <h2 class="dl-section-title">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      Download FAQs
+    </h2>
+    <div class="dl-faq-list">
+      <% faqs.forEach((f, i) => { %>
+        <div class="dl-faq-item">
+          <button type="button" class="dl-faq-question" data-faq-toggle>
+            <span><%= f.q %></span>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="dl-faq-answer"><p><%= f.a %></p></div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (related && related.length) { %>
+  <section class="dl-related-section">
+    <h2 class="dl-section-title">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+      Maybe You Like
+    </h2>
+    <div class="dl-related-grid">
+      <% related.forEach(item => { %>
+        <a class="dl-related-card" href="/app/<%= item.slug %>">
+          <div class="dl-related-banner" <% if (item.banner_file_id) { %>style="background-image:url('/icon/<%= item.banner_file_id %>')"<% } %>>
+            <% if (!item.banner_file_id) { %><div class="app-icon lg"><%- include('partials/app-icon', { category: item.category }) %></div><% } %>
+          </div>
+          <div class="dl-related-info">
+            <div class="dl-related-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><div class="app-icon sm"><%- include('partials/app-icon', { category: item.category }) %></div><% } %></div>
+            <div>
+              <strong><%= item.name %></strong>
+              <span><%= item.category %></span>
+              <% if (item.rating && item.rating > 0) { %><span class="rating-row">★ <%= Number(item.rating).toFixed(1) %></span><% } %>
+            </div>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
 </main>
-<script>(function(){var count=3;var el=document.getElementById('standaloneCountdown');var target='/go/<%= app.slug %>';var timer=setInterval(function(){count-=1;el.textContent=count>0?count:'Ready';if(count<=0){clearInterval(timer);window.location.href=target;}},1000);})();</script>
+<%- include('partials/footer') %>
+<script src="/js/timer.js" defer></script>
+<script>
+(function () {
+  var toggle = document.getElementById('dlVersionToggle');
+  var body = document.getElementById('dlVersionBody');
+  if (toggle && body) {
+    toggle.addEventListener('click', function () {
+      var isOpen = !body.hidden;
+      body.hidden = isOpen;
+      toggle.classList.toggle('is-open', !isOpen);
+    });
+  }
+
+  document.querySelectorAll('[data-faq-toggle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var item = btn.closest('.dl-faq-item');
+      var wasOpen = item.classList.contains('is-open');
+      document.querySelectorAll('.dl-faq-item.is-open').forEach(function (el) { el.classList.remove('is-open'); });
+      if (!wasOpen) item.classList.add('is-open');
+    });
+  });
+})();
+</script>
 <%- include('partials/foot') %>
