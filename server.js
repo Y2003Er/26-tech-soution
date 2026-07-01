@@ -157,7 +157,12 @@ const PORT = process.env.RAILWAY_PORT || process.env.PORT || 3000;
 const HOST = process.env.RAILWAY_STATIC_URL ? '0.0.0.0' : 'localhost';
 
 initializeDatabase().then(() => {
+<<<<<<< HEAD
   app.listen(PORT, HOST, () => {
     console.log(`26 Tech Solution inaendesha kwenye http://${HOST}:${PORT}`);
+=======
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`26 Tech Solution inaendesha kwenye http://0.0.0.0:${PORT}`);
+>>>>>>> 83a46742eb372906c7677f61d46613526fc6a5ae
   });
 });
