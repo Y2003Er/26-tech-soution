@@ -4,7 +4,10 @@
   <header class="admin-topbar"><div><span class="eyebrow">Upload manager</span><h1><%= app ? 'Edit Software' : 'New Software Upload' %></h1></div><a href="/admin" class="btn btn-secondary">Back</a></header>
   <% if (error && error.length > 0) { %><div class="flash error"><%= error %></div><% } %>
   <form class="upload-form" method="POST" enctype="multipart/form-data" action="<%= app ? '/admin/apps/' + app.id + '/edit' : '/admin/apps' %>">
+
     <section class="upload-drop"><input type="file" name="icon" accept="image/*"><div><strong>Drag and drop app icon</strong><span>or click to choose a new image</span></div><% if (app && app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="Current icon"><% } %></section>
+
+    <section class="upload-drop"><input type="file" name="banner" accept="image/*"><div><strong>Drag and drop banner/cover image</strong><span>Inatumika kama background ya Featured card (16:9 inapendekezwa)</span></div><% if (app && app.banner_file_id) { %><img src="/icon/<%= app.banner_file_id %>" alt="Current banner"><% } %></section>
 
     <section class="form-grid">
       <label>App Name *<input type="text" name="name" value="<%= app ? app.name : '' %>" required data-slug-source></label>
@@ -13,35 +16,30 @@
       <label class="full">Description *<textarea name="description" required><%= app ? app.description : '' %></textarea></label>
       <label class="full">Download URL / Telegram File ID *<input type="text" name="download_url" value="<%= app ? app.download_url : '' %>" required></label>
       <label class="full">App Icon Telegram File ID<input type="text" name="icon_file_id" value="<%= app && app.icon_file_id ? app.icon_file_id : '' %>"></label>
+      <label class="full">Banner/Cover Telegram File ID<input type="text" name="banner_file_id" value="<%= app && app.banner_file_id ? app.banner_file_id : '' %>"></label>
 
       <label>Version<input type="text" name="version" value="<%= app ? app.version : 'v1.0' %>"></label>
       <label>File Size<input type="text" name="file_size" placeholder="45 MB" value="<%= app ? app.file_size : '' %>"></label>
       <label>Platform<select name="os"><% ['Windows','Android','macOS','iOS','Linux','Multi'].forEach(os => { %><option value="<%= os %>" <%= app && app.os === os ? 'selected' : '' %>><%= os %></option><% }) %></select></label>
       <label>Type<select name="is_free"><option value="true" <%= !app || app.is_free ? 'selected' : '' %>>Free</option><option value="false" <%= app && !app.is_free ? 'selected' : '' %>>Premium</option></select></label>
 
-      <!-- ── Fields mpya: Developer & Package Name ── -->
       <label>Developer<input type="text" name="developer" placeholder="Verified Publisher" value="<%= app && app.developer ? app.developer : '' %>"></label>
       <label>Package Name<input type="text" name="package_name" placeholder="com.example.app" value="<%= app && app.package_name ? app.package_name : '' %>"></label>
 
-      <!-- ── Field mpya: Rating ── -->
       <label>Rating (0.0 - 5.0)<input type="number" name="rating" step="0.1" min="0" max="5" value="<%= app && app.rating ? app.rating : '0.0' %>"></label>
 
       <label>Featured Toggle<select name="is_featured"><option value="false" <%= !app || !app.is_featured ? 'selected' : '' %>>No</option><option value="true" <%= app && app.is_featured ? 'selected' : '' %>>Yes</option></select></label>
 
-      <!-- ── Field mpya: Editor's Choice ── -->
       <label>Editor's Choice<select name="is_editors_choice"><option value="false" <%= !app || !app.is_editors_choice ? 'selected' : '' %>>No</option><option value="true" <%= app && app.is_editors_choice ? 'selected' : '' %>>Yes</option></select></label>
 
       <label>Trending Toggle<select disabled><option>Auto by downloads</option></select></label>
       <label>Popular Toggle<select disabled><option>Auto by views</option></select></label>
       <label>Auto Timestamp<input type="text" value="Managed by database" readonly></label>
 
-      <!-- ── Field mpya: Mod Info (maelezo ya orange chini ya card) ── -->
       <label class="full">Mod Info (maelezo mafupi yanayoonekana chini ya card)<input type="text" name="mod_info" placeholder="Unlimited Money, VIP Unlocked, Premium Unlocked" value="<%= app && app.mod_info ? app.mod_info : '' %>"></label>
 
-      <!-- ── Field mpya: Badges (tenganisha kwa koma) ── -->
       <label class="full">Badges (tenganisha kwa koma: MOD, ONLINE, OFFLINE, PREMIUM, Paid)<input type="text" name="badges" placeholder="MOD, ONLINE" value="<%= app && app.badges && app.badges.length ? app.badges.join(', ') : '' %>"></label>
 
-      <!-- ── Field mpya: Screenshots (URL moja kwa kila line) ── -->
       <label class="full">Screenshots (URL moja kwa kila mstari)<textarea name="screenshots" placeholder="https://.../screenshot1.jpg&#10;https://.../screenshot2.jpg"><%= app && app.screenshots && app.screenshots.length ? app.screenshots.join('\n') : '' %></textarea></label>
 
       <label class="full">Version History<textarea placeholder="Optional release notes for the changelog layout"></textarea></label>
