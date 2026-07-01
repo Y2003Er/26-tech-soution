@@ -2,10 +2,9 @@ const pool = require('../config/db');
 
 const AppModel = {
 
-  // Leta apps zote (na filter + search + pagination)
   async getAll({ category, search, platform, sort = 'trending', limit = 20, offset = 0 } = {}) {
     let query = `
-      SELECT id, name, slug, category, icon_file_id, description,
+      SELECT id, name, slug, category, icon_file_id, banner_file_id, description,
              version, file_size, os, is_free, is_featured,
              views, downloads, created_at, updated_at,
              developer, package_name, rating, mod_info,
@@ -48,7 +47,6 @@ const AppModel = {
     }
   },
 
-  // Hesabu jumla ya apps (kwa pagination)
   async count({ category, search, platform } = {}) {
     let query = `SELECT COUNT(*) FROM apps WHERE is_active = true`;
     const params = [];
@@ -72,7 +70,6 @@ const AppModel = {
     }
   },
 
-  // Leta app moja kwa slug
   async getBySlug(slug) {
     try {
       const { rows } = await pool.query(
@@ -86,7 +83,6 @@ const AppModel = {
     }
   },
 
-  // Leta app moja kwa id
   async getById(id) {
     try {
       const { rows } = await pool.query(
@@ -100,31 +96,22 @@ const AppModel = {
     }
   },
 
-  // Ongeza view count
   async incrementViews(id) {
     try {
-      await pool.query(
-        `UPDATE apps SET views = views + 1 WHERE id = $1`,
-        [id]
-      );
+      await pool.query(`UPDATE apps SET views = views + 1 WHERE id = $1`, [id]);
     } catch (err) {
       console.error('Hitilafu kwenye AppModel.incrementViews:', err.message);
     }
   },
 
-  // Ongeza download count
   async incrementDownloads(id) {
     try {
-      await pool.query(
-        `UPDATE apps SET downloads = downloads + 1 WHERE id = $1`,
-        [id]
-      );
+      await pool.query(`UPDATE apps SET downloads = downloads + 1 WHERE id = $1`, [id]);
     } catch (err) {
       console.error('Hitilafu kwenye AppModel.incrementDownloads:', err.message);
     }
   },
 
-  // Leta categories zote zilizopo (pamoja na category_image_url)
   async getCategories() {
     try {
       const { rows } = await pool.query(
@@ -147,7 +134,7 @@ const AppModel = {
   async getHomeSections() {
     try {
       const baseSelect = `
-        SELECT id, name, slug, category, icon_file_id, description,
+        SELECT id, name, slug, category, icon_file_id, banner_file_id, description,
                version, file_size, os, is_free, is_featured,
                views, downloads, created_at, updated_at,
                developer, package_name, rating, mod_info,
@@ -178,7 +165,6 @@ const AppModel = {
     }
   },
 
-  // Leta apps zinazofanana (same category)
   async getRelated(appId, category, limit = 4) {
     try {
       const { rows } = await pool.query(
@@ -201,7 +187,7 @@ const AppModel = {
   async adminGetAll() {
     try {
       const { rows } = await pool.query(
-        `SELECT id, name, slug, category, icon_file_id, version,
+        `SELECT id, name, slug, category, icon_file_id, banner_file_id, version,
                 file_size, os, is_free, is_featured, is_active,
                 views, downloads, created_at, rating, mod_info,
                 badges, is_editors_choice
@@ -216,20 +202,20 @@ const AppModel = {
 
   async create({ name, slug, category, description, version,
                  file_size, os, is_free, download_url, is_featured,
-                 is_active, icon_file_id, developer, package_name,
+                 is_active, icon_file_id, banner_file_id, developer, package_name,
                  rating, mod_info, badges, screenshots, is_editors_choice }) {
     try {
       const { rows } = await pool.query(
         `INSERT INTO apps
            (name, slug, category, description, version,
             file_size, os, is_free, download_url, is_featured,
-            is_active, icon_file_id, developer, package_name,
+            is_active, icon_file_id, banner_file_id, developer, package_name,
             rating, mod_info, badges, screenshots, is_editors_choice)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
          RETURNING *`,
         [name, slug, category, description, version,
          file_size, os, is_free, download_url, is_featured,
-         is_active !== undefined ? is_active : true, icon_file_id || null,
+         is_active !== undefined ? is_active : true, icon_file_id || null, banner_file_id || null,
          developer || 'Verified Publisher', package_name || null,
          rating || 0, mod_info || null, badges || [], screenshots || [],
          is_editors_choice || false]
@@ -243,7 +229,7 @@ const AppModel = {
 
   async update(id, { name, slug, category, description, version,
                      file_size, os, is_free, download_url, is_featured,
-                     is_active, icon_file_id, developer, package_name,
+                     is_active, icon_file_id, banner_file_id, developer, package_name,
                      rating, mod_info, badges, screenshots, is_editors_choice }) {
     try {
       const { rows } = await pool.query(
@@ -251,12 +237,12 @@ const AppModel = {
            name=$1, slug=$2, category=$3, description=$4,
            version=$5, file_size=$6, os=$7, is_free=$8,
            download_url=$9, is_featured=$10, is_active=$11, icon_file_id=$12,
-           developer=$13, package_name=$14, rating=$15, mod_info=$16,
-           badges=$17, screenshots=$18, is_editors_choice=$19
-         WHERE id=$20 RETURNING *`,
+           banner_file_id=$13, developer=$14, package_name=$15, rating=$16, mod_info=$17,
+           badges=$18, screenshots=$19, is_editors_choice=$20
+         WHERE id=$21 RETURNING *`,
         [name, slug, category, description, version,
          file_size, os, is_free, download_url, is_featured,
-         is_active, icon_file_id || null,
+         is_active, icon_file_id || null, banner_file_id || null,
          developer || 'Verified Publisher', package_name || null,
          rating || 0, mod_info || null, badges || [], screenshots || [],
          is_editors_choice || false, id]
@@ -294,8 +280,6 @@ const AppModel = {
       throw err;
     }
   },
-
-  // ── CATEGORIES ADMIN (kwa category_image_url) ──
 
   async setCategoryImage(category, imageUrl) {
     try {
