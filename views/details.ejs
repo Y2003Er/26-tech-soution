@@ -28,7 +28,7 @@ const badges = app ? buildBadges(app) : [];
 
   <!-- ════════ DETAILS HERO - banner + overlay kama LiteAPKs ════════ -->
   <section class="details-hero">
-    <div class="details-hero-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image: url('<%= app.screenshots[0] %>')"<% } %>>
+    <div class="details-hero-banner" <% if (app.banner_file_id) { %>style="background-image: url('/icon/<%= app.banner_file_id %>')"<% } else if (app.screenshots && app.screenshots.length) { %>style="background-image: url('<%= app.screenshots[0] %>')"<% } %>>
       <% if (badges.length) { %>
         <div class="details-hero-badges">
           <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
@@ -122,7 +122,7 @@ const badges = app ? buildBadges(app) : [];
       <% related.forEach(item => { %>
         <a class="software-card" href="/app/<%= item.slug %>">
           <% const itemBadges = buildBadges(item); %>
-          <div class="card-banner" <% if (item.screenshots && item.screenshots.length) { %>style="background-image:url('<%= item.screenshots[0] %>')"<% } %>>
+          <div class="card-banner" <% if (item.banner_file_id) { %>style="background-image:url('/icon/<%= item.banner_file_id %>')"<% } else if (item.screenshots && item.screenshots.length) { %>style="background-image:url('<%= item.screenshots[0] %>')"<% } %>>
             <% if (itemBadges.length) { %>
               <div class="badge-wrap"><% itemBadges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %></div>
             <% } %>
