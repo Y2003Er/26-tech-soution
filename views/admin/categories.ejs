@@ -1,0 +1,41 @@
+<%- include('../partials/head', { title: 'Category Images - 26 Tech Admin' }) %>
+<%- include('../partials/admin-nav') %>
+<main class="admin-main">
+  <header class="admin-topbar">
+    <div><span class="eyebrow">Homepage covers</span><h1>Category Images</h1></div>
+    <a href="/admin" class="btn btn-secondary">Back</a>
+  </header>
+
+  <% if (success && success.length > 0) { %><div class="flash success"><%= success %></div><% } %>
+  <% if (error && error.length > 0) { %><div class="flash error"><%= error %></div><% } %>
+
+  <p class="cat-hint">Weka picha kwa kila category — hizi ndizo zinaonekana kwenye "Categories" section ya homepage badala ya herufi mbili.</p>
+
+  <div class="cat-manage-grid">
+    <% categories.forEach(c => { %>
+      <form class="cat-manage-card" method="POST" action="/admin/categories" enctype="multipart/form-data">
+        <input type="hidden" name="category" value="<%= c.category %>">
+        <div class="cat-manage-preview">
+          <% if (c.category_image_url) { %>
+            <img src="<%= c.category_image_url %>" alt="<%= c.category %>">
+          <% } else { %>
+            <span>No image</span>
+          <% } %>
+        </div>
+        <div class="cat-manage-info">
+          <strong><%= c.category %></strong>
+          <span><%= c.total || 0 %> apps</span>
+        </div>
+        <label class="cat-manage-upload">
+          <input type="file" name="category_image" accept="image/*" required>
+          <span>Choose image</span>
+        </label>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </form>
+    <% }) %>
+    <% if (categories.length === 0) { %>
+      <div class="empty-state">Hakuna categories bado. Ongeza app kwanza ili category ionekane hapa.</div>
+    <% } %>
+  </div>
+</main>
+<%- include('../partials/foot') %>
