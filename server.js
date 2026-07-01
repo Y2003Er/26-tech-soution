@@ -152,12 +152,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ── FIX: Port binding sahihi kwa Railway ──
-const PORT = process.env.RAILWAY_PORT || process.env.PORT || 3000;
-const HOST = process.env.RAILWAY_STATIC_URL ? '0.0.0.0' : 'localhost';
+// ── FULL FIX: Imepunguzwa masharti ili Railway proxy isome app moja kwa moja ──
+const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
 
 initializeDatabase().then(() => {
   app.listen(PORT, HOST, () => {
-    console.log(`26 Tech Solution inaendesha kwenye http://${HOST}:${PORT}`);
+    console.log(`26 Tech Solution imewaka kikamilifu kwenye port ${PORT}`);
   });
 });
