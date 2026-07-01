@@ -175,7 +175,7 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
       <% shownCategories.slice(0,6).forEach(c => { %>
         <a class="category-card" href="/?cat=<%= encodeURIComponent(c.category) %>#results">
           <% if (c.category_image_url) { %>
-            <div class="category-image"><img src="<%= c.category_image_url %>" alt="<%= c.category %>"></div>
+            <div class="category-image"><img src="/icon/<%= c.category_image_url %>" alt="<%= c.category %>"></div>
           <% } else { %>
             <span class="category-icon"><%- include('partials/app-icon', { category: c.category }) %></span>
           <% } %>
