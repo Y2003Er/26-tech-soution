@@ -53,16 +53,22 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
       <% featured.forEach(app => { %>
         <a class="feature-card" href="/app/<%= app.slug %>">
           <% const badges = buildBadges(app); %>
-          <% if (badges.length) { %>
-            <div class="badge-wrap">
-              <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+          <div class="card-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <div>
+                <strong><%= app.name %></strong>
+                <span><%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></span>
+              </div>
             </div>
-          <% } %>
-          <div class="app-icon lg"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-          <div>
-            <h3><%= app.name %></h3>
+          </div>
+          <div class="card-body">
             <p><%= app.description || 'Verified software ready for download.' %></p>
-            <span><%= app.version || 'v1.0' %> - <%= app.file_size || 'N/A' %></span>
             <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
             <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
           </div>
@@ -105,20 +111,26 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
       <% popular.forEach(app => { %>
         <a class="software-card" href="/app/<%= app.slug %>">
           <% const badges = buildBadges(app); %>
-          <% if (badges.length) { %>
-            <div class="badge-wrap">
-              <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+          <div class="card-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <div>
+                <strong><%= app.name %></strong>
+                <span><%= app.category %> - <%= app.os || 'Multi' %></span>
+              </div>
             </div>
-          <% } %>
-          <div class="card-top">
-            <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-            <span><%= app.is_free ? 'Free' : 'Premium' %></span>
           </div>
-          <h3><%= app.name %></h3>
-          <p><%= app.category %> - <%= app.os || 'Multi' %></p>
-          <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
-          <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
-          <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
+          <div class="card-body">
+            <span class="metric-row"><span><%= app.is_free ? 'Free' : 'Premium' %></span></span>
+            <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
+            <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
+            <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
+          </div>
         </a>
       <% }) %>
     </div>
@@ -194,20 +206,26 @@ const ratingText = (app) => (app.rating && app.rating > 0) ? Number(app.rating).
       <% apps.forEach(app => { %>
         <a class="software-card" href="/app/<%= app.slug %>">
           <% const badges = buildBadges(app); %>
-          <% if (badges.length) { %>
-            <div class="badge-wrap">
-              <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+          <div class="card-banner" <% if (app.screenshots && app.screenshots.length) { %>style="background-image:url('<%= app.screenshots[0] %>')"<% } %>>
+            <% if (badges.length) { %>
+              <div class="badge-wrap">
+                <% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %>
+              </div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
+              <div>
+                <strong><%= app.name %></strong>
+                <span><%= app.category %> - <%= app.os || 'Multi' %></span>
+              </div>
             </div>
-          <% } %>
-          <div class="card-top">
-            <div class="app-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-            <span><%= app.version || 'v1.0' %></span>
           </div>
-          <h3><%= app.name %></h3>
-          <p><%= app.category %> - <%= app.os || 'Multi' %></p>
-          <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
-          <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
-          <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
+          <div class="card-body">
+            <span class="metric-row"><span><%= app.version || 'v1.0' %></span></span>
+            <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } %>
+            <% if (app.mod_info) { %><div class="mod-line"><%= app.mod_info %></div><% } %>
+            <div class="metric-row"><span><%= fmt(app.downloads) %> downloads</span><span><%= app.file_size || 'N/A' %></span></div>
+          </div>
         </a>
       <% }) %>
     </div>
