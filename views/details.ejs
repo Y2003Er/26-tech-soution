@@ -1,132 +1,33 @@
-<%- include('partials/head', { title: app ? app.name + ' - 26 Tech' : 'Software Details' }) %>
-<%- include('partials/nav') %>
-<%
-const fmt = n => Number(n || 0).toLocaleString();
-const dateFmt = d => d ? new Date(d).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Recently';
+/* ════════ DETAILS HERO - yenye background image kama LiteAPKs ════════ */
+.details-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) 280px;
+  gap: 24px;
+  align-items: center;
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 30px;
+  background: linear-gradient(135deg,rgba(124,58,237,.20),rgba(14,165,233,.08));
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 30px 90px rgba(0,0,0,.3);
+  overflow: hidden;
+  isolation: isolate;
+}
 
-// Helper: badges za app (Editor's Choice, MOD/PREMIUM, ONLINE/OFFLINE)
-const buildBadges = (a) => {
-  const list = [];
-  if (a.is_editors_choice) list.push({ text: "Editor's Choice", cls: 'badge-choice' });
-  if (a.badges && a.badges.length) {
-    a.badges.forEach(b => {
-      const lower = b.toLowerCase();
-      let cls = 'badge-mod';
-      if (lower === 'online') cls = 'badge-online';
-      else if (lower === 'offline') cls = 'badge-offline';
-      else if (lower === 'premium') cls = 'badge-premium';
-      list.push({ text: b, cls });
-    });
-  }
-  return list;
-};
-const ratingText = (a) => (a && a.rating && a.rating > 0) ? Number(a.rating).toFixed(1) : null;
-const badges = app ? buildBadges(app) : [];
-%>
-<main class="details-page">
-  <% if (app) { %>
+/* Overlay ya giza juu ya background image */
+.details-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(135deg, rgba(7,8,18,.88), rgba(12,15,30,.65));
+}
 
-  <section class="details-hero">
-    <div class="details-icon"><% if (app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="<%= app.name %>"><% } else { %><%- include('partials/app-icon', { category: app.category }) %><% } %></div>
-
-    <div class="details-title-block">
-      <% if (badges.length) { %>
-        <div class="badge-wrap"><% badges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %></div>
-      <% } %>
-      <div class="eyebrow"><%= app.category || 'Software' %> by <%= app.developer || 'Verified Publisher' %></div>
-      <h1><%= app.name %></h1>
-      <p><%= app.description || 'Verified software available from 26 Tech Solution.' %></p>
-      <div class="detail-tags">
-        <% if (ratingText(app)) { %><span class="rating-row">★ <%= ratingText(app) %></span><% } else { %><span>No ratings yet</span><% } %>
-        <span><%= fmt(app.downloads) %> downloads</span>
-        <span><%= app.version || 'v1.0' %></span>
-      </div>
-      <% if (app.mod_info) { %><div class="mod-line details-mod-line"><%= app.mod_info %></div><% } %>
-    </div>
-
-    <aside class="download-panel">
-      <a class="btn btn-primary big" href="/download/<%= app.slug %>">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        <span>Download Now</span>
-      </a>
-      <button class="btn btn-secondary" type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-        <span>Share</span>
-      </button>
-    </aside>
-  </section>
-
-  <section class="details-grid">
-    <div class="details-main">
-
-      <!-- ════════ SCREENSHOTS - sasa za kweli, fallback ya placeholder ════════ -->
-      <% if (app.screenshots && app.screenshots.length) { %>
-        <div class="screenshot-gallery has-images">
-          <% app.screenshots.forEach(shot => { %>
-            <a href="<%= shot %>" target="_blank" rel="noopener" class="screenshot-thumb">
-              <img src="<%= shot %>" alt="<%= app.name %> screenshot" loading="lazy">
-            </a>
-          <% }) %>
-        </div>
-      <% } else { %>
-        <div class="screenshot-gallery"><div>Screenshot Gallery</div><div>Preview</div><div>Interface</div></div>
-      <% } %>
-
-      <article class="glass-panel"><h2>Description</h2><p><%= app.description || 'No additional description has been added yet.' %></p></article>
-      <article class="glass-panel"><h2>Features</h2><ul class="feature-list"><li>Verified download source</li><li>Fast secure server handoff</li><li>Clean version and file metadata</li><li>Compatible with <%= app.os || 'modern platforms' %></li></ul></article>
-      <article class="glass-panel"><h2>Changelog</h2><p>Latest version <strong><%= app.version || 'v1.0' %></strong> was updated <%= dateFmt(app.updated_at || app.created_at) %>.</p></article>
-      <article class="glass-panel comments"><h2>Comments</h2><p>Community comments can connect here when moderation is added. The layout is ready without changing the current backend.</p></article>
-    </div>
-
-    <aside class="spec-panel glass-panel">
-      <h2>File Information</h2>
-      <dl>
-        <div><dt>Developer</dt><dd><%= app.developer || 'Verified Publisher' %></dd></div>
-        <% if (app.package_name) { %><div><dt>Package Name</dt><dd><%= app.package_name %></dd></div><% } %>
-        <div><dt>Version</dt><dd><%= app.version || 'v1.0' %></dd></div>
-        <div><dt>File Size</dt><dd><%= app.file_size || 'N/A' %></dd></div>
-        <div><dt>Compatibility</dt><dd><%= app.os || 'Multi-platform' %></dd></div>
-        <div><dt>Last Update</dt><dd><%= dateFmt(app.updated_at || app.created_at) %></dd></div>
-        <% if (ratingText(app)) { %><div><dt>Rating</dt><dd class="rating-row">★ <%= ratingText(app) %> / 5.0</dd></div><% } %>
-        <div><dt>Views</dt><dd><%= fmt(app.views) %></dd></div>
-      </dl>
-      <div class="share-row">
-        <button type="button" data-share-app data-share-title="<%= app.name %>" data-share-text="<%= app.name %> - <%= app.category %> kutoka 26 Tech Solution">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-          <span>Share</span>
-        </button>
-        <button type="button" data-copy-link>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          <span>Copy Link</span>
-        </button>
-      </div>
-    </aside>
-  </section>
-
-  <section class="section">
-    <div class="section-head"><div><span>Related Software</span><h2>You may also like</h2></div></div>
-    <div class="software-grid">
-      <% related.forEach(item => { %>
-        <a class="software-card" href="/app/<%= item.slug %>">
-          <% const itemBadges = buildBadges(item); %>
-          <% if (itemBadges.length) { %>
-            <div class="badge-wrap"><% itemBadges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %></div>
-          <% } %>
-          <div class="card-top">
-            <div class="app-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: item.category }) %><% } %></div>
-            <span><%= item.version || 'v1.0' %></span>
-          </div>
-          <h3><%= item.name %></h3>
-          <p><%= item.category %></p>
-          <% if (ratingText(item)) { %><span class="rating-row">★ <%= ratingText(item) %></span><% } %>
-          <% if (item.mod_info) { %><div class="mod-line"><%= item.mod_info %></div><% } %>
-          <div class="metric-row"><span><%= fmt(item.downloads) %> downloads</span><span><%= item.file_size || 'N/A' %></span></div>
-        </a>
-      <% }) %>
-    </div>
-  </section>
-
-  <% } else { %><div class="empty-state">Software not found.</div><% } %>
-</main>
-<%- include('partials/footer') %>
-<%- include('partials/foot') %>
+/* Yaliyomo yote yawe juu ya overlay */
+.details-hero > * {
+  position: relative;
+  z-index: 2;
+}
