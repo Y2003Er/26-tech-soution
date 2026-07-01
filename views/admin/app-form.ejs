@@ -7,20 +7,20 @@
 
     <section class="upload-drop">
       <label class="cat-manage-upload">
-        <input type="file" name="icon" accept="image/*">
-        <span>Chagua Icon</span>
+        <input type="file" name="icon" accept="image/*" data-preview-target="icon-preview" data-name-target="icon-filename">
+        <span id="icon-filename">Chagua Icon</span>
       </label>
       <div><strong>App Icon</strong><span>Bofya hapo juu kuchagua picha — itapakiwa Telegram moja kwa moja.</span></div>
-      <% if (app && app.icon_file_id) { %><img src="/icon/<%= app.icon_file_id %>" alt="Current icon"><% } %>
+      <img id="icon-preview" src="<%= app && app.icon_file_id ? '/icon/' + app.icon_file_id : '' %>" alt="Icon preview" style="<%= app && app.icon_file_id ? '' : 'display:none' %>">
     </section>
 
     <section class="upload-drop">
       <label class="cat-manage-upload">
-        <input type="file" name="banner" accept="image/*">
-        <span>Chagua Banner</span>
+        <input type="file" name="banner" accept="image/*" data-preview-target="banner-preview" data-name-target="banner-filename">
+        <span id="banner-filename">Chagua Banner</span>
       </label>
       <div><strong>Banner/Cover Image</strong><span>Inatumika kama background ya Featured card (16:9 inapendekezwa). Bofya hapo juu kuchagua picha.</span></div>
-      <% if (app && app.banner_file_id) { %><img src="/icon/<%= app.banner_file_id %>" alt="Current banner"><% } %>
+      <img id="banner-preview" src="<%= app && app.banner_file_id ? '/icon/' + app.banner_file_id : '' %>" alt="Banner preview" style="<%= app && app.banner_file_id ? '' : 'display:none' %>">
     </section>
 
     <section class="form-grid">
@@ -65,5 +65,30 @@
     <div class="upload-progress"><span></span></div>
     <div class="form-actions"><button class="btn btn-primary" type="submit"><%= app ? 'Save Changes' : 'Publish Software' %></button><a href="/admin" class="btn btn-secondary">Cancel</a></div>
   </form>
+
+  <script>
+    document.querySelectorAll('input[type="file"][data-preview-target]').forEach(function (input) {
+      input.addEventListener('change', function () {
+        var nameEl = document.getElementById(input.dataset.nameTarget);
+        var imgEl = document.getElementById(input.dataset.previewTarget);
+        var file = input.files && input.files[0];
+
+        if (!file) {
+          if (nameEl) nameEl.textContent = nameEl.dataset.defaultLabel || nameEl.textContent;
+          return;
+        }
+
+        if (nameEl) {
+          if (!nameEl.dataset.defaultLabel) nameEl.dataset.defaultLabel = nameEl.textContent;
+          nameEl.textContent = 'Umechagua: ' + file.name;
+        }
+
+        if (imgEl) {
+          imgEl.src = URL.createObjectURL(file);
+          imgEl.style.display = '';
+        }
+      });
+    });
+  </script>
 </main>
 <%- include('../partials/foot') %>
