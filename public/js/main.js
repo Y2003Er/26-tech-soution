@@ -1,31 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-  // ── Scroll ya kuaminika kwenda kwenye anchor (#results, #latest n.k) ──
-  // Tunazuia default scroll ya browser kwanza, kisha tunafanya scroll
-  // wenyewe kwa kutumia offsetTop (si scrollIntoView) ili iwe sahihi
-  // hata kama picha/layout bado zinapakia.
-  if (location.hash) {
-    // Rudisha scroll juu papo hapo ili kuzuia "jump" ya awali ya browser
-    window.scrollTo(0, 0);
-
-    var scrollToHash = function () {
-      var scrollTarget = document.querySelector(location.hash);
-      if (!scrollTarget) return;
-      var navOffset = 80;
-      var targetY = scrollTarget.getBoundingClientRect().top + window.pageYOffset - navOffset;
-      window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
-    };
-
-    // Jaribu mara kadhaa: mara moja baada ya layout, na tena baada ya
-    // picha/fonts kupakia kikamilifu (window.onload inaweza kuchelewa)
-    window.requestAnimationFrame(function () {
-      setTimeout(scrollToHash, 150);
-    });
-    window.addEventListener('load', function () {
-      setTimeout(scrollToHash, 100);
-    });
-  }
-
   var searchToggle = document.querySelector('[data-search-toggle]');
   var searchOverlay = document.querySelector('[data-search-overlay]');
   var searchClose = document.querySelector('[data-search-close]');
