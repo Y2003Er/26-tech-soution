@@ -130,18 +130,24 @@ const badges = app ? buildBadges(app) : [];
       <% related.forEach(item => { %>
         <a class="software-card" href="/app/<%= item.slug %>">
           <% const itemBadges = buildBadges(item); %>
-          <% if (itemBadges.length) { %>
-            <div class="badge-wrap"><% itemBadges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %></div>
-          <% } %>
-          <div class="card-top">
-            <div class="app-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: item.category }) %><% } %></div>
-            <span><%= item.version || 'v1.0' %></span>
+          <div class="card-banner" <% if (item.screenshots && item.screenshots.length) { %>style="background-image:url('<%= item.screenshots[0] %>')"<% } %>>
+            <% if (itemBadges.length) { %>
+              <div class="badge-wrap"><% itemBadges.forEach(b => { %><span class="badge <%= b.cls %>"><%= b.text %></span><% }) %></div>
+            <% } %>
+            <div class="card-banner-overlay">
+              <div class="app-icon"><% if (item.icon_file_id) { %><img src="/icon/<%= item.icon_file_id %>" alt=""><% } else { %><%- include('partials/app-icon', { category: item.category }) %><% } %></div>
+              <div>
+                <strong><%= item.name %></strong>
+                <span><%= item.category %></span>
+              </div>
+            </div>
           </div>
-          <h3><%= item.name %></h3>
-          <p><%= item.category %></p>
-          <% if (ratingText(item)) { %><span class="rating-row">★ <%= ratingText(item) %></span><% } %>
-          <% if (item.mod_info) { %><div class="mod-line"><%= item.mod_info %></div><% } %>
-          <div class="metric-row"><span><%= fmt(item.downloads) %> downloads</span><span><%= item.file_size || 'N/A' %></span></div>
+          <div class="card-body">
+            <span class="metric-row"><span><%= item.version || 'v1.0' %></span></span>
+            <% if (ratingText(item)) { %><span class="rating-row">★ <%= ratingText(item) %></span><% } %>
+            <% if (item.mod_info) { %><div class="mod-line"><%= item.mod_info %></div><% } %>
+            <div class="metric-row"><span><%= fmt(item.downloads) %> downloads</span><span><%= item.file_size || 'N/A' %></span></div>
+          </div>
         </a>
       <% }) %>
     </div>
